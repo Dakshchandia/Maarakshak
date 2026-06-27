@@ -154,29 +154,45 @@ async function generateWithPdfFile(
   if (!fileUri) throw new Error('Failed to upload PDF to Gemini Files API');
 
   // Step 3: Generate content using the uploaded file
+  // Use gemini-2.5-flash first — higher free tier quota than 2.0-flash
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const modelsToTry = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+  let lastError: Error | null = null;
 
-  const result = await model.generateContent([
-    {
-      fileData: {
-        mimeType: 'application/pdf',
-        fileUri,
-      },
-    },
-    prompt,
-  ]);
+  for (const modelName of modelsToTry) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent([
+        { fileData: { mimeType: 'application/pdf', fileUri } },
+        prompt,
+      ]);
+      const text = result.response.text();
+      // Clean up uploaded file (fire and forget)
+      if (fileName) {
+        fetch(`https://generativelanguage.googleapis.com/v1beta/${fileName}?key=${apiKey}`, {
+          method: 'DELETE',
+        }).catch(() => {});
+      }
+      return text;
+    } catch (err) {
+      lastError = err as Error;
+      const msg = (err as Error).message || '';
+      console.warn(`PDF analysis with ${modelName} failed: ${msg.slice(0, 120)}`);
+      if (msg.includes('429') || msg.includes('quota') || msg.includes('404') || msg.includes('not found')) {
+        continue; // try next model
+      }
+      break; // non-quota error — don't retry
+    }
+  }
 
-  const text = result.response.text();
-
-  // Step 4: Clean up uploaded file (fire and forget)
+  // Clean up even on failure
   if (fileName) {
     fetch(`https://generativelanguage.googleapis.com/v1beta/${fileName}?key=${apiKey}`, {
       method: 'DELETE',
     }).catch(() => {});
   }
 
-  return text;
+  throw lastError || new Error('All models failed for PDF analysis');
 }
 
 export async function generateJSONWithImage<T>(

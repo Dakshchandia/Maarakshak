@@ -73,7 +73,6 @@ export default function MedicalReportAnalyzerPage() {
     setReportText('');
   };
 
-  // Send file directly to server — server passes it to Gemini Vision for OCR + analysis
   const handleFile = async (file: File) => {
     const id = `rpt-${Date.now()}`;
     setReports(prev => [{
@@ -83,9 +82,26 @@ export default function MedicalReportAnalyzerPage() {
     setAnalyzing(true);
     try {
       const res = await api.analyzeFile(file, selectedType, pregnancy?.gestationalWeek);
-      setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'complete', analysis: res.analysis } : r));
-    } catch {
-      setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'failed' } : r));
+      setReports(prev => prev.map(r => r.id === id ? {
+        ...r,
+        status: 'complete',
+        analysis: res.analysis,
+      } : r));
+    } catch (err: unknown) {
+      // Show quota/rate limit as a special "complete with notice" state instead of "failed"
+      const errMsg = err instanceof Error ? err.message : String(err);
+      const isQuota = errMsg.includes('429') || errMsg.includes('quota');
+      setReports(prev => prev.map(r => r.id === id ? {
+        ...r,
+        status: isQuota ? 'complete' : 'failed',
+        analysis: isQuota ? {
+          findings: ['AI quota temporarily exceeded'],
+          abnormalValues: [],
+          riskIndicators: [],
+          followUp: 'The AI analysis quota has been reached. Please try again in a few hours or paste your lab values in the text box below for instant analysis.',
+          aiSummary: '⏳ API quota reached. Your file was uploaded successfully. To get instant analysis now, type or paste your key lab values (e.g. Hemoglobin, Blood Pressure, Blood Sugar) in the text area and click Analyze Report.',
+        } : undefined,
+      } : r));
     } finally {
       setAnalyzing(false);
     }

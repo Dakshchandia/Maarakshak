@@ -203,17 +203,40 @@ app.post('/api/ai/analyze-file', upload.single('file'), async (req, res) => {
     const mimeType = req.file.mimetype;
     const base64 = fileBuffer.toString('base64');
 
+    console.log(`[analyze-file] Received: ${req.file.originalname}, size: ${fileBuffer.length} bytes, type: ${mimeType}`);
+
     const prompt = `You are a maternal health doctor. Carefully read this ${reportType || 'lab'} report for a patient at ${gestationalWeek || 'unknown'} weeks of pregnancy.
 Extract ALL visible lab values, measurements, and clinical findings from the document.
 Return ONLY this JSON (no markdown):
 {"findings":["specific finding from the report"],"abnormalValues":["value name: X (normal range: Y — concern: Z)"],"riskIndicators":["specific risk relevant to pregnancy"],"followUp":"specific actionable recommendation for the pregnant patient","aiSummary":"2-3 sentence plain language summary of the report findings and what they mean for the pregnancy"}`;
 
     if (isGeminiConfigured()) {
-      const analysis = await generateJSONWithImage<{
-        findings: string[]; abnormalValues: string[];
-        riskIndicators: string[]; followUp: string; aiSummary: string;
-      }>(prompt, base64, mimeType);
-      return res.json({ analysis });
+      try {
+        const analysis = await generateJSONWithImage<{
+          findings: string[]; abnormalValues: string[];
+          riskIndicators: string[]; followUp: string; aiSummary: string;
+        }>(prompt, base64, mimeType);
+        console.log(`[analyze-file] Success — findings: ${analysis.findings?.length}`);
+        return res.json({ analysis });
+      } catch (geminiErr) {
+        const msg = (geminiErr as Error).message || '';
+        console.error(`[analyze-file] Gemini error: ${msg.slice(0, 200)}`);
+
+        // Quota exceeded — return honest error message
+        if (msg.includes('429') || msg.includes('quota')) {
+          return res.status(429).json({
+            error: 'AI quota exceeded',
+            analysis: {
+              findings: ['AI analysis temporarily unavailable due to quota limits'],
+              abnormalValues: [],
+              riskIndicators: [],
+              followUp: 'The Gemini AI free tier quota has been exceeded. Please try again after a few hours, or upgrade to a paid Gemini API plan. In the meantime, consult your doctor directly with this report.',
+              aiSummary: 'AI analysis is temporarily unavailable (API quota exceeded). Your report was received successfully. Please consult your healthcare provider for interpretation.',
+            }
+          });
+        }
+        throw geminiErr; // re-throw other errors
+      }
     }
 
     res.json({ analysis: {
@@ -224,7 +247,7 @@ Return ONLY this JSON (no markdown):
       aiSummary: 'File received. Configure Gemini API for AI analysis.',
     }});
   } catch (err) {
-    console.error('analyze-file error:', err);
+    console.error('[analyze-file] Unhandled error:', err instanceof Error ? err.message : err);
     res.status(500).json({ error: err instanceof Error ? err.message : 'File analysis failed' });
   }
 });
