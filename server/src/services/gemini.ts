@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI, GoogleAIFileManager } from '@google/generative-ai/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleAIFileManager } from '@google/generative-ai/server';
 import { writeFileSync, unlinkSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
