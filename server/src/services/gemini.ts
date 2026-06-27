@@ -1,4 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, GoogleAIFileManager } from '@google/generative-ai/server';
+import { writeFileSync, unlinkSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
 // Lazy init — dotenv.config() in index.ts runs before first call
 let _genAI: GoogleGenerativeAI | null | undefined = undefined;
@@ -81,8 +84,15 @@ export async function generateWithImage(
   mimeType: string,
 ): Promise<string> {
   const genAI = getGenAI();
-  if (!genAI) throw new Error('Gemini not configured');
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!genAI || !apiKey) throw new Error('Gemini not configured');
 
+  // PDFs must be uploaded via Files API — inlineData only works for images
+  if (mimeType === 'application/pdf') {
+    return generateWithPdfFile(prompt, imageBase64, apiKey);
+  }
+
+  // Images can use inlineData directly
   for (const modelName of MODEL_CHAIN) {
     try {
       const model = genAI.getGenerativeModel({ model: modelName });
@@ -100,6 +110,45 @@ export async function generateWithImage(
     }
   }
   throw new Error('All Gemini vision models exhausted');
+}
+
+async function generateWithPdfFile(
+  prompt: string,
+  pdfBase64: string,
+  apiKey: string,
+): Promise<string> {
+  const fileManager = new GoogleAIFileManager(apiKey);
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  // Write PDF to a temp file
+  const tempPath = join(tmpdir(), `maaraksha-report-${Date.now()}.pdf`);
+  try {
+    writeFileSync(tempPath, Buffer.from(pdfBase64, 'base64'));
+
+    // Upload to Gemini Files API
+    const uploadResult = await fileManager.uploadFile(tempPath, {
+      mimeType: 'application/pdf',
+      displayName: 'medical-report.pdf',
+    });
+
+    const fileUri = uploadResult.file.uri;
+
+    // Generate with the uploaded file
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const result = await model.generateContent([
+      { fileData: { mimeType: 'application/pdf', fileUri } },
+      prompt,
+    ]);
+
+    const text = result.response.text();
+
+    // Clean up uploaded file
+    await fileManager.deleteFile(uploadResult.file.name).catch(() => {});
+    return text;
+  } finally {
+    // Clean up temp file
+    try { unlinkSync(tempPath); } catch { /* ignore */ }
+  }
 }
 
 export async function generateJSONWithImage<T>(
