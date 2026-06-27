@@ -9,7 +9,24 @@ import { sendEmailAlert } from './services/alerts.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(cors());
+
+// Allow frontend origin — set CORS_ORIGIN env var on Render
+// e.g. https://maaraksha.vercel.app
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
+  : ['http://localhost:5173', 'http://localhost:4173'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (curl, Postman, same-origin)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // ── Health ────────────────────────────────────────────────────────────────────
