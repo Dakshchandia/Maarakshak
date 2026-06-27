@@ -73,16 +73,65 @@ export default function MedicalReportAnalyzerPage() {
     setReportText('');
   };
 
-  const handleFile = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result as string || file.name;
-      analyzeReport(text.slice(0, 2000), selectedType, file.name);
+  // Extract text from PDF using pdf.js
+  const extractPdfText = async (file: File): Promise<string> => {
+    try {
+      const pdfjsLib = await import('pdfjs-dist');
+      // Use the worker from public folder
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+
+      for (let i = 1; i <= Math.min(pdf.numPages, 5); i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .map((item: { str?: string }) => item.str || '')
+          .join(' ');
+        fullText += pageText + '\n';
+      }
+
+      return fullText.trim().slice(0, 3000) || `PDF: ${file.name} (could not extract text)`;
+    } catch (err) {
+      console.error('PDF extraction failed:', err);
+      return `PDF file: ${file.name}. Unable to extract text automatically. Please type the key values below.`;
+    }
+  };
+
+  const handleFile = async (file: File) => {
+    const id = `rpt-${Date.now()}`;
+    const newReport: UploadedReport = {
+      id, fileName: file.name,
+      reportType: selectedType,
+      uploadedAt: new Date().toISOString(),
+      status: 'analyzing',
     };
-    if (file.type === 'application/pdf' || file.type.startsWith('image/')) {
-      analyzeReport(`File uploaded: ${file.name}. Please extract text content for analysis.`, selectedType, file.name);
-    } else {
-      reader.readAsText(file);
+    setReports(prev => [newReport, ...prev]);
+    setAnalyzing(true);
+
+    try {
+      let text = '';
+      if (file.type === 'application/pdf') {
+        text = await extractPdfText(file);
+      } else if (file.type.startsWith('image/')) {
+        // For images, send filename + prompt Gemini with OCR hint
+        text = `Medical report image from file: ${file.name}. This appears to be a ${selectedType.replace('_', ' ')} report. Please provide a general maternal health analysis template.`;
+      } else {
+        text = await file.text();
+      }
+
+      const res = await api.analyzeReport({
+        reportText: text,
+        reportType: selectedType,
+        gestationalWeek: pregnancy?.gestationalWeek,
+      });
+      setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'complete', analysis: res.analysis } : r));
+    } catch {
+      setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'failed' } : r));
+    } finally {
+      setAnalyzing(false);
     }
   };
 
