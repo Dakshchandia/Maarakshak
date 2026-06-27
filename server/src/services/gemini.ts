@@ -75,7 +75,46 @@ export async function generateJSON<T>(prompt: string): Promise<T> {
   return JSON.parse(cleaned) as T;
 }
 
-export async function chatWithHistory(
+export async function generateWithImage(
+  prompt: string,
+  imageBase64: string,
+  mimeType: string,
+): Promise<string> {
+  const genAI = getGenAI();
+  if (!genAI) throw new Error('Gemini not configured');
+
+  for (const modelName of MODEL_CHAIN) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent([
+        { inlineData: { data: imageBase64, mimeType } },
+        prompt,
+      ]);
+      return result.response.text();
+    } catch (err) {
+      const msg = (err as Error).message || '';
+      if (msg.includes('429') || msg.includes('404') || msg.includes('not found') || msg.includes('quota')) {
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('All Gemini vision models exhausted');
+}
+
+export async function generateJSONWithImage<T>(
+  prompt: string,
+  imageBase64: string,
+  mimeType: string,
+): Promise<T> {
+  const text = await generateWithImage(
+    prompt + '\n\nRespond ONLY with valid JSON, no markdown.',
+    imageBase64,
+    mimeType,
+  );
+  const cleaned = text.replace(/```json\n?|\n?```/g, '').trim();
+  return JSON.parse(cleaned) as T;
+}
   systemInstruction: string,
   history: { role: string; parts: { text: string }[] }[],
   message: string,

@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
-import { isGeminiConfigured, generateJSON, chatWithHistory } from './services/gemini.js';
+import { isGeminiConfigured, generateJSON, generateJSONWithImage, chatWithHistory } from './services/gemini.js';
 import { assessRiskLocal, assessRiskWithAI, extractSymptomsLocal } from './services/riskEngine.js';
 import { sendEmailAlert } from './services/alerts.js';
 
@@ -141,29 +141,54 @@ Use affordable Indian foods. Return ONLY JSON: {"breakfast":[{"item":"food","por
 // ── Feature 2: Medical Report Analyzer ───────────────────────────────────────
 app.post('/api/ai/analyze-report', async (req, res) => {
   try {
-    const { reportText, reportType, gestationalWeek } = req.body;
-    if (!reportText) return res.status(400).json({ error: 'Report text required' });
-    
-    // If only a filename was sent (PDF/image upload without text extraction), return helpful fallback
+    const { reportText, reportType, gestationalWeek, imageBase64, imageMimeType } = req.body;
+
+    const prompt = `You are a maternal health doctor analyzing a pregnancy ${reportType || 'lab'} report. Patient gestational week: ${gestationalWeek || 'unknown'}.
+Analyze this medical report and return ONLY JSON:
+{"findings":["key finding 1","key finding 2"],"abnormalValues":["abnormal value with context"],"riskIndicators":["any risk for pregnancy"],"followUp":"specific recommendation for pregnant woman","aiSummary":"2-3 sentence plain language summary for patient"}`;
+
+    // If image data sent (scanned PDF or image upload) — use Gemini Vision
+    if (imageBase64 && imageMimeType && isGeminiConfigured()) {
+      const analysis = await generateJSONWithImage<{
+        findings: string[]; abnormalValues: string[];
+        riskIndicators: string[]; followUp: string; aiSummary: string;
+      }>(prompt, imageBase64, imageMimeType);
+      return res.json({ analysis });
+    }
+
+    if (!reportText) return res.status(400).json({ error: 'Report text or image required' });
+
+    // Text-based analysis
     const isJustFilename = reportText.trim().startsWith('File uploaded:') || reportText.trim().length < 20;
     if (isJustFilename) {
       return res.json({ analysis: {
-        findings: ['Report file received successfully'],
+        findings: ['Report file received'],
         abnormalValues: [],
         riskIndicators: [],
-        followUp: 'Please type or paste your report values in the text box below for AI analysis. For example: "Hemoglobin: 9.2 g/dL, Blood Pressure: 142/92 mmHg"',
-        aiSummary: 'File uploaded. To get AI analysis, please type your lab values in the text area below and click Analyze Report.',
+        followUp: 'Please type your lab values in the text box for AI analysis (e.g., Hemoglobin: 9.2 g/dL, Blood Pressure: 142/92 mmHg)',
+        aiSummary: 'Could not extract text from this file. Please type your key lab values in the text area below and click Analyze Report.',
       }});
     }
 
     if (isGeminiConfigured()) {
-      const analysis = await generateJSON<{ findings: string[]; abnormalValues: string[]; riskIndicators: string[]; followUp: string; aiSummary: string }>(
-        `You are a maternal health doctor analyzing a pregnancy ${reportType || 'lab'} report. Patient week: ${gestationalWeek || 'unknown'}.\nReport: "${reportText}"\nReturn ONLY JSON: {"findings":["finding1"],"abnormalValues":["any abnormal value with context"],"riskIndicators":["risk if any"],"followUp":"specific recommendation","aiSummary":"2-3 sentence plain language summary"}`
-      );
+      const analysis = await generateJSON<{
+        findings: string[]; abnormalValues: string[];
+        riskIndicators: string[]; followUp: string; aiSummary: string;
+      }>(`${prompt}\n\nReport content:\n"${reportText}"`);
       return res.json({ analysis });
     }
-    res.json({ analysis: { findings: ['Report received', `${reportType||'Lab'} values extracted`], abnormalValues: [], riskIndicators: [], followUp: 'Share this report with your ASHA worker or PHC doctor for interpretation', aiSummary: 'Your report has been received. Please consult your healthcare provider for detailed interpretation. Continue regular medications and ANC visits.' } });
-  } catch (err) { res.status(500).json({ error: err instanceof Error ? err.message : 'Report analysis failed' }); }
+
+    res.json({ analysis: {
+      findings: ['Report received', `${reportType || 'Lab'} values extracted`],
+      abnormalValues: [],
+      riskIndicators: [],
+      followUp: 'Share this report with your ASHA worker or PHC doctor for interpretation',
+      aiSummary: 'Your report has been received. Please consult your healthcare provider for detailed interpretation.',
+    }});
+  } catch (err) {
+    console.error('analyze-report error:', err);
+    res.status(500).json({ error: err instanceof Error ? err.message : 'Report analysis failed' });
+  }
 });
 
 // ── Feature 10: Digital Twin ──────────────────────────────────────────────────
