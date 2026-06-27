@@ -90,6 +90,7 @@ export default function MedicalReportAnalyzerPage() {
     } catch (err: unknown) {
       // Show quota/rate limit as a special "complete with notice" state instead of "failed"
       const errMsg = err instanceof Error ? err.message : String(err);
+      console.error('[Report Analyzer] Upload error:', errMsg);
       const isQuota = errMsg.includes('429') || errMsg.includes('quota');
       setReports(prev => prev.map(r => r.id === id ? {
         ...r,
@@ -102,6 +103,10 @@ export default function MedicalReportAnalyzerPage() {
           aiSummary: '⏳ API quota reached. Your file was uploaded successfully. To get instant analysis now, type or paste your key lab values (e.g. Hemoglobin, Blood Pressure, Blood Sugar) in the text area and click Analyze Report.',
         } : undefined,
       } : r));
+      // Show error in UI via a temporary alert so we can debug
+      if (!isQuota) {
+        console.error('[Report Analyzer] Non-quota error — check Network tab for details:', errMsg);
+      }
     } finally {
       setAnalyzing(false);
     }
