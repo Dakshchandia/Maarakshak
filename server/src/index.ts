@@ -3,12 +3,14 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import multer from 'multer';
 import { isGeminiConfigured, generateJSON, generateJSONWithImage, chatWithHistory } from './services/gemini.js';
 import { assessRiskLocal, assessRiskWithAI, extractSymptomsLocal } from './services/riskEngine.js';
 import { sendEmailAlert } from './services/alerts.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 // Allow frontend origin — set CORS_ORIGIN env var on Render
 // e.g. https://maaraksha.vercel.app
@@ -191,7 +193,43 @@ Analyze this medical report and return ONLY JSON:
   }
 });
 
-// ── Feature 10: Digital Twin ──────────────────────────────────────────────────
+// ── Feature 2b: Analyze Report via direct file upload ────────────────────────
+app.post('/api/ai/analyze-file', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+    const { reportType, gestationalWeek } = req.body;
+    const fileBuffer = req.file.buffer;
+    const mimeType = req.file.mimetype;
+    const base64 = fileBuffer.toString('base64');
+
+    const prompt = `You are a maternal health doctor. Carefully read this ${reportType || 'lab'} report for a patient at ${gestationalWeek || 'unknown'} weeks of pregnancy.
+Extract ALL visible lab values, measurements, and clinical findings from the document.
+Return ONLY this JSON (no markdown):
+{"findings":["specific finding from the report"],"abnormalValues":["value name: X (normal range: Y — concern: Z)"],"riskIndicators":["specific risk relevant to pregnancy"],"followUp":"specific actionable recommendation for the pregnant patient","aiSummary":"2-3 sentence plain language summary of the report findings and what they mean for the pregnancy"}`;
+
+    if (isGeminiConfigured()) {
+      const analysis = await generateJSONWithImage<{
+        findings: string[]; abnormalValues: string[];
+        riskIndicators: string[]; followUp: string; aiSummary: string;
+      }>(prompt, base64, mimeType);
+      return res.json({ analysis });
+    }
+
+    res.json({ analysis: {
+      findings: ['Report received'],
+      abnormalValues: [],
+      riskIndicators: [],
+      followUp: 'Please consult your doctor for interpretation.',
+      aiSummary: 'File received. Configure Gemini API for AI analysis.',
+    }});
+  } catch (err) {
+    console.error('analyze-file error:', err);
+    res.status(500).json({ error: err instanceof Error ? err.message : 'File analysis failed' });
+  }
+});
+
+
 app.post('/api/ai/digital-twin', async (req, res) => {
   try {
     const { pregnancyId, riskHistory, dailyEntries, medicines, appointments } = req.body;

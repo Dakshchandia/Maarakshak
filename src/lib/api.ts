@@ -79,6 +79,18 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
+  analyzeFile: (file: File, reportType: string, gestationalWeek?: number) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('reportType', reportType);
+    if (gestationalWeek) formData.append('gestationalWeek', String(gestationalWeek));
+    return request<{ analysis: { findings: string[]; abnormalValues: string[]; riskIndicators: string[]; followUp: string; aiSummary: string } }>('/ai/analyze-file', {
+      method: 'POST',
+      body: formData,
+      // Don't set Content-Type — browser sets it with boundary for multipart
+    });
+  },
+
   getDigitalTwin: (data: Record<string, unknown>) =>
     request<{ twin: import('@/types').DigitalTwin }>('/ai/digital-twin', {
       method: 'POST',

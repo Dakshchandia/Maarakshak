@@ -73,87 +73,16 @@ export default function MedicalReportAnalyzerPage() {
     setReportText('');
   };
 
-  // Extract text from PDF, or render to image if text-based extraction fails
-  const extractPdfText = async (file: File): Promise<{ text: string; imageBase64?: string; imageMimeType?: string }> => {
-    try {
-      const pdfjsLib = await import('pdfjs-dist');
-      pdfjsLib.GlobalWorkerOptions.workerSrc =
-        `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
-
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let fullText = '';
-
-      for (let i = 1; i <= Math.min(pdf.numPages, 5); i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items
-          .map((item: { str?: string }) => item.str || '')
-          .join(' ');
-        fullText += pageText + '\n';
-      }
-
-      const extractedText = fullText.trim();
-
-      // If meaningful text extracted, use it
-      if (extractedText.length > 50) {
-        return { text: extractedText.slice(0, 3000) };
-      }
-
-      // No text = scanned PDF → render first page to image and use Gemini Vision
-      const page = await pdf.getPage(1);
-      const scale = 2.0;
-      const viewport = page.getViewport({ scale });
-      const canvas = document.createElement('canvas');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      const ctx = canvas.getContext('2d')!;
-      await page.render({ canvasContext: ctx, viewport }).promise;
-
-      // Convert canvas to base64 JPEG
-      const imageBase64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
-      return {
-        text: `Scanned PDF: ${file.name}`,
-        imageBase64,
-        imageMimeType: 'image/jpeg',
-      };
-    } catch (err) {
-      console.error('PDF extraction failed:', err);
-      return { text: `PDF file: ${file.name}` };
-    }
-  };
-
+  // Send file directly to server — server passes it to Gemini Vision for OCR + analysis
   const handleFile = async (file: File) => {
     const id = `rpt-${Date.now()}`;
-    const newReport: UploadedReport = {
-      id, fileName: file.name,
-      reportType: selectedType,
-      uploadedAt: new Date().toISOString(),
-      status: 'analyzing',
-    };
-    setReports(prev => [newReport, ...prev]);
+    setReports(prev => [{
+      id, fileName: file.name, reportType: selectedType,
+      uploadedAt: new Date().toISOString(), status: 'analyzing',
+    }, ...prev]);
     setAnalyzing(true);
-
     try {
-      let payload: Record<string, unknown> = {
-        reportType: selectedType,
-        gestationalWeek: pregnancy?.gestationalWeek,
-      };
-
-      if (file.type === 'application/pdf') {
-        const { text, imageBase64, imageMimeType } = await extractPdfText(file);
-        payload = { ...payload, reportText: text, imageBase64, imageMimeType };
-      } else if (file.type.startsWith('image/')) {
-        // Direct image upload — convert to base64 and send to Gemini Vision
-        const arrayBuffer = await file.arrayBuffer();
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-        payload = { ...payload, reportText: file.name, imageBase64: base64, imageMimeType: file.type };
-      } else {
-        const text = await file.text();
-        payload = { ...payload, reportText: text };
-      }
-
-      const res = await api.analyzeReport(payload);
+      const res = await api.analyzeFile(file, selectedType, pregnancy?.gestationalWeek);
       setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'complete', analysis: res.analysis } : r));
     } catch {
       setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'failed' } : r));
