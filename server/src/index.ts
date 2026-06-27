@@ -10,7 +10,7 @@ import { sendEmailAlert } from './services/alerts.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } }); // 20MB limit
 
 // Allow frontend origin — set CORS_ORIGIN env var on Render
 // e.g. https://maaraksha.vercel.app
@@ -29,7 +29,14 @@ app.use(cors({
     callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 }));
+
+// Explicitly handle OPTIONS preflight for all routes (required for multipart uploads)
+app.options('*', cors());
 app.use(express.json());
 
 // ── Health ────────────────────────────────────────────────────────────────────
