@@ -303,49 +303,6 @@ app.post('/api/ai/analyze-file', upload.single('file'), async (req, res) => {
 
     // If text content, extract it for logging and direct AI use
     const textContent = !isRealPdf ? fileBuffer.toString('utf-8') : null;
-    if (textContent) {
-      console.log('[analyze-file] TEXT CONTENT LENGTH:', textContent.length);
-      console.log('[analyze-file] TEXT PREVIEW:', textContent.slice(0, 500));
-    }
-    const prompt = `You are a maternal health doctor. Carefully read this ${reportType || 'lab'} report for a patient at ${gestationalWeek || 'unknown'} weeks of pregnancy.
-Extract ALL visible lab values, medicines, and follow-up appointments from the document.
-
-Return ONLY this JSON (no markdown, no extra text):
-{
-  "findings": ["specific finding from the report"],
-  "abnormalValues": ["value name: X (normal range: Y — concern: Z)"],
-  "riskIndicators": ["specific risk relevant to pregnancy"],
-  "followUp": "specific actionable recommendation for the pregnant patient",
-  "aiSummary": "2-3 sentence plain language summary for the patient",
-  "medicines": [
-    {
-      "name": "medicine name",
-      "dosage": "dose amount e.g. 200mg",
-      "frequency": "e.g. Twice daily / 1-0-1",
-      "duration": "e.g. 3 months",
-      "purpose": "reason prescribed e.g. Iron deficiency anaemia",
-      "time": "08:00"
-    }
-  ],
-  "appointments": [
-    {
-      "title": "appointment title e.g. Prenatal Follow-up",
-      "date": "YYYY-MM-DD format if mentioned, else empty string",
-      "type": "ANC or follow_up or lab or ultrasound",
-      "location": "location if mentioned, else Nearest PHC"
-    }
-  ]
-}
-
-Rules:
-- If no medicines mentioned, return empty array []
-- If no appointments mentioned, return empty array []
-- Extract ALL prescribed medications including supplements
-- If a follow-up date is mentioned, add it to appointments
-- Common medicines to look for: Iron, Folic Acid, Calcium, Vitamins, Antibiotics, Antihypertensives`;
-
-    // ── PHASE 3: BUILD PROMPT ─────────────────────────────────────────────────
-
     // ── PHASE 3: BUILD PROMPT ─────────────────────────────────────────────────
     const prompt = `You are a maternal health doctor. Carefully read this ${reportType || 'lab'} report for a patient at ${gestationalWeek || 'unknown'} weeks of pregnancy.
 Extract ALL visible lab values, medicines, and follow-up appointments from the document.
