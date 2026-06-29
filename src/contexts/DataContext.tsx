@@ -9,9 +9,17 @@ import {
 } from '@/lib/demo-data';
 
 const STORAGE_KEY = 'maaraksha_report_data';
+const STORAGE_VERSION = 'v2'; // bump to clear old demo data cache
 
 function loadReportData(): { medicines: MedicineReminder[]; appointments: Appointment[] } {
   try {
+    // Version check — if old version, clear and start fresh (removes old demo medicine cache)
+    const storedVersion = localStorage.getItem('maaraksha_storage_version');
+    if (storedVersion !== STORAGE_VERSION) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.setItem('maaraksha_storage_version', STORAGE_VERSION);
+      return { medicines: [], appointments: [] };
+    }
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const data = JSON.parse(saved);
