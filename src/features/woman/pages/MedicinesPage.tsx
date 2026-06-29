@@ -282,7 +282,11 @@ export default function MedicinesPage() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-1">MEDICATION HUB</p>
             <h1 className="text-2xl font-bold">{t('medicines.title')}</h1>
-            <p className="text-white/80 text-sm mt-1">{myMeds.length} medicine{myMeds.length > 1 ? 's' : ''} · Week {pregnancy?.gestationalWeek}</p>
+            <p className="text-white/80 text-sm mt-1">
+              {myMeds.length > 0
+                ? `${myMeds.length} medicine${myMeds.length > 1 ? 's' : ''} · Week ${pregnancy?.gestationalWeek}`
+                : `Week ${pregnancy?.gestationalWeek} · Upload a prescription to start`}
+            </p>
           </div>
           <div className="flex gap-2 shrink-0">
             <Button size="sm" variant="outline"
@@ -302,8 +306,7 @@ export default function MedicinesPage() {
                 transition={{ duration: 1 }} className="h-full rounded-full bg-white" />
             </div>
           </div>
-        )}
-      </motion.div>
+        )}      </motion.div>
 
       {/* Upload more */}
       <Card className="border-dashed border-primary-200 bg-primary-50/30">
