@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
   Pill, Check, Clock, Plus, AlertTriangle, Sparkles,
-  Upload, FileText, Image, Video, X, Loader2,
+  Upload, FileText, Image, X, Loader2,
   CheckCircle, Trash2, Activity,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -237,15 +237,11 @@ export default function MedicinesPage() {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
               <UploadSourceBtn icon={FileText} label="PDF Prescription" accept=".pdf"
                 onFile={f => handleUpload(f, 'PDF Prescription')} loading={uploading} />
-              <UploadSourceBtn icon={FileText} label="Medical Report" accept=".pdf"
-                onFile={f => handleUpload(f, 'Medical Report')} loading={uploading} />
               <UploadSourceBtn icon={Image} label="Prescription Image" accept="image/*"
                 onFile={f => handleUpload(f, 'Prescription Image')} loading={uploading} />
-              <UploadSourceBtn icon={Video} label="Consultation Video" accept="video/*,audio/*"
-                onFile={f => handleUpload(f, 'Consultation Recording')} loading={uploading} />
             </div>
 
             <div className="flex items-center gap-3">
@@ -326,8 +322,6 @@ export default function MedicinesPage() {
               onFile={f => handleUpload(f, 'PDF')} loading={uploading} />
             <UploadSourceBtn icon={Image} label="Image" accept="image/*"
               onFile={f => handleUpload(f, 'Image')} loading={uploading} />
-            <UploadSourceBtn icon={Video} label="Video" accept="video/*,audio/*"
-              onFile={f => handleUpload(f, 'Recording')} loading={uploading} />
           </div>
         </CardContent>
       </Card>
