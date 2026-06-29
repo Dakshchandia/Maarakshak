@@ -13,17 +13,28 @@ const STORAGE_KEY = 'maaraksha_report_data';
 function loadReportData(): { medicines: MedicineReminder[]; appointments: Appointment[] } {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const data = JSON.parse(saved);
+      // Only keep user-created items — filter out any old demo data that may have leaked in
+      const medicines = (data.medicines || []).filter((m: MedicineReminder) =>
+        m.id.startsWith('report-') || m.id.startsWith('manual-')
+      );
+      const appointments = (data.appointments || []).filter((a: Appointment) =>
+        a.id.startsWith('report-') || a.id.startsWith('manual-')
+      );
+      return { medicines, appointments };
+    }
   } catch { /* ignore */ }
   return { medicines: [], appointments: [] };
 }
 
 function saveReportData(medicines: MedicineReminder[], appointments: Appointment[]) {
   try {
-    // Only save report-extracted items (not demo items)
-    const reportMeds = medicines.filter(m => m.id.startsWith('report-'));
-    const reportAppts = appointments.filter(a => a.id.startsWith('report-'));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ medicines: reportMeds, appointments: reportAppts }));
+    // Save all user-created medicines (report-extracted and manually added)
+    // Exclude demo medicines (they start with 'm1','m2','m3' from demo-data)
+    const userMeds = medicines.filter(m => m.id.startsWith('report-') || m.id.startsWith('manual-'));
+    const userAppts = appointments.filter(a => a.id.startsWith('report-') || a.id.startsWith('manual-'));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ medicines: userMeds, appointments: userAppts }));
   } catch { /* ignore */ }
 }
 
@@ -48,6 +59,8 @@ interface DataContextType {
   addDailyEntry: (entry: DailyEntry) => void;
   getDailyEntry: (pregnancyId: string, date: string) => DailyEntry | undefined;
   addMedicineFromReport: (med: Omit<MedicineReminder, 'id'>) => void;
+  addManualMedicine: (med: Omit<MedicineReminder, 'id'>) => void;
+  deleteMedicine: (id: string) => void;
   addAppointmentFromReport: (appt: Omit<Appointment, 'id'>) => void;
 }
 
@@ -62,12 +75,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [riskReports, setRiskReports] = useState(DEMO_RISK_REPORTS);
   const [alerts, setAlerts] = useState(DEMO_ALERTS);
   const [notifications, setNotifications] = useState(DEMO_NOTIFICATIONS);
+  // Appointments: demo appointments kept for ASHA/family dashboards, but women only see report-extracted
   const [appointments, setAppointments] = useState<Appointment[]>([
     ...DEMO_APPOINTMENTS,
     ...savedData.appointments,
   ]);
+  // Medicines: NEVER show demo medicines on the woman's Medicines page
+  // Only show report-extracted (id starts with 'report-') or manually added (id starts with 'manual-')
   const [medicines, setMedicines] = useState<MedicineReminder[]>([
-    ...DEMO_MEDICINES,
     ...savedData.medicines,
   ]);
   const [riskHistory, setRiskHistory] = useState(DEMO_RISK_HISTORY);
@@ -170,14 +185,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
       id: `report-med-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     };
     setMedicines(prev => {
-      // Avoid duplicates by name
+      // Avoid duplicates by name + pregnancyId
       if (prev.some(m => m.name.toLowerCase() === newMed.name.toLowerCase() && m.pregnancyId === newMed.pregnancyId)) {
         return prev;
       }
       const updated = [newMed, ...prev];
-      // Persist report-extracted items to localStorage
-      const reportMeds = updated.filter(m => m.id.startsWith('report-'));
-      saveReportData(reportMeds, appointments.filter(a => a.id.startsWith('report-')));
+      saveReportData(updated, appointments);
       return updated;
     });
   }, [appointments]);
@@ -200,6 +213,29 @@ export function DataProvider({ children }: { children: ReactNode }) {
     });
   }, [medicines]);
 
+  const deleteMedicine = useCallback((id: string) => {
+    setMedicines(prev => {
+      const updated = prev.filter(m => m.id !== id);
+      saveReportData(updated, appointments);
+      return updated;
+    });
+  }, [appointments]);
+
+  const addManualMedicine = useCallback((med: Omit<MedicineReminder, 'id'>) => {
+    const newMed: MedicineReminder = {
+      ...med,
+      id: `manual-med-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    };
+    setMedicines(prev => {
+      if (prev.some(m => m.name.toLowerCase() === newMed.name.toLowerCase() && m.pregnancyId === newMed.pregnancyId)) {
+        return prev;
+      }
+      const updated = [newMed, ...prev];
+      saveReportData(updated, appointments);
+      return updated;
+    });
+  }, [appointments]);
+
   return (
     <DataContext.Provider value={{
       pregnancies, symptoms, riskReports, alerts, notifications,
@@ -207,7 +243,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       addSymptom, addRiskReport, addAlert, addNotification,
       updatePregnancyRisk, markNotificationRead, toggleMedicineTaken, triggerSOS,
       addDailyEntry, getDailyEntry,
-      addMedicineFromReport, addAppointmentFromReport,
+      addMedicineFromReport, addManualMedicine, deleteMedicine, addAppointmentFromReport,
     }}>
       {children}
     </DataContext.Provider>
