@@ -23,6 +23,7 @@ export interface OnboardingData {
   symptoms: string[];
   additionalInfo: string;
   previousReports: string;
+  role?: UserRole; // allows role selection during onboarding
 }
 
 // ─── Context shape ────────────────────────────────────────────────────────────
@@ -166,6 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const updated: User = {
       ...user,
       name: profile.name,
+      role: profile.role || user.role || 'woman', // use selected role
       age: profile.age,
       weight: profile.weight,
       gestationalMonth: profile.gestationalMonth,
@@ -207,9 +209,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     i18n.changeLanguage(lang);
   }, [user, isDemo]);
 
-  // needsOnboarding: only for real (non-demo) women who haven't completed onboarding
+  // needsOnboarding: true for any new Clerk user who hasn't completed onboarding
+  // Demo users are treated as fully onboarded
   const needsOnboarding = Boolean(
-    user && user.role === 'woman' && !user.onboardingComplete && !isDemo,
+    user && !user.onboardingComplete && !isDemo,
   );
 
   return (
