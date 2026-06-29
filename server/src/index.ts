@@ -4,12 +4,9 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
-import * as pdfImport from 'pdf-parse';
-const pdf = ((pdfImport as any).default || pdfImport) as any;
 import { isGeminiConfigured, generateJSON, generateJSONWithImage, chatWithHistory } from './services/gemini.js';
 import { assessRiskLocal, assessRiskWithAI, extractSymptomsLocal } from './services/riskEngine.js';
 import { sendEmailAlert } from './services/alerts.js';
-import { Medicine, Appointment } from './services/db.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -372,25 +369,12 @@ app.post('/api/ai/analyze-file', upload.single('file'), async (req, res) => {
     const effectiveMimeType = isRealPdf ? mimeType : 'text/plain';
     console.log('[analyze-file] FILE START:', JSON.stringify(fileStart), '| IS REAL PDF:', isRealPdf, '| EFFECTIVE MIME:', effectiveMimeType);
 
-    let textContent = !isRealPdf ? fileBuffer.toString('utf-8') : null;
-    if (isRealPdf) {
-      try {
-        console.log('[analyze-file] Parsing PDF buffer via pdf-parse...');
-        const pdfData = await pdf(fileBuffer);
-        textContent = pdfData.text;
-        console.log('[analyze-file] PDF text extracted successfully via pdf-parse. Length:', pdfData.text.length);
-      } catch (pdfErr) {
-        console.error('[analyze-file] Failed to extract text from PDF via pdf-parse:', pdfErr);
-      }
+    // Text files → decode as UTF-8; real PDFs → null (Gemini Files API reads them directly)
+    const textContent = !isRealPdf ? fileBuffer.toString('utf-8') : null;
+    if (textContent) {
+      console.log('[analyze-file] TEXT CONTENT LENGTH:', textContent.length);
+      console.log('[analyze-file] TEXT PREVIEW:', textContent.slice(0, 500));
     }
-
-    // ── STEP 1: VERIFY PDF TEXT EXTRACTION ───────────────────────────────────
-    const extractedTextForLogging = textContent || fileBuffer.toString('utf-8', 0, Math.min(fileBuffer.length, 5000));
-    console.log("PDF Text Length:", extractedTextForLogging.length);
-    console.log("PDF Text Preview:", extractedTextForLogging.slice(0, 3000));
-    const targetMeds = ["Ferrous Sulphate", "Folic Acid", "Calcium", "Vitamin D3", "Metformin"];
-    const medsInText = targetMeds.filter(med => extractedTextForLogging.toLowerCase().includes(med.toLowerCase()));
-    console.log("Whether medicine names are present in extracted text:", medsInText.length > 0, medsInText);
 
     // ── PHASE 3: BUILD PROMPT ─────────────────────────────────────────────────
     const prompt = `You are a maternal health doctor. Carefully read this ${reportType || 'lab'} report for a patient at ${gestationalWeek || 'unknown'} weeks of pregnancy.
@@ -534,107 +518,6 @@ Rules:
     res.status(500).json({ error: err instanceof Error ? err.message : 'File analysis failed' });
   }
 });
-
-// ── Medicines DB (Step 5, 6 & 7) ─────────────────────────────────────────────
-app.post('/api/medicines', async (req, res) => {
-  try {
-    const { userId, medicines } = req.body;
-    console.log("Saving Medicines...");
-    console.log(medicines);
-
-    const medicinesToSave = (medicines || []).map((m: any) => ({
-      ...m,
-      userId,
-      taken: m.taken || false,
-    }));
-
-    const savedMedicines = await Medicine.insertMany(medicinesToSave);
-    console.log("Saved Medicines:", savedMedicines);
-
-    // Verify database records actually exist (Step 6)
-    const records = await Medicine.find({ userId });
-    console.log("Database Medicines:", records);
-
-    res.json({ medicines: savedMedicines });
-  } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Save medicines failed' });
-  }
-});
-
-app.get('/api/medicines', async (req, res) => {
-  try {
-    const userId = req.query.userId as string;
-    const records = await Medicine.find({ userId });
-    console.log("Database Medicines:", records);
-    res.json({ medicines: records });
-  } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Get medicines failed' });
-  }
-});
-
-app.put('/api/medicines/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(`[PUT /api/medicines/${id}] Updating medicine...`);
-    const updated = await Medicine.update(id, req.body);
-    if (!updated) return res.status(404).json({ error: 'Medicine not found' });
-    console.log("Updated Medicine:", updated);
-    res.json({ medicine: updated });
-  } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Update medicine failed' });
-  }
-});
-
-app.delete('/api/medicines/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(`[DELETE /api/medicines/${id}] Deleting medicine...`);
-    const success = await Medicine.delete(id);
-    if (!success) return res.status(404).json({ error: 'Medicine not found' });
-    console.log("Deleted Medicine ID:", id);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Delete medicine failed' });
-  }
-});
-
-// ── Appointments DB (Step 5, 6 & 7) ──────────────────────────────────────────
-app.post('/api/appointments', async (req, res) => {
-  try {
-    const { userId, appointments } = req.body;
-    console.log("Saving Appointments...");
-    console.log(appointments);
-
-    const apptsToSave = (appointments || []).map((a: any) => ({
-      ...a,
-      userId,
-      status: a.status || 'upcoming',
-    }));
-
-    const savedAppointments = await Appointment.insertMany(apptsToSave);
-    console.log("Saved Appointments:", savedAppointments);
-
-    // Verify database records actually exist (Step 6)
-    const records = await Appointment.find({ userId });
-    console.log("Database Appointments:", records);
-
-    res.json({ appointments: savedAppointments });
-  } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Save appointments failed' });
-  }
-});
-
-app.get('/api/appointments', async (req, res) => {
-  try {
-    const userId = req.query.userId as string;
-    const records = await Appointment.find({ userId });
-    console.log("Database Appointments:", records);
-    res.json({ appointments: records });
-  } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Get appointments failed' });
-  }
-});
-
 
 app.post('/api/ai/digital-twin', async (req, res) => {
   try {
