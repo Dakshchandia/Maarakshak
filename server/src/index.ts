@@ -477,41 +477,28 @@ Rules:
         });
 
       } catch (geminiErr) {
-        console.error('[analyze-file] GEMINI ERROR — Falling back to regex extraction:', geminiErr);
+        const msg = (geminiErr as Error).message || '';
+        console.error('[analyze-file] GEMINI ERROR:', msg.slice(0, 200));
+        if (msg.includes('429') || msg.includes('quota')) {
+          return res.status(429).json({
+            error: 'AI quota exceeded',
+            analysis: { findings: ['AI quota exceeded'], abnormalValues: [], riskIndicators: [],
+              followUp: 'Please try again in a few hours or type lab values manually.',
+              aiSummary: '⏳ AI quota reached. Type your key lab values in the text area below.' },
+            medicines: [], appointments: [],
+          });
+        }
+        throw geminiErr;
       }
     }
 
-    // ── STEP 10: CREATE FALLBACK EXTRACTION ──────────────────────────────────
-    console.log('[analyze-file] Running regex fallback extraction');
-    const medicinesFallback = extractMedicinesRegex(extractedTextForLogging);
-    const appointmentsFallback = extractAppointmentsRegex(extractedTextForLogging);
-
-    // ── STEP 3 & 4 (FALLBACK) logs ──────────────────────────────────────────
-    const parsedMedicines = medicinesFallback.map((m: any) => ({
-      name: m.name,
-      dose: m.dose || m.dosage || 'As prescribed',
-      dosage: m.dosage || m.dose || 'As prescribed',
-      frequency: m.frequency || 'As directed',
-      duration: m.duration || '3 Months'
-    }));
-    console.log("Parsed Medicines:", parsedMedicines);
-
-    const parsedAppointments = appointmentsFallback.map((a: any) => ({
-      title: a.title,
-      date: a.date || ''
-    }));
-    console.log("Parsed Appointments:", parsedAppointments);
-
+    // No Gemini — return stub
+    console.log('[analyze-file] Gemini not configured');
     return res.json({
-      analysis: {
-        findings: ['Report received', 'Extracted via fallback pattern match'],
-        abnormalValues: [],
-        riskIndicators: [],
-        followUp: 'Medicines and appointments extracted using regex fallback.',
-        aiSummary: 'File processed successfully using rule-based fallback.',
-      },
-      medicines: parsedMedicines,
-      appointments: parsedAppointments,
+      analysis: { findings: ['Report received'], abnormalValues: [], riskIndicators: [],
+        followUp: 'Please consult your doctor for interpretation.',
+        aiSummary: 'Configure Gemini API for AI analysis.' },
+      medicines: [], appointments: [],
     });
   } catch (err) {
     console.error('[analyze-file] UNHANDLED ERROR:', err instanceof Error ? err.message : String(err));
