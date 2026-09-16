@@ -7,7 +7,8 @@ import { PregnancyCard } from '@/components/common/PregnancyCard';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { sortByRisk } from '@/lib/utils';
-import type { RiskLevel } from '@/types';
+import type { RiskLevel, Pregnancy } from '@/types';
+import { PatientDetailsModal } from '@/components/common/PatientDetailsModal';
 
 export default function PriorityListPage() {
   const { t } = useTranslation();
@@ -16,6 +17,7 @@ export default function PriorityListPage() {
   const [villageFilter, setVillageFilter] = useState('');
   const [riskFilter, setRiskFilter] = useState<RiskLevel | ''>('');
   const [trimesterFilter, setTrimesterFilter] = useState('');
+  const [selectedPregnancy, setSelectedPregnancy] = useState<Pregnancy | null>(null);
 
   const filtered = useMemo(() => {
     let list = sortByRisk(pregnancies);
@@ -76,7 +78,7 @@ export default function PriorityListPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filtered.map(p => <PregnancyCard key={p.id} pregnancy={p} />)}
+        {filtered.map(p => <PregnancyCard key={p.id} pregnancy={p} onClick={() => setSelectedPregnancy(p)} />)}
       </div>
 
       {filtered.length === 0 && (
@@ -85,6 +87,12 @@ export default function PriorityListPage() {
           {t('asha.noMatches')}
         </div>
       )}
+
+      <PatientDetailsModal
+        pregnancy={selectedPregnancy}
+        isOpen={!!selectedPregnancy}
+        onClose={() => setSelectedPregnancy(null)}
+      />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, AlertTriangle, Clock, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -5,15 +6,17 @@ import { useData } from '@/contexts/DataContext';
 import { getDemoStats } from '@/lib/demo-data';
 import { StatCard } from '@/components/common/StatCard';
 import { PregnancyCard } from '@/components/common/PregnancyCard';
+import { PatientDetailsModal } from '@/components/common/PatientDetailsModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { sortByRisk } from '@/lib/utils';
-
+import type { Pregnancy } from '@/types';
 export default function AshaHome() {
   const { t } = useTranslation();
   const { pregnancies, notifications } = useData();
   const stats = getDemoStats('asha');
   const priority = sortByRisk(pregnancies).slice(0, 3);
+  const [selectedPregnancy, setSelectedPregnancy] = useState<Pregnancy | null>(null);
 
   return (
     <div className="space-y-6">
@@ -32,7 +35,7 @@ export default function AshaHome() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {priority.map(p => <PregnancyCard key={p.id} pregnancy={p} />)}
+        {priority.map(p => <PregnancyCard key={p.id} pregnancy={p} onClick={() => setSelectedPregnancy(p)} />)}
       </div>
 
       <Card>
@@ -49,6 +52,12 @@ export default function AshaHome() {
           ))}
         </CardContent>
       </Card>
+
+      <PatientDetailsModal
+        pregnancy={selectedPregnancy}
+        isOpen={!!selectedPregnancy}
+        onClose={() => setSelectedPregnancy(null)}
+      />
     </div>
   );
 }

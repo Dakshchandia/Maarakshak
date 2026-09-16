@@ -1,18 +1,22 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useData } from '@/contexts/DataContext';
 import { getDemoStats } from '@/lib/demo-data';
 import { StatCard } from '@/components/common/StatCard';
 import { PregnancyCard } from '@/components/common/PregnancyCard';
+import { PatientDetailsModal } from '@/components/common/PatientDetailsModal';
 import { RiskDistributionChart } from '@/components/charts/RiskCharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, AlertTriangle, FileText, Activity } from 'lucide-react';
 import { sortByRisk } from '@/lib/utils';
+import type { Pregnancy } from '@/types';
 
 export default function PhcHome() {
   const { t } = useTranslation();
   const { pregnancies, alerts, riskReports } = useData();
   const stats = getDemoStats('phc');
   const highRisk = sortByRisk(pregnancies.filter(p => p.riskLevel !== 'GREEN')).slice(0, 4);
+  const [selectedPregnancy, setSelectedPregnancy] = useState<Pregnancy | null>(null);
 
   return (
     <div className="space-y-6">
@@ -45,8 +49,14 @@ export default function PhcHome() {
 
       <h2 className="text-xl font-bold">{t('phc.casesAttention')}</h2>
       <div className="grid gap-4 md:grid-cols-2">
-        {highRisk.map(p => <PregnancyCard key={p.id} pregnancy={p} />)}
+        {highRisk.map(p => <PregnancyCard key={p.id} pregnancy={p} onClick={() => setSelectedPregnancy(p)} />)}
       </div>
+
+      <PatientDetailsModal
+        pregnancy={selectedPregnancy}
+        isOpen={!!selectedPregnancy}
+        onClose={() => setSelectedPregnancy(null)}
+      />
     </div>
   );
 }

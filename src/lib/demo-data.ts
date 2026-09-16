@@ -75,11 +75,50 @@ export const DEMO_MEDICINES: MedicineReminder[] = [
 ];
 
 export const DEMO_RISK_HISTORY: RiskHistoryEntry[] = [
+  // p1: Priya Sharma (28 weeks, YELLOW, 62)
   { id: 'rh1', pregnancyId: 'p1', week: 12, riskLevel: 'GREEN', riskScore: 10, date: '2026-03-01' },
   { id: 'rh2', pregnancyId: 'p1', week: 16, riskLevel: 'GREEN', riskScore: 15, date: '2026-03-29' },
   { id: 'rh3', pregnancyId: 'p1', week: 20, riskLevel: 'GREEN', riskScore: 22, date: '2026-04-26' },
   { id: 'rh4', pregnancyId: 'p1', week: 24, riskLevel: 'YELLOW', riskScore: 45, date: '2026-05-24' },
   { id: 'rh5', pregnancyId: 'p1', week: 28, riskLevel: 'YELLOW', riskScore: 62, date: '2026-06-22' },
+  
+  // p2: Sunita Meena (34 weeks, RED, 89)
+  { id: 'rh6', pregnancyId: 'p2', week: 14, riskLevel: 'GREEN', riskScore: 25, date: '2026-02-15' },
+  { id: 'rh7', pregnancyId: 'p2', week: 20, riskLevel: 'YELLOW', riskScore: 45, date: '2026-03-25' },
+  { id: 'rh8', pregnancyId: 'p2', week: 28, riskLevel: 'YELLOW', riskScore: 58, date: '2026-05-15' },
+  { id: 'rh9', pregnancyId: 'p2', week: 32, riskLevel: 'RED', riskScore: 78, date: '2026-06-05' },
+  { id: 'rh10', pregnancyId: 'p2', week: 34, riskLevel: 'RED', riskScore: 89, date: '2026-06-23' },
+
+  // p3: Kavita Joshi (22 weeks, GREEN, 18)
+  { id: 'rh11', pregnancyId: 'p3', week: 12, riskLevel: 'GREEN', riskScore: 12, date: '2026-04-10' },
+  { id: 'rh12', pregnancyId: 'p3', week: 16, riskLevel: 'GREEN', riskScore: 15, date: '2026-05-08' },
+  { id: 'rh13', pregnancyId: 'p3', week: 22, riskLevel: 'GREEN', riskScore: 18, date: '2026-06-20' },
+
+  // p4: Rekha Devi (36 weeks, RED, 92)
+  { id: 'rh14', pregnancyId: 'p4', week: 20, riskLevel: 'GREEN', riskScore: 30, date: '2026-03-01' },
+  { id: 'rh15', pregnancyId: 'p4', week: 28, riskLevel: 'YELLOW', riskScore: 60, date: '2026-04-25' },
+  { id: 'rh16', pregnancyId: 'p4', week: 34, riskLevel: 'RED', riskScore: 85, date: '2026-06-05' },
+  { id: 'rh17', pregnancyId: 'p4', week: 36, riskLevel: 'RED', riskScore: 92, date: '2026-06-23' },
+
+  // p5: Anita Kumari (16 weeks, GREEN, 12)
+  { id: 'rh18', pregnancyId: 'p5', week: 8, riskLevel: 'GREEN', riskScore: 8, date: '2026-04-20' },
+  { id: 'rh19', pregnancyId: 'p5', week: 12, riskLevel: 'GREEN', riskScore: 10, date: '2026-05-18' },
+  { id: 'rh20', pregnancyId: 'p5', week: 16, riskLevel: 'GREEN', riskScore: 12, date: '2026-06-18' },
+
+  // p6: Meena Bai (30 weeks, YELLOW, 55)
+  { id: 'rh21', pregnancyId: 'p6', week: 18, riskLevel: 'GREEN', riskScore: 20, date: '2026-03-30' },
+  { id: 'rh22', pregnancyId: 'p6', week: 24, riskLevel: 'GREEN', riskScore: 35, date: '2026-05-10' },
+  { id: 'rh23', pregnancyId: 'p6', week: 30, riskLevel: 'YELLOW', riskScore: 55, date: '2026-06-21' },
+
+  // p7: Pooja Singh (8 weeks, GREEN, 8)
+  { id: 'rh24', pregnancyId: 'p7', week: 4, riskLevel: 'GREEN', riskScore: 5, date: '2026-05-20' },
+  { id: 'rh25', pregnancyId: 'p7', week: 8, riskLevel: 'GREEN', riskScore: 8, date: '2026-06-19' },
+
+  // p8: Geeta Sharma (38 weeks, YELLOW, 68)
+  { id: 'rh26', pregnancyId: 'p8', week: 24, riskLevel: 'GREEN', riskScore: 28, date: '2026-03-15' },
+  { id: 'rh27', pregnancyId: 'p8', week: 32, riskLevel: 'YELLOW', riskScore: 50, date: '2026-05-10' },
+  { id: 'rh28', pregnancyId: 'p8', week: 36, riskLevel: 'YELLOW', riskScore: 62, date: '2026-06-08' },
+  { id: 'rh29', pregnancyId: 'p8', week: 38, riskLevel: 'YELLOW', riskScore: 68, date: '2026-06-22' },
 ];
 
 export const DEMO_ANALYTICS: AnalyticsSnapshot[] = [
