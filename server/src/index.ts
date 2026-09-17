@@ -44,14 +44,183 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', demo: !isGeminiConfigured(), gemini: isGeminiConfigured(), timestamp: new Date().toISOString() });
 });
 
+// ── Nearby Hospitals (OpenStreetMap Overpass API — free, no key required) ─────
+app.get('/api/hospitals/nearby', async (req, res) => {
+  try {
+    const lat = parseFloat(req.query.lat as string);
+    const lng = parseFloat(req.query.lng as string);
+    const radiusKm = Math.min(parseFloat(req.query.radius as string) || 10, 50);
+
+    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      return res.status(400).json({ error: 'Invalid coordinates' });
+    }
+
+    const radiusM = radiusKm * 1000;
+
+    // Overpass QL query — fetches hospitals, PHCs, clinics
+    const query = `[out:json][timeout:25];(node["amenity"~"hospital|clinic|health_post"](around:${radiusM},${lat},${lng});way["amenity"~"hospital|clinic|health_post"](around:${radiusM},${lat},${lng});node["healthcare"~"hospital|clinic|centre"](around:${radiusM},${lat},${lng});way["healthcare"~"hospital|clinic|centre"](around:${radiusM},${lat},${lng}););out center tags;`;
+
+    // Try multiple Overpass endpoints for reliability
+    const OVERPASS_ENDPOINTS = [
+      'https://overpass-api.de/api/interpreter',
+      'https://lz4.overpass-api.de/api/interpreter',
+      'https://z.overpass-api.de/api/interpreter',
+    ];
+
+    let overpassData: { elements: Array<{
+      id: number; type: string; lat?: number; lon?: number;
+      center?: { lat: number; lon: number };
+      tags?: Record<string, string>;
+    }> } | null = null;
+
+    for (const endpoint of OVERPASS_ENDPOINTS) {
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 20000);
+        const r = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'MaaRaksha/1.0' },
+          body: `data=${encodeURIComponent(query)}`,
+          signal: controller.signal,
+        });
+        clearTimeout(timer);
+        if (r.ok) {
+          overpassData = await r.json() as typeof overpassData;
+          break;
+        }
+      } catch (e) {
+        console.warn(`[hospitals] Overpass endpoint ${endpoint} failed:`, (e as Error).message?.slice(0, 60));
+      }
+    }
+
+    if (!overpassData) {
+      return res.status(502).json({ error: 'Location service temporarily unavailable. Try again shortly.' });
+    }
+
+    // Haversine distance in km
+    function haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function getFacilityType(tags: Record<string, string> = {}): string {
+      const name = (tags.name || '').toUpperCase();
+      if (name.includes('PHC') || name.includes('PRIMARY HEALTH')) return 'PHC';
+      if (name.includes('CHC') || name.includes('COMMUNITY HEALTH')) return 'CHC';
+      if (name.includes('DISTRICT HOSPITAL') || name.includes('CIVIL HOSPITAL') || name.includes('GOVT') || name.includes('GOVERNMENT')) return 'Hospital';
+      if (tags.amenity === 'hospital' || tags.healthcare === 'hospital') return 'Hospital';
+      if (tags.amenity === 'health_post') return 'PHC';
+      if (tags.amenity === 'clinic' || tags.healthcare === 'clinic' || tags.healthcare === 'centre') return 'Clinic';
+      return 'Clinic';
+    }
+
+    function getServices(tags: Record<string, string> = {}, type: string): string[] {
+      const services: string[] = [];
+      if (type === 'PHC') services.push('ANC', 'Immunization', 'Family Planning');
+      if (type === 'CHC') services.push('Emergency Delivery', 'Blood Tests', 'ANC');
+      if (type === 'Hospital') services.push('Emergency', 'Lab Tests', 'OPD');
+      if (type === 'Clinic') services.push('OPD', 'Consultation');
+      if (tags.emergency === 'yes') services.push('24h Emergency');
+      const spec = tags['healthcare:speciality'] || '';
+      if (spec) services.push(...spec.split(';').map((s: string) => s.trim()).slice(0, 2));
+      return [...new Set(services)].slice(0, 5);
+    }
+
+    const seen = new Set<string>();
+    const facilities: Array<{
+      id: string; name: string; type: string; address: string;
+      distance: string; distanceKm: number; phone: string;
+      lat: number; lng: number; available24h: boolean; services: string[];
+    }> = [];
+
+    for (const el of overpassData.elements) {
+      const tags = el.tags || {};
+      const name = (tags.name || tags['name:en'] || '').trim();
+      if (!name) continue;
+
+      const elLat = el.lat ?? el.center?.lat;
+      const elLng = el.lon ?? el.center?.lon;
+      if (!elLat || !elLng) continue;
+
+      const key = `${name.toLowerCase().slice(0, 25)}-${Math.round(elLat * 100)}-${Math.round(elLng * 100)}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      const distKm = haversine(lat, lng, elLat, elLng);
+      const type = getFacilityType(tags);
+
+      const addrParts = [
+        tags['addr:housename'], tags['addr:street'],
+        tags['addr:village'] || tags['addr:city'],
+        tags['addr:district'], tags['addr:state'],
+      ].filter(Boolean);
+      const address = addrParts.length > 0
+        ? addrParts.join(', ')
+        : (tags['addr:full'] || tags.description || 'Address not available');
+
+      const phone = (tags.phone || tags['contact:phone'] || tags['contact:mobile'] || '').trim();
+      const available24h = tags.opening_hours === '24/7' || tags.emergency === 'yes' || type === 'Hospital';
+
+      facilities.push({
+        id: `osm-${el.type}-${el.id}`,
+        name,
+        type,
+        address,
+        distanceKm: Math.round(distKm * 10) / 10,
+        distance: distKm < 1 ? `${Math.round(distKm * 1000)} m` : `${(Math.round(distKm * 10) / 10)} km`,
+        phone,
+        lat: elLat,
+        lng: elLng,
+        available24h,
+        services: getServices(tags, type),
+      });
+    }
+
+    facilities.sort((a, b) => a.distanceKm - b.distanceKm);
+    console.log(`[hospitals/nearby] lat=${lat} lng=${lng} → ${facilities.length} results`);
+    res.json({ facilities: facilities.slice(0, 20), userLat: lat, userLng: lng });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[hospitals/nearby] error:', msg);
+    res.status(500).json({ error: 'Could not fetch nearby facilities. Please try again.' });
+  }
+});
+
 // ── Risk Assessment ───────────────────────────────────────────────────────────
 app.post('/api/risk/assess', async (req, res) => {
   try {
     const { symptoms, gestationalWeek, bloodPressure, previousComplications, transcription, pregnancyId, womanId } = req.body;
     const input = { symptoms: symptoms || [], gestationalWeek: gestationalWeek || 20, bloodPressure, previousComplications, transcription, pregnancyId };
-    const assessment = isGeminiConfigured() ? await assessRiskWithAI(input, generateJSON) : assessRiskLocal(input);
-    res.json({ report: { id: `r-${Date.now()}`, pregnancyId: pregnancyId || 'unknown', womanId: womanId || 'unknown', ...assessment, symptoms: symptoms || [], gestationalWeek: gestationalWeek || 20, createdAt: new Date().toISOString() } });
-  } catch (err) { res.status(500).json({ error: err instanceof Error ? err.message : 'Risk assessment failed' }); }
+
+    const geminiReady = isGeminiConfigured();
+    console.log(`[risk/assess] Gemini configured: ${geminiReady} | symptoms: ${(symptoms || []).join(', ')} | week: ${gestationalWeek} | bp: ${bloodPressure || 'N/A'}`);
+
+    const assessment = geminiReady
+      ? await assessRiskWithAI(input, generateJSON)
+      : (console.warn('[risk/assess] Gemini not configured — using local fallback'), assessRiskLocal(input));
+
+    console.log(`[risk/assess] Result: score=${assessment.riskScore}, level=${assessment.riskLevel}`);
+
+    res.json({
+      report: {
+        id: `r-${Date.now()}`,
+        pregnancyId: pregnancyId || 'unknown',
+        womanId: womanId || 'unknown',
+        ...assessment,
+        symptoms: symptoms || [],
+        gestationalWeek: gestationalWeek || 20,
+        createdAt: new Date().toISOString(),
+        aiGenerated: geminiReady,
+      }
+    });
+  } catch (err) {
+    console.error('[risk/assess] Error:', err instanceof Error ? err.message : err);
+    res.status(500).json({ error: err instanceof Error ? err.message : 'Risk assessment failed' });
+  }
 });
 
 // ── Symptom Extraction ────────────────────────────────────────────────────────

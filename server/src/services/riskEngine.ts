@@ -65,19 +65,75 @@ export function assessRiskLocal(input: RiskInput): RiskOutput {
 }
 
 export async function assessRiskWithAI(input: RiskInput, generateJSON: <T>(prompt: string) => Promise<T>): Promise<RiskOutput> {
-  try {
-    const result = await generateJSON<RiskOutput>(`
-You are a maternal health clinical risk assessment AI aligned with WHO guidelines.
-Analyze this pregnancy case and return JSON with: riskLevel (GREEN/YELLOW/RED), riskScore (0-100), riskFactors (array), clinicalReasoning, suggestedAction, followUpRecommendation.
+  const symptomsText = input.symptoms.length > 0 ? input.symptoms.join(', ') : 'No symptoms reported';
+  const bpText = input.bloodPressure || 'Not measured';
+  const complicationsText = input.previousComplications?.length ? input.previousComplications.join(', ') : 'None';
+  const transcriptionText = input.transcription?.trim() || 'None';
+  const week = input.gestationalWeek || 20;
 
-Symptoms: ${input.symptoms.join(', ')}
-Gestational Week: ${input.gestationalWeek}
-Blood Pressure: ${input.bloodPressure || 'Not provided'}
-Previous Complications: ${input.previousComplications?.join(', ') || 'None'}
-Patient Report: ${input.transcription || 'N/A'}
-    `);
-    return result;
-  } catch {
+  // Derive trimester for context
+  const trimester = week <= 13 ? 1 : week <= 27 ? 2 : 3;
+
+  const prompt = `You are a senior maternal health physician specializing in high-risk obstetrics in rural India. Perform a clinical risk assessment for this pregnant patient.
+
+PATIENT DATA:
+- Gestational Week: ${week} (Trimester ${trimester})
+- Reported Symptoms: ${symptomsText}
+- Blood Pressure: ${bpText}
+- Previous Complications: ${complicationsText}
+- Patient's Own Description: ${transcriptionText}
+
+CLINICAL ASSESSMENT RULES:
+1. Score 0-100 where: 0-39 = GREEN (low risk), 40-69 = YELLOW (moderate risk), 70-100 = RED (high risk)
+2. HIGH RISK symptoms (each adds 20-30 points): vaginal bleeding, reduced/absent fetal movement, blurred vision, severe headache with BP issues, severe abdominal pain, signs of preeclampsia
+3. MODERATE RISK symptoms (each adds 10-15 points): persistent headache, swelling of face/hands, dizziness, fever >38°C, vomiting affecting nutrition
+4. LOW RISK symptoms (each adds 3-8 points): mild nausea, fatigue, mild back pain, no symptoms
+5. BP ≥160/110: add 35 points. BP ≥140/90: add 20 points. BP ≥130/85: add 10 points
+6. Gestational week ≥36: add 5 points. Week 28-35: add 3 points
+7. Previous complications: add 10 points each
+8. Base score is 5 (not 0) — every pregnancy carries some inherent risk
+9. "No symptoms" alone = score around 5-15 depending on week
+
+IMPORTANT: Analyze the actual symptoms provided. Do NOT return a generic score. Each patient's score MUST reflect their specific symptom combination and clinical profile.
+
+Return ONLY this exact JSON structure (no markdown, no explanation):
+{
+  "riskLevel": "GREEN" or "YELLOW" or "RED",
+  "riskScore": <integer 0-100>,
+  "riskFactors": ["factor1", "factor2"],
+  "clinicalReasoning": "<2-3 sentences explaining why this specific score was assigned based on the symptoms>",
+  "suggestedAction": "<specific action for this patient>",
+  "followUpRecommendation": "<specific follow-up plan>"
+}`;
+
+  try {
+    const result = await generateJSON<RiskOutput>(prompt);
+
+    // Validate the response has required fields and sensible values
+    if (
+      !result ||
+      typeof result.riskScore !== 'number' ||
+      result.riskScore < 0 || result.riskScore > 100 ||
+      !['GREEN', 'YELLOW', 'RED'].includes(result.riskLevel) ||
+      !result.clinicalReasoning
+    ) {
+      console.warn('[riskEngine] Gemini returned invalid structure, using local fallback:', JSON.stringify(result));
+      return assessRiskLocal(input);
+    }
+
+    // Ensure riskLevel matches the score (Gemini sometimes returns inconsistent values)
+    const correctedLevel: 'GREEN' | 'YELLOW' | 'RED' =
+      result.riskScore >= 70 ? 'RED' : result.riskScore >= 40 ? 'YELLOW' : 'GREEN';
+
+    console.log(`[riskEngine] Gemini AI risk: score=${result.riskScore}, level=${correctedLevel} (week=${week}, symptoms=${input.symptoms.length})`);
+
+    return {
+      ...result,
+      riskLevel: correctedLevel,
+      riskFactors: Array.isArray(result.riskFactors) ? result.riskFactors : [],
+    };
+  } catch (err) {
+    console.error('[riskEngine] Gemini AI assessment failed, falling back to local:', (err as Error).message);
     return assessRiskLocal(input);
   }
 }
