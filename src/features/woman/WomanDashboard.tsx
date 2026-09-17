@@ -1,5 +1,5 @@
-// v2 - grouped nav with illustrations
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
   LayoutDashboard, ClipboardCheck, Heart, Stethoscope,
   AlertTriangle, Bell,
@@ -21,7 +21,14 @@ export default function WomanDashboard() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language; // consume language to ensure re-render on change
 
-  // Re-compute nav whenever language changes
+  // Force re-render when language changes so nav labels update
+  const [, forceUpdate] = useState(0);
+  useEffect(() => {
+    const onLangChange = () => forceUpdate(n => n + 1);
+    i18n.on('languageChanged', onLangChange);
+    return () => i18n.off('languageChanged', onLangChange);
+  }, [i18n]);
+
   const nav: NavGroup[] = [
     {
       label: t('nav.home'),

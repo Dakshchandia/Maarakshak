@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import {
   Heart, Bell, LogOut, Menu, X, Globe, Shield, ChevronDown, ChevronRight,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
@@ -55,6 +55,15 @@ function GroupedNav({ groups, location, onNavigate }: {
   location: { pathname: string };
   onNavigate?: () => void;
 }) {
+  // Subscribe to language changes to force re-render when language switches
+  const { i18n } = useTranslation();
+  const [, forceUpdate] = useState(0);
+  useEffect(() => {
+    const onLangChange = () => forceUpdate(n => n + 1);
+    i18n.on('languageChanged', onLangChange);
+    return () => i18n.off('languageChanged', onLangChange);
+  }, [i18n]);
+
   // Auto-expand whichever group contains the active path
   const activeGroup = groups.findIndex(g =>
     (g.path && location.pathname === g.path) ||
