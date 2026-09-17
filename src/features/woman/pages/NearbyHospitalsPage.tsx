@@ -74,7 +74,7 @@ function FacilityCard({ f, isNearest }: { f: Facility; isNearest: boolean }) {
             ) : (
               <div className="flex items-center gap-1.5 text-gray-400">
                 <Phone className="h-3.5 w-3.5 shrink-0" />
-                <span>Phone not available</span>
+              <span>{t('hospitals.phoneNotAvailable')}</span>
               </div>
             )}
             {!f.available24h && (
@@ -91,7 +91,7 @@ function FacilityCard({ f, isNearest }: { f: Facility; isNearest: boolean }) {
               ))}
               {f.services.length > 4 && (
                 <span className="rounded-full bg-gray-100 border border-gray-200 px-2 py-0.5 text-[10px] text-gray-400">
-                  +{f.services.length - 4} more
+                  {t('hospitals.moreServices', { count: f.services.length - 4 })}
                 </span>
               )}
             </div>
@@ -141,7 +141,7 @@ export default function NearbyHospitalsPage() {
     // Step 1: Get browser geolocation
     if (!navigator.geolocation) {
       setStatus('error');
-      setErrorMsg('Geolocation is not supported by your browser. Please use a modern browser.');
+      setErrorMsg(t('hospitals.geoNotSupported'));
       return;
     }
 
@@ -158,13 +158,13 @@ export default function NearbyHospitalsPage() {
       const geoErr = err as GeolocationPositionError;
       setStatus('error');
       if (geoErr.code === geoErr.PERMISSION_DENIED) {
-        setErrorMsg('Location permission denied. Please allow location access in your browser settings and try again.');
+        setErrorMsg(t('hospitals.permissionDenied'));
       } else if (geoErr.code === geoErr.POSITION_UNAVAILABLE) {
-        setErrorMsg('Location unavailable. Please check your device GPS or network connection.');
+        setErrorMsg(t('hospitals.locationUnavailable'));
       } else if (geoErr.code === geoErr.TIMEOUT) {
-        setErrorMsg('Location request timed out. Please try again.');
+        setErrorMsg(t('hospitals.locationTimeout'));
       } else {
-        setErrorMsg('Could not get your location. Please try again.');
+        setErrorMsg(t('hospitals.locationFailed'));
       }
       return;
     }
@@ -194,13 +194,13 @@ export default function NearbyHospitalsPage() {
       setStatus('done');
 
       if (result.facilities.length === 0) {
-        setErrorMsg('No healthcare facilities found within 10 km of your location. Try expanding search area or check your connection.');
+        setErrorMsg(t('hospitals.noResults'));
       }
     } catch (err) {
       setStatus('error');
-      setErrorMsg('Could not fetch nearby hospitals. Please check your internet connection and try again.');
+      setErrorMsg(t('hospitals.fetchFailed'));
     }
-  }, []);
+  }, [t]);
 
   const filtered = filter === 'All'
     ? facilities
@@ -209,9 +209,9 @@ export default function NearbyHospitalsPage() {
   const nearest = filtered[0];
 
   const statusLabel = () => {
-    if (status === 'locating') return 'Getting your location…';
-    if (status === 'fetching') return 'Finding nearby hospitals…';
-    if (status === 'done') return locationLabel ? `Location: ${locationLabel}` : t('hospitals.locationUpdated');
+    if (status === 'locating') return t('hospitals.locating');
+    if (status === 'fetching') return t('hospitals.fetching');
+    if (status === 'done') return locationLabel ? t('hospitals.showingNear', { location: locationLabel }) : t('hospitals.locationUpdated');
     return t('hospitals.useLocation');
   };
 
@@ -228,7 +228,7 @@ export default function NearbyHospitalsPage() {
           <h1 className="text-2xl font-bold">{t('hospitals.title')}</h1>
           <p className="text-white/80 text-sm mt-1">
             {status === 'done' && locationLabel
-              ? `Showing facilities near ${locationLabel}`
+              ? t('hospitals.showingNear', { location: locationLabel })
               : t('hospitals.subtitle', { village: pregnancy?.villageName || 'your location' })}
           </p>
           <Button
@@ -272,12 +272,12 @@ export default function NearbyHospitalsPage() {
                 className="absolute inset-0 rounded-full border-4 border-transparent border-t-rose-500" />
             </div>
             <p className="text-gray-600 font-medium">
-              {status === 'locating' ? 'Getting your location…' : 'Finding nearby hospitals…'}
+              {status === 'locating' ? t('hospitals.locating') : t('hospitals.fetching')}
             </p>
             <p className="text-sm text-gray-400 text-center max-w-xs">
               {status === 'locating'
-                ? 'Please allow location access when prompted'
-                : 'Searching healthcare facilities within 10 km of your location'}
+                ? t('hospitals.allowLocation')
+                : t('hospitals.searchingWithin')}
             </p>
           </CardContent>
         </Card>
@@ -289,10 +289,10 @@ export default function NearbyHospitalsPage() {
           <CardContent className="p-4 flex items-start gap-3">
             <WifiOff className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="font-semibold text-amber-700 text-sm">Location Error</p>
+              <p className="font-semibold text-amber-700 text-sm">{t('hospitals.locationError')}</p>
               <p className="text-xs text-amber-600 mt-1">{errorMsg}</p>
               <Button size="sm" variant="outline" className="mt-2 border-amber-300 text-amber-700" onClick={handleLocate}>
-                <RefreshCw className="h-3.5 w-3.5 mr-1" /> Try Again
+                <RefreshCw className="h-3.5 w-3.5 mr-1" /> {t('hospitals.tryAgain')}
               </Button>
             </div>
           </CardContent>
@@ -304,10 +304,10 @@ export default function NearbyHospitalsPage() {
         <Card className="border-gray-200">
           <CardContent className="py-10 text-center space-y-3">
             <MapPin className="h-10 w-10 mx-auto text-gray-300" />
-            <p className="text-gray-500 font-medium">No facilities found nearby</p>
-            <p className="text-sm text-gray-400">No healthcare facilities were found within 10 km. Try moving to an area with better coverage.</p>
+            <p className="text-gray-500 font-medium">{t('hospitals.noFacilitiesTitle')}</p>
+            <p className="text-sm text-gray-400">{t('hospitals.noFacilitiesDesc')}</p>
             <Button size="sm" variant="outline" onClick={handleLocate}>
-              <RefreshCw className="h-3.5 w-3.5 mr-1" /> Retry
+              <RefreshCw className="h-3.5 w-3.5 mr-1" /> {t('hospitals.retry')}
             </Button>
           </CardContent>
         </Card>
@@ -321,11 +321,11 @@ export default function NearbyHospitalsPage() {
               <MapPin className="h-8 w-8 text-primary-400" />
             </div>
             <div>
-              <p className="font-semibold text-gray-700">Find Nearby Healthcare Facilities</p>
-              <p className="text-sm text-gray-400 mt-1">Tap the button above to find hospitals, PHCs, and clinics near your current location</p>
+              <p className="font-semibold text-gray-700">{t('hospitals.findNearbyTitle')}</p>
+              <p className="text-sm text-gray-400 mt-1">{t('hospitals.findNearbyDesc')}</p>
             </div>
             <Button onClick={handleLocate} className="bg-gradient-to-r from-rose-500 to-pink-500">
-              <MapPin className="h-4 w-4 mr-2" /> Use My Location
+              <MapPin className="h-4 w-4 mr-2" /> {t('hospitals.useMyLocation')}
             </Button>
           </CardContent>
         </Card>
@@ -338,7 +338,7 @@ export default function NearbyHospitalsPage() {
             <button key={f} onClick={() => setFilter(f)}
               className={cn('shrink-0 rounded-2xl border px-4 py-1.5 text-xs font-semibold transition-all',
                 filter === f ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-gray-600 border-gray-200 hover:border-primary-300')}>
-              {f}
+              {f === 'All' ? t('hospitals.allFilter') : f}
               {f !== 'All' && (
                 <span className="ml-1 text-[10px] opacity-70">
                   ({facilities.filter(x => x.type === f).length})
@@ -366,8 +366,8 @@ export default function NearbyHospitalsPage() {
       {status === 'done' && facilities.length > 0 && filtered.length === 0 && (
         <Card>
           <CardContent className="py-8 text-center">
-            <p className="text-gray-500">No {filter} facilities found nearby.</p>
-            <button onClick={() => setFilter('All')} className="mt-2 text-sm text-primary-600 underline">Show all facilities</button>
+            <p className="text-gray-500">{t('hospitals.noFilterResults', { type: filter })}</p>
+            <button onClick={() => setFilter('All')} className="mt-2 text-sm text-primary-600 underline">{t('hospitals.showAll')}</button>
           </CardContent>
         </Card>
       )}
@@ -377,7 +377,12 @@ export default function NearbyHospitalsPage() {
         <CardContent className="p-4">
           <p className="text-xs font-bold text-blue-700 mb-2">{t('hospitals.emergencyNumbers')}</p>
           <div className="grid grid-cols-2 gap-2">
-            {[['108', 'Ambulance'], ['1800-180-1104', 'NHM Helpline'], ['104', 'Health Helpline'], ['112', 'Police/Emergency']].map(([num, label]) => (
+            {[
+              ['108', t('hospitals.ambulance')],
+              ['1800-180-1104', t('hospitals.nhmHelpline')],
+              ['104', t('hospitals.healthHelpline')],
+              ['112', t('hospitals.emergencyServices')],
+            ].map(([num, label]) => (
               <a key={num} href={`tel:${num}`}
                 className="flex items-center gap-2 rounded-xl bg-white border border-blue-100 p-2 hover:bg-blue-50 transition-colors">
                 <Phone className="h-3.5 w-3.5 text-blue-500" />

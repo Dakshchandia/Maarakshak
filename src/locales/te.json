@@ -99,12 +99,30 @@
     "nutritionReviewSublabel": "వారపు ఆహారం & సప్లిమెంట్ తనిఖీ",
     "tetanusLabel": "టెటనస్ టాక్సాయిడ్ (TT) డోస్",
     "tetanusSublabel": "ASHA వర్కర్‌తో తనిఖీ చేయండి",
+    "weekPrefix": "వా",
+    "riskBadgeSuffix": "ప్రమాదం",
+    "trimesterPrefix": "త్రై",
     "actionTypes": {
       "appointment": "అపాయింట్‌మెంట్",
       "medicine": "మందు",
       "task": "పని",
       "vaccine": "టీకా"
     }
+  },
+  "roles": { "woman": "మహిళ", "asha": "ASHA వర్కర్", "family": "కుటుంబం", "phc": "PHC అడ్మిన్", "district": "జిల్లా అధికారి" },
+  "aiInsights": {
+    "factorGoodHydration": "మంచి నీటి సేవనం",
+    "factorRegularMeds": "క్రమం తప్పని మందులు",
+    "factorNormalBP": "సాధారణ BP",
+    "factorHeadache": "తేలికైన తలనొప్పి",
+    "factorLowWater": "తక్కువ నీరు తాగడం",
+    "factorBorderlineBP": "సరిహద్దు BP",
+    "factorElevatedBP": "అధిక రక్తపోటు",
+    "factorReducedFM": "తగ్గిన శిశు కదలిక",
+    "factorSevereHeadache": "తీవ్రమైన తలనొప్పి",
+    "recGreen": "సాధారణ సంరక్షణ కొనసాగించండి. మీరు బాగా చేస్తున్నారు!",
+    "recYellow": "రోజుకు 8+ గ్లాసుల నీరు తాగండి. BP పర్యవేక్షించండి.",
+    "recRed": "వెంటనే PHCకి వెళ్ళండి. ASHA వర్కర్‌ని సంప్రదించండి."
   },
   "journey": {
     "title": "గర్భకాల ప్రయాణం",
@@ -197,7 +215,10 @@
       "medicines": "మందులు",
       "hydration": "నీరు",
       "asha": "ASHA"
-    }
+    },
+    "weekBadge": "వారం {{week}}",
+    "riskBadge": "{{level}} ప్రమాదం",
+    "trimesterBadge": "త్రై{{n}}"
   },
   "notifications": {
     "title": "నోటిఫికేషన్ కేంద్రం",
@@ -303,7 +324,25 @@
     "callBtn": "కాల్",
     "directionsBtn": "దిశలు",
     "emergencyNumbers": "📞 అత్యవసర నంబర్లు",
-    "ambulance": "అంబులెన్స్"
+    "ambulance": "అంబులెన్స్",
+    "locating": "మీ స్థానం గుర్తిస్తోంది…",
+    "fetching": "సమీప ఆసుపత్రులు వెతుకుతోంది…",
+    "locationError": "స్థాన లోపం",
+    "tryAgain": "మళ్ళీ ప్రయత్నించండి",
+    "retry": "మళ్ళీ",
+    "noFacilitiesTitle": "సమీపంలో సౌకర్యాలు లేవు",
+    "noFacilitiesDesc": "10 కి.మీ. లోపల ఆరోగ్య సౌకర్యాలు కనుగొనబడలేదు.",
+    "findNearbyTitle": "సమీప ఆరోగ్య సౌకర్యాలు కనుగొనండి",
+    "findNearbyDesc": "సమీప ఆసుపత్రులు, PHCలు కనుగొనడానికి పై బటన్ నొక్కండి",
+    "useMyLocation": "నా స్థానం ఉపయోగించు",
+    "phoneNotAvailable": "ఫోన్ అందుబాటులో లేదు",
+    "moreServices": "+{{count}} మరిన్ని",
+    "allFilter": "అన్నీ",
+    "geoNotSupported": "మీ బ్రాウజర్ జియోలొకేషన్ సపోర్ట్ చేయదు.",
+    "permissionDenied": "స్థాన అనుమతి తిరస్కరించబడింది.",
+    "locationFailed": "స్థానం పొందలేకపోయాం.",
+    "fetchFailed": "ఆసుపత్రులు పొందలేకపోయాం.",
+    "noResults": "10 కి.మీ. లోపల సౌకర్యాలు లేవు."
   },
   "emergency": {
     "tabs": {

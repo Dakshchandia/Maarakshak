@@ -43,17 +43,17 @@ export function AIHealthInsights({ pregnancy, riskHistory }: AIHealthInsightsPro
   const r = 38, c = 2 * Math.PI * r;
   const fill = (score / 100) * c;
 
-  const demoFactors = score < 35
-    ? ['Good hydration', 'Regular medicines', 'Normal BP']
+  const demoFactors: string[] = score < 35
+    ? [t('aiInsights.factorGoodHydration'), t('aiInsights.factorRegularMeds'), t('aiInsights.factorNormalBP')]
     : score < 65
-    ? ['Mild headache reported', 'Low water intake', 'Borderline BP']
-    : ['Elevated blood pressure', 'Reduced fetal movement', 'Severe headache'];
+    ? [t('aiInsights.factorHeadache'), t('aiInsights.factorLowWater'), t('aiInsights.factorBorderlineBP')]
+    : [t('aiInsights.factorElevatedBP'), t('aiInsights.factorReducedFM'), t('aiInsights.factorSevereHeadache')];
 
   const demoRec = score < 35
-    ? 'Continue routine care and daily check-ins. You are doing great!'
+    ? t('aiInsights.recGreen')
     : score < 65
-    ? 'Increase hydration to 8+ glasses/day. Monitor BP daily. Contact ASHA if headache persists.'
-    : 'Visit PHC immediately. Contact your ASHA worker. Avoid physical exertion.';
+    ? t('aiInsights.recYellow')
+    : t('aiInsights.recRed');
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
@@ -85,7 +85,7 @@ export function AIHealthInsights({ pregnancy, riskHistory }: AIHealthInsightsPro
                 </div>
               </div>
               <Badge variant={pregnancy.riskLevel === 'RED' ? 'red' : pregnancy.riskLevel === 'YELLOW' ? 'yellow' : 'green'} className="text-xs">
-                {pregnancy.riskLevel === 'GREEN' ? 'Low Risk' : pregnancy.riskLevel === 'YELLOW' ? 'Medium Risk' : 'High Risk'}
+                {pregnancy.riskLevel === 'GREEN' ? t('risk.green') : pregnancy.riskLevel === 'YELLOW' ? t('risk.yellow') : t('risk.red')}
               </Badge>
             </div>
 

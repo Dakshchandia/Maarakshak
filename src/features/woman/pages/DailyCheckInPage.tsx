@@ -57,7 +57,7 @@ const riskStyle: Record<RiskLevel, { card: string; badge: string; text: string; 
 
 // ─── Local risk assessment fallback ──────────────────────────────────────────
 
-function localRiskAssess(symptoms: string[], week: number): { score: number; level: RiskLevel; reasoning: string; action: string; precautions: string[]; warnings: string[] } {
+function localRiskAssess(symptoms: string[], week: number, t: (key: string, opts?: Record<string, unknown>) => string): { score: number; level: RiskLevel; reasoning: string; action: string; precautions: string[]; warnings: string[] } {
   let score = 10;
   const warnings: string[] = [];
   const precautions: string[] = [];
@@ -81,19 +81,19 @@ function localRiskAssess(symptoms: string[], week: number): { score: number; lev
   const level: RiskLevel = score >= 65 ? 'RED' : score >= 35 ? 'YELLOW' : 'GREEN';
 
   if (level === 'GREEN') {
-    precautions.push('Continue taking prescribed medicines', 'Drink 8+ glasses of water daily', 'Rest adequately and avoid heavy lifting');
+    precautions.push(t('checkin.localPrecautions.green1'), t('checkin.localPrecautions.green2'), t('checkin.localPrecautions.green3'));
   } else if (level === 'YELLOW') {
-    precautions.push('Contact your ASHA worker within 24 hours', 'Monitor symptoms closely', 'Check blood pressure if possible', 'Increase rest periods');
-    warnings.push('If symptoms worsen, go to PHC immediately');
+    precautions.push(t('checkin.localPrecautions.yellow1'), t('checkin.localPrecautions.yellow2'), t('checkin.localPrecautions.yellow3'), t('checkin.localPrecautions.yellow4'));
+    warnings.push(t('checkin.localPrecautions.yellowWarn'));
   } else {
-    precautions.push('Seek medical attention TODAY', 'Do not delay — contact ASHA worker immediately', 'Have family member accompany you to PHC');
-    warnings.push('URGENT: Visit PHC or hospital today', 'Call emergency services if symptoms are severe');
+    precautions.push(t('checkin.localPrecautions.red1'), t('checkin.localPrecautions.red2'), t('checkin.localPrecautions.red3'));
+    warnings.push(t('checkin.localPrecautions.redWarn1'), t('checkin.localPrecautions.redWarn2'));
   }
 
   return {
     score, level,
-    reasoning: `Based on ${symptoms.length} symptom(s) at ${week} weeks gestation, risk score is ${score}/100.`,
-    action: level === 'RED' ? 'URGENT: Visit PHC/hospital today' : level === 'YELLOW' ? 'Contact ASHA within 24 hours' : 'Continue routine care',
+    reasoning: t('checkin.localPrecautions.reasoning', { count: symptoms.length, week, score }),
+    action: level === 'RED' ? t('checkin.localPrecautions.action_red') : level === 'YELLOW' ? t('checkin.localPrecautions.action_yellow') : t('checkin.localPrecautions.action_green'),
     precautions, warnings,
   };
 }
@@ -473,7 +473,7 @@ function ResultStep({ entry, onNewEntry, onContinueToAssistant }: { entry: Daily
         size="lg"
       >
         <MessageCircle className="h-5 w-5 mr-2" />
-        Continue to AI Assistant →
+        {t('checkin.continueToAssistant')}
       </Button>
     </motion.div>
   );
@@ -572,7 +572,7 @@ export default function DailyCheckInPage() {
 
     // Empty input validation
     if (!transcription.trim() && allSymptoms.length === 0) {
-      setAnalyzeError('Please describe your symptoms before analyzing. You can use the symptom chips, voice input, or type a description.');
+      setAnalyzeError(t('checkin.describeBeforeAnalyze'));
       return;
     }
 

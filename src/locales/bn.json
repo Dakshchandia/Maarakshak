@@ -99,12 +99,30 @@
     "nutritionReviewSublabel": "সাপ্তাহিক খাদ্য ও সাপ্লিমেন্ট পরীক্ষা",
     "tetanusLabel": "টিটেনাস টক্সয়েড (TT) ডোজ",
     "tetanusSublabel": "ASHA কর্মীর সাথে যোগাযোগ করুন",
+    "weekPrefix": "স",
+    "riskBadgeSuffix": "ঝুঁকি",
+    "trimesterPrefix": "ত",
     "actionTypes": {
       "appointment": "অ্যাপয়েন্টমেন্ট",
       "medicine": "ওষুধ",
       "task": "কাজ",
       "vaccine": "টিকা"
     }
+  },
+  "roles": { "woman": "মহিলা", "asha": "ASHA কর্মী", "family": "পরিবার", "phc": "PHC প্রশাসক", "district": "জেলা কর্মকর্তা" },
+  "aiInsights": {
+    "factorGoodHydration": "ভালো জলপান",
+    "factorRegularMeds": "নিয়মিত ওষুধ",
+    "factorNormalBP": "স্বাভাবিক BP",
+    "factorHeadache": "হালকা মাথাব্যথা",
+    "factorLowWater": "কম পানি পান",
+    "factorBorderlineBP": "সীমারেখা BP",
+    "factorElevatedBP": "উচ্চ রক্তচাপ",
+    "factorReducedFM": "কম শিশু নড়াচড়া",
+    "factorSevereHeadache": "তীব্র মাথাব্যথা",
+    "recGreen": "নিয়মিত যত্ন চালিয়ে যান। আপনি দারুণ করছেন!",
+    "recYellow": "দিনে 8+ গ্লাস পানি পান করুন। BP পর্যবেক্ষণ করুন।",
+    "recRed": "তাৎক্ষণিক PHC-তে যান। ASHA কর্মীর সাথে যোগাযোগ করুন।"
   },
   "journey": {
     "title": "গর্ভাবস্থার যাত্রা",
@@ -197,7 +215,10 @@
       "medicines": "ওষুধ",
       "hydration": "জল",
       "asha": "ASHA"
-    }
+    },
+    "weekBadge": "সপ্তাহ {{week}}",
+    "riskBadge": "{{level}} ঝুঁকি",
+    "trimesterBadge": "ত{{n}}"
   },
   "notifications": {
     "title": "বিজ্ঞপ্তি কেন্দ্র",
@@ -301,7 +322,32 @@
     "callBtn": "কল",
     "directionsBtn": "দিকনির্দেশনা",
     "emergencyNumbers": "📞 জরুরি নম্বর",
-    "ambulance": "অ্যাম্বুলেন্স"
+    "ambulance": "অ্যাম্বুলেন্স",
+    "locating": "আপনার অবস্থান নির্ধারণ হচ্ছে…",
+    "fetching": "কাছের হাসপাতাল খোঁজা হচ্ছে…",
+    "showingNear": "{{location}} এর কাছের সুবিধা দেখানো হচ্ছে",
+    "locationError": "অবস্থান ত্রুটি",
+    "tryAgain": "আবার চেষ্টা করুন",
+    "retry": "পুনরায় চেষ্টা",
+    "noFacilitiesTitle": "কাছে কোনো সুবিধা পাওয়া যায়নি",
+    "noFacilitiesDesc": "১০ কিমির মধ্যে কোনো স্বাস্থ্য সুবিধা পাওয়া যায়নি।",
+    "findNearbyTitle": "কাছের স্বাস্থ্য সুবিধা খুঁজুন",
+    "findNearbyDesc": "কাছের হাসপাতাল, PHC খুঁজতে উপরের বাটন চাপুন",
+    "useMyLocation": "আমার অবস্থান ব্যবহার করুন",
+    "phoneNotAvailable": "ফোন নম্বর নেই",
+    "moreServices": "+{{count}} আরও",
+    "allFilter": "সব",
+    "noFilterResults": "কাছে {{type}} সুবিধা নেই।",
+    "showAll": "সব সুবিধা দেখুন",
+    "geoNotSupported": "আপনার ব্রাউজার জিওলোকেশন সমর্থন করে না।",
+    "permissionDenied": "অবস্থান অনুমতি প্রত্যাখ্যান করা হয়েছে।",
+    "locationUnavailable": "অবস্থান অনুপলব্ধ।",
+    "locationTimeout": "অবস্থান অনুরোধ টাইম আউট।",
+    "locationFailed": "অবস্থান পাওয়া যায়নি।",
+    "fetchFailed": "হাসপাতাল আনতে পারা যায়নি।",
+    "noResults": "১০ কিমির মধ্যে কোনো সুবিধা নেই।",
+    "allowLocation": "অবস্থান অ্যাক্সেস অনুমতি দিন",
+    "searchingWithin": "১০ কিমির মধ্যে খোঁজা হচ্ছে"
   },
   "emergency": {
     "tabs": {
@@ -346,6 +392,60 @@
   "alerts": {
     "title": "সতর্কতা ইতিহাস",
     "recipients": "প্রাপকরা"
+  },
+  "medicines": {
+    "title": "ওষুধ স্মারক",
+    "taken": "নেওয়া হয়েছে",
+    "pending": "বাকি",
+    "reminderAt": "স্মারক {{time}} টায়",
+    "medicationHub": "ওষুধ কেন্দ্র",
+    "uploadToStart": "শুরু করতে প্রেসক্রিপশন আপলোড করুন",
+    "noMedicinesAdded": "কোনো ওষুধ যোগ করা হয়নি",
+    "addManually": "ওষুধ ম্যানুয়ালি যোগ করুন",
+    "addMedTitle": "ওষুধ ম্যানুয়ালি যোগ করুন",
+    "medNameLabel": "ওষুধের নাম *",
+    "dosageLabel": "ডোজ",
+    "timeLabel": "সময়",
+    "frequencyLabel": "ফ্রিকোয়েন্সি",
+    "durationLabel": "মেয়াদ",
+    "purposeLabel": "উদ্দেশ্য (ঐচ্ছিক)",
+    "saveMedicine": "ওষুধ সংরক্ষণ করুন",
+    "freq_once": "দিনে একবার",
+    "freq_twice": "দিনে দুইবার",
+    "freq_thrice": "দিনে তিনবার",
+    "freq_weekly": "সাপ্তাহিক",
+    "freq_needed": "প্রয়োজনে",
+    "todaysAdherence": "আজকের পালন",
+    "takenCount": "{{taken}}/{{total}} নেওয়া হয়েছে",
+    "addFromPrescription": "প্রেসক্রিপশন থেকে যোগ করুন",
+    "adherenceScore": "পালন স্কোর",
+    "excellent": "🌟 চমৎকার",
+    "good": "👍 ভালো",
+    "needsImprovement": "⚠️ উন্নতি দরকার",
+    "todaysMedications": "আজকের ওষুধ",
+    "statusTaken": "✓ নেওয়া হয়েছে",
+    "statusMissed": "✗ মিস হয়েছে",
+    "statusSoon": "⏰ শীঘ্রই",
+    "statusPending": "বাকি",
+    "smartInsight": "AI পরামর্শ",
+    "allTaken": "আজ সব ওষুধ নেওয়া হয়েছে! দারুণ।",
+    "noneTaken": "{{count}} ওষুধ আজ বাকি।",
+    "somePending": "{{count}} ওষুধ এখনো বাকি।",
+    "pdfLabel": "PDF",
+    "imageLabel": "ছবি"
+  },
+  "checkin_extra": {
+    "continueToAssistant": "AI সহকারীতে যান →",
+    "localPrecautions": {
+      "green1": "নির্ধারিত ওষুধ চালিয়ে যান",
+      "green2": "প্রতিদিন ৮+ গ্লাস পানি পান করুন",
+      "green3": "পর্যাপ্ত বিশ্রাম নিন",
+      "yellow1": "২৪ ঘণ্টার মধ্যে ASHA কর্মীর সাথে যোগাযোগ করুন",
+      "action_red": "জরুরি: আজই PHC/হাসপাতালে যান",
+      "action_yellow": "২৪ ঘণ্টার মধ্যে ASHA-তে যোগাযোগ করুন",
+      "action_green": "নিয়মিত যত্ন চালিয়ে যান",
+      "reasoning": "{{week}} সপ্তাহে {{count}} লক্ষণের ভিত্তিতে ঝুঁকি স্কোর {{score}}/100।"
+    }
   },
   "onboarding": {
     "welcome": "আপনার স্বাস্থ্য প্রোফাইল সেট আপ করি",

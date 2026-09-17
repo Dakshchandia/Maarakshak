@@ -382,17 +382,17 @@ export default function AssistantPage({ initialMessage }: { initialMessage?: str
         {pregnancy && (
           <div className="mt-2 flex flex-wrap gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-white border border-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-700">
-              <Baby className="h-3 w-3" /> Week {pregnancy.gestationalWeek}
+              <Baby className="h-3 w-3" /> {t('assistant.weekBadge', { week: pregnancy.gestationalWeek })}
             </span>
             <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium border ${
               pregnancy.riskLevel === 'RED' ? 'bg-red-50 border-red-200 text-red-700' :
               pregnancy.riskLevel === 'YELLOW' ? 'bg-amber-50 border-amber-200 text-amber-700' :
               'bg-emerald-50 border-emerald-200 text-emerald-700'
             }`}>
-              <Heart className="h-3 w-3" /> {pregnancy.riskLevel} Risk
+              <Heart className="h-3 w-3" /> {t('assistant.riskBadge', { level: pregnancy.riskLevel })}
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-white border border-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
-              T{pregnancy.trimester}
+              {t('assistant.trimesterBadge', { n: pregnancy.trimester })}
             </span>
           </div>
         )}
@@ -485,9 +485,7 @@ export default function AssistantPage({ initialMessage }: { initialMessage?: str
             </Button>
           </div>
           <p className="mt-1.5 text-center text-[10px] text-gray-400">
-            {currentLang === 'hi'
-              ? 'यह चिकित्सीय सलाह नहीं है। गंभीर लक्षणों के लिए डॉक्टर से मिलें।'
-              : 'Not medical advice. Consult a doctor for serious symptoms.'}
+            {t('assistant.notMedicalAdvice')}
           </p>
         </div>
       </CardContent>

@@ -240,7 +240,7 @@ export function DashboardLayout({ children, titleKey, navItems }: DashboardLayou
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold truncate">{user.name}</p>
-                  <p className="text-xs capitalize text-gray-500">{user.role.replace('_', ' ')}</p>
+                  <p className="text-xs capitalize text-gray-500">{t(`roles.${user.role}`, user.role.replace('_', ' '))}</p>
                 </div>
               </div>
             </div>
@@ -292,7 +292,7 @@ export function DashboardLayout({ children, titleKey, navItems }: DashboardLayou
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold truncate">{user.name}</p>
-                      <p className="text-xs text-gray-500 capitalize">{user.role.replace('_', ' ')}</p>
+                      <p className="text-xs text-gray-500 capitalize">{t(`roles.${user.role}`, user.role.replace('_', ' '))}</p>
                     </div>
                     <Button variant="ghost" size="icon" onClick={handleLogout} className="shrink-0">
                       <LogOut className="h-4 w-4" />

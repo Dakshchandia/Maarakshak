@@ -99,12 +99,30 @@
     "nutritionReviewSublabel": "साप्ताहिक आहार आणि सप्लिमेंट तपासणी",
     "tetanusLabel": "टेटनस टॉक्सॉइड (TT) डोस",
     "tetanusSublabel": "ASHA कार्यकर्त्याशी तपासा",
+    "weekPrefix": "आ॰",
+    "riskBadgeSuffix": "धोका",
+    "trimesterPrefix": "ति",
     "actionTypes": {
       "appointment": "भेट",
       "medicine": "औषध",
       "task": "काम",
       "vaccine": "लस"
     }
+  },
+  "roles": { "woman": "महिला", "asha": "ASHA कार्यकर्ता", "family": "कुटुंब", "phc": "PHC प्रशासक", "district": "जिल्हाधिकारी" },
+  "aiInsights": {
+    "factorGoodHydration": "चांगले पाणी पिणे",
+    "factorRegularMeds": "नियमित औषधे",
+    "factorNormalBP": "सामान्य BP",
+    "factorHeadache": "सौम्य डोकेदुखी",
+    "factorLowWater": "कमी पाणी पिणे",
+    "factorBorderlineBP": "सीमावर्ती BP",
+    "factorElevatedBP": "उच्च रक्तदाब",
+    "factorReducedFM": "कमी भ्रूण हालचाल",
+    "factorSevereHeadache": "तीव्र डोकेदुखी",
+    "recGreen": "नियमित काळजी सुरू ठेवा. तुम्ही छान करत आहात!",
+    "recYellow": "दररोज 8+ ग्लास पाणी प्या. BP दररोज तपासा.",
+    "recRed": "ताबडतोब PHC ला जा. ASHA कार्यकर्त्याशी संपर्क करा."
   },
   "journey": {
     "title": "गर्भावस्था प्रवास",
@@ -197,7 +215,10 @@
       "medicines": "औषधे",
       "hydration": "पाणी",
       "asha": "ASHA"
-    }
+    },
+    "weekBadge": "आठवडा {{week}}",
+    "riskBadge": "{{level}} धोका",
+    "trimesterBadge": "ति{{n}}"
   },
   "notifications": {
     "title": "सूचना केंद्र",
@@ -303,7 +324,25 @@
     "callBtn": "कॉल",
     "directionsBtn": "दिशा निर्देश",
     "emergencyNumbers": "📞 आपत्कालीन क्रमांक",
-    "ambulance": "रुग्णवाहिका"
+    "ambulance": "रुग्णवाहिका",
+    "locating": "तुमचे स्थान शोधत आहे…",
+    "fetching": "जवळील रुग्णालये शोधत आहे…",
+    "locationError": "स्थान त्रुटी",
+    "tryAgain": "पुन्हा प्रयत्न करा",
+    "retry": "पुन्हा",
+    "noFacilitiesTitle": "जवळपास सुविधा आढळल्या नाहीत",
+    "noFacilitiesDesc": "10 किमी मध्ये आरोग्य सुविधा आढळल्या नाहीत.",
+    "findNearbyTitle": "जवळील आरोग्य सुविधा शोधा",
+    "findNearbyDesc": "जवळील रुग्णालये, PHC शोधण्यासाठी वरील बटण दाबा",
+    "useMyLocation": "माझे स्थान वापरा",
+    "phoneNotAvailable": "फोन उपलब्ध नाही",
+    "moreServices": "+{{count}} अधिक",
+    "allFilter": "सर्व",
+    "geoNotSupported": "आपला ब्राउझर जिओलोकेशन सपोर्ट करत नाही.",
+    "permissionDenied": "स्थान परवानगी नाकारली.",
+    "locationFailed": "स्थान मिळवता आले नाही.",
+    "fetchFailed": "रुग्णालये मिळवता आली नाहीत.",
+    "noResults": "10 किमी मध्ये आरोग्य सुविधा नाहीत."
   },
   "emergency": {
     "tabs": {

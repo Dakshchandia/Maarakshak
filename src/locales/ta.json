@@ -180,7 +180,31 @@
     "nutritionReviewLabel": "ஊட்டச்சத்து மதிப்பாய்வு",
     "nutritionReviewSublabel": "வாராந்திர உணவு மற்றும் சப்ளிமெண்ட் சோதனை",
     "tetanusLabel": "டெட்டனஸ் டாக்சாய்டு (TT) டோஸ்",
-    "tetanusSublabel": "ASHA தொழிலாளரிடம் சரிபார்க்கவும்"
+    "tetanusSublabel": "ASHA தொழிலாளரிடம் சரிபார்க்கவும்",
+    "weekPrefix": "வா",
+    "riskBadgeSuffix": "ஆபத்து",
+    "trimesterPrefix": "ம"
+  },
+  "roles": {
+    "woman": "பெண்",
+    "asha": "ASHA தொழிலாளர்",
+    "family": "குடும்பம்",
+    "phc": "PHC நிர்வாகி",
+    "district": "மாவட்ட அதிகாரி"
+  },
+  "aiInsights": {
+    "factorGoodHydration": "நல்ல நீரேற்றம்",
+    "factorRegularMeds": "தவறாத மருந்துகள்",
+    "factorNormalBP": "சாதாரண BP",
+    "factorHeadache": "சிறிய தலைவலி",
+    "factorLowWater": "குறைந்த நீர் பருகல்",
+    "factorBorderlineBP": "எல்லை BP",
+    "factorElevatedBP": "உயர் இரத்த அழுத்தம்",
+    "factorReducedFM": "குறைந்த கரு அசைவு",
+    "factorSevereHeadache": "கடுமையான தலைவலி",
+    "recGreen": "வழக்கமான பராமரிப்பை தொடரவும். நீங்கள் சிறப்பாக செய்கிறீர்கள்!",
+    "recYellow": "தினமும் 8+ கிளாஸ் தண்ணீர் குடிக்கவும். BP கண்காணிக்கவும்.",
+    "recRed": "உடனடியாக PHC செல்லவும். ASHA தொழிலாளரை அணுகவும்."
   },
   "journey": {
     "title": "கர்ப்பகாலப் பயணம்",
@@ -319,7 +343,33 @@
       "high": "அதிக ஆபத்து"
     },
     "recordedTranscript": "பதிவு செய்யப்பட்டது:",
-    "clear": "அழிக்கவும்"
+    "clear": "அழிக்கவும்",
+    "continueToAssistant": "AI உதவியாளரிடம் தொடரவும் →",
+    "describeBeforeAnalyze": "பகுப்பாய்வுக்கு முன் அறிகுறிகளை விவரிக்கவும்.",
+    "localPrecautions": {
+      "green1": "நிர்ணயிக்கப்பட்ட மருந்துகளை தொடரவும்",
+      "green2": "தினமும் 8+ கிளாஸ் தண்ணீர் குடிக்கவும்",
+      "green3": "போதுமான ஓய்வு எடுக்கவும்",
+      "yellow1": "24 மணி நேரத்தில் ASHA தொழிலாளரை அணுகவும்",
+      "yellow2": "அறிகுறிகளை கவனமாக கண்காணிக்கவும்",
+      "yellow3": "முடிந்தால் BP சோதிக்கவும்",
+      "yellow4": "அதிக ஓய்வு எடுக்கவும்",
+      "yellowWarn": "அறிகுறிகள் மோசமானால் PHC செல்லவும்",
+      "red1": "இன்றே மருத்துவ உதவி பெறவும்",
+      "red2": "தாமதிக்காதீர்கள் — உடனடியாக ASHA வை அணுகவும்",
+      "red3": "குடும்பத்தினருடன் PHC செல்லவும்",
+      "redWarn1": "அவசரம்: இன்றே PHC/மருத்துவமனை செல்லவும்",
+      "redWarn2": "கடுமையான அறிகுறிகளுக்கு அவசர சேவையை அழைக்கவும்",
+      "action_red": "அவசரம்: இன்றே PHC/மருத்துவமனை செல்லவும்",
+      "action_yellow": "24 மணி நேரத்தில் ASHA வை அணுகவும்",
+      "action_green": "வழக்கமான பராமரிப்பை தொடரவும்",
+      "reasoning": "{{week}} வார கர்ப்பகாலத்தில் {{count}} அறிகுறி அடிப்படையில் ஆபத்து மதிப்பெண் {{score}}/100."
+    },
+    "fallbackPrecautions": {
+      "p1": "நிர்ணயிக்கப்பட்ட மருந்துகளை எடுக்கவும்",
+      "p2": "தண்ணீர் குடிக்கவும்",
+      "p3": "ஓய்வு எடுக்கவும்"
+    }
   },
   "appointments": {
     "title": "ANC சந்திப்பு கண்காணிப்பு",
@@ -334,7 +384,43 @@
     "title": "மருந்து நினைவூட்டல்கள்",
     "taken": "எடுக்கப்பட்டது",
     "pending": "நிலுவையில்",
-    "reminderAt": "நினைவூட்டல் {{time}} மணிக்கு"
+    "reminderAt": "நினைவூட்டல் {{time}} மணிக்கு",
+    "medicationHub": "மருந்து மையம்",
+    "uploadToStart": "தொடங்க மருந்துச்சீட்டு பதிவேற்றவும்",
+    "noMedicinesAdded": "மருந்துகள் சேர்க்கப்படவில்லை",
+    "noMedicinesDesc": "மருந்து நினைவூட்டல்களுக்கு மருந்துச்சீட்டை பதிவேற்றவும்.",
+    "addManually": "மருந்தை கைமுறையாக சேர்க்கவும்",
+    "addMedTitle": "மருந்தை கைமுறையாக சேர்க்கவும்",
+    "medNameLabel": "மருந்தின் பெயர் *",
+    "dosageLabel": "அளவு",
+    "timeLabel": "நேரம்",
+    "frequencyLabel": "அதிர்வெண்",
+    "durationLabel": "காலம்",
+    "purposeLabel": "நோக்கம் (விருப்பத்தேர்வு)",
+    "saveMedicine": "மருந்தை சேமிக்கவும்",
+    "freq_once": "ஒரு நாளில் ஒரு முறை",
+    "freq_twice": "ஒரு நாளில் இரு முறை",
+    "freq_thrice": "ஒரு நாளில் மும்முறை",
+    "freq_weekly": "வாராந்திரம்",
+    "freq_needed": "தேவைப்படும்போது",
+    "todaysAdherence": "இன்றைய இணக்கம்",
+    "takenCount": "{{taken}}/{{total}} எடுக்கப்பட்டது",
+    "addFromPrescription": "மருந்துச்சீட்டிலிருந்து சேர்க்கவும்",
+    "adherenceScore": "இணக்க மதிப்பெண்",
+    "excellent": "🌟 சிறந்தது",
+    "good": "👍 நன்று",
+    "needsImprovement": "⚠️ மேம்பாடு தேவை",
+    "todaysMedications": "இன்றைய மருந்துகள்",
+    "statusTaken": "✓ எடுத்தது",
+    "statusMissed": "✗ தவறவிட்டது",
+    "statusSoon": "⏰ விரைவில்",
+    "statusPending": "நிலுவையில்",
+    "smartInsight": "AI ஆலோசனை",
+    "allTaken": "இன்று அனைத்து மருந்துகளும் எடுக்கப்பட்டன! சிறந்தது.",
+    "noneTaken": "{{count}} மருந்துகள் இன்று நிலுவையில் உள்ளன.",
+    "somePending": "{{count}} மருந்து நிலுவையில் உள்ளது.",
+    "pdfLabel": "PDF",
+    "imageLabel": "படம்"
   },
   "assistant": {
     "title": "AI தாய்வழி சுகாதார உதவியாளர்",
@@ -357,7 +443,10 @@
       "medicines": "மருந்துகள்",
       "hydration": "நீரேற்றம்",
       "asha": "ASHA"
-    }
+    },
+    "weekBadge": "வாரம் {{week}}",
+    "riskBadge": "{{level}} ஆபத்து",
+    "trimesterBadge": "ம{{n}}"
   },
   "notifications": {
     "title": "அறிவிப்பு மையம்",
@@ -481,7 +570,32 @@
     "ambulance": "ஆம்புலன்ஸ்",
     "healthHelpline": "சுகாதார உதவி",
     "nhmHelpline": "NHM உதவி",
-    "emergencyServices": "அவசர சேவைகள்"
+    "emergencyServices": "அவசர சேவைகள்",
+    "locating": "உங்கள் இடம் கண்டறியப்படுகிறது…",
+    "fetching": "அருகிலுள்ள மருத்துவமனைகள் தேடப்படுகின்றன…",
+    "showingNear": "{{location}} அருகிலுள்ள வசதிகள் காட்டப்படுகின்றன",
+    "locationError": "இட பிழை",
+    "tryAgain": "மீண்டும் முயற்சிக்கவும்",
+    "retry": "மீண்டும் முயற்சி",
+    "noFacilitiesTitle": "அருகில் வசதிகள் இல்லை",
+    "noFacilitiesDesc": "10 கி.மீ. தொலைவில் சுகாதார வசதிகள் இல்லை.",
+    "findNearbyTitle": "அருகிலுள்ள சுகாதார வசதிகளை கண்டுபிடிக்கவும்",
+    "findNearbyDesc": "மேலே உள்ள பொத்தானை அழுத்தி அருகிலுள்ள மருத்துவமனைகள் கண்டுபிடிக்கவும்",
+    "useMyLocation": "என் இடத்தைப் பயன்படுத்தவும்",
+    "phoneNotAvailable": "தொலைபேசி இல்லை",
+    "moreServices": "+{{count}} மேலும்",
+    "allFilter": "அனைத்தும்",
+    "noFilterResults": "அருகில் {{type}} வசதிகள் இல்லை.",
+    "showAll": "அனைத்து வசதிகளும் காட்டவும்",
+    "geoNotSupported": "உங்கள் உலாவி இட சேவையை ஆதரிக்கவில்லை.",
+    "permissionDenied": "இட அனுமதி மறுக்கப்பட்டது.",
+    "locationUnavailable": "இடம் கிடைக்கவில்லை.",
+    "locationTimeout": "இட கோரிக்கை நேரம் முடிந்தது.",
+    "locationFailed": "இடம் கண்டுபிடிக்க முடியவில்லை.",
+    "fetchFailed": "மருத்துவமனைகளை பெற முடியவில்லை.",
+    "noResults": "10 கி.மீ. தொலைவில் சுகாதார வசதிகள் இல்லை.",
+    "allowLocation": "இட அனுமதி வழங்கவும்",
+    "searchingWithin": "10 கி.மீ. தொலைவில் தேடப்படுகிறது"
   },
   "emergency": {
     "tabs": {

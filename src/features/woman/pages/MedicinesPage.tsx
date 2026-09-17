@@ -47,6 +47,7 @@ function AddMedicineModal({ pregnancyId, womanId, onAdd, onClose }: {
   const [time, setTime] = useState('08:00');
   const [duration, setDuration] = useState('');
   const [purpose, setPurpose] = useState('');
+  const { t } = useTranslation();
 
   const handleSave = () => {
     if (!name.trim()) return;
@@ -68,50 +69,59 @@ function AddMedicineModal({ pregnancyId, womanId, onAdd, onClose }: {
         className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl"
         onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
-          <h3 className="font-display text-lg font-bold text-gray-900">Add Medicine Manually</h3>
+          <h3 className="font-display text-lg font-bold text-gray-900">{t('medicines.addMedTitle')}</h3>
           <button onClick={onClose} className="rounded-xl p-1.5 hover:bg-gray-100">
             <X className="h-5 w-5 text-gray-500" />
           </button>
         </div>
         <div className="space-y-3">
           <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">Medicine Name *</label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Iron + Folic Acid" autoFocus />
+            <label className="text-xs font-semibold text-gray-500 mb-1 block">{t('medicines.medNameLabel')}</label>
+            <Input value={name} onChange={e => setName(e.target.value)} placeholder={t('medicines.medNamePlaceholder')} autoFocus />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">Dosage</label>
-              <Input value={dosage} onChange={e => setDosage(e.target.value)} placeholder="e.g. 200mg" />
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">{t('medicines.dosageLabel')}</label>
+              <Input value={dosage} onChange={e => setDosage(e.target.value)} placeholder={t('medicines.dosagePlaceholder', 'e.g. 200mg')} />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">Time</label>
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">{t('medicines.timeLabel')}</label>
               <Input type="time" value={time} onChange={e => setTime(e.target.value)} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">Frequency</label>
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">{t('medicines.frequencyLabel')}</label>
               <select value={frequency} onChange={e => setFrequency(e.target.value)}
                 className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300">
-                {['Once daily','Twice daily','Thrice daily','1-0-1','0-0-1','Once at night','Weekly','As needed'].map(f => (
-                  <option key={f} value={f}>{f}</option>
+                {[
+                  ['Once daily', t('medicines.freq_once')],
+                  ['Twice daily', t('medicines.freq_twice')],
+                  ['Thrice daily', t('medicines.freq_thrice')],
+                  ['1-0-1', t('medicines.freq_101', '1-0-1')],
+                  ['0-0-1', t('medicines.freq_001', '0-0-1')],
+                  ['Once at night', t('medicines.freq_night')],
+                  ['Weekly', t('medicines.freq_weekly')],
+                  ['As needed', t('medicines.freq_needed')],
+                ].map(([val, label]) => (
+                  <option key={val} value={val}>{label}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">Duration</label>
-              <Input value={duration} onChange={e => setDuration(e.target.value)} placeholder="e.g. 3 months" />
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">{t('medicines.durationLabel')}</label>
+              <Input value={duration} onChange={e => setDuration(e.target.value)} placeholder={t('medicines.durationPlaceholder', 'e.g. 3 months')} />
             </div>
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">Purpose (optional)</label>
-            <Input value={purpose} onChange={e => setPurpose(e.target.value)} placeholder="e.g. Iron deficiency anaemia" />
+            <label className="text-xs font-semibold text-gray-500 mb-1 block">{t('medicines.purposeLabel')}</label>
+            <Input value={purpose} onChange={e => setPurpose(e.target.value)} placeholder={t('medicines.purposePlaceholder', 'e.g. Iron deficiency anaemia')} />
           </div>
         </div>
         <div className="flex gap-3 mt-5">
-          <Button variant="outline" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" className="flex-1" onClick={onClose}>{t('common.cancel')}</Button>
           <Button className="flex-1" onClick={handleSave} disabled={!name.trim()}>
-            <Plus className="h-4 w-4 mr-1" /> Save Medicine
+            <Plus className="h-4 w-4 mr-1" /> {t('medicines.saveMedicine')}
           </Button>
         </div>
       </motion.div>
@@ -209,9 +219,9 @@ export default function MedicinesPage() {
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500 via-primary-500 to-pink-500 p-6 text-white">
           <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/10" />
           <div className="relative">
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-1">MEDICATION HUB</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-1">{t('medicines.medicationHub')}</p>
             <h1 className="text-2xl font-bold">{t('medicines.title')}</h1>
-            <p className="text-white/80 text-sm mt-1">Upload a prescription to get started</p>
+            <p className="text-white/80 text-sm mt-1">{t('medicines.uploadToStart')}</p>
           </div>
         </div>
 
@@ -222,10 +232,8 @@ export default function MedicinesPage() {
               <div className="mx-auto h-16 w-16 rounded-2xl bg-primary-100 flex items-center justify-center">
                 <Pill className="h-8 w-8 text-primary-400" />
               </div>
-              <p className="font-bold text-gray-700 text-lg">No Medicines Added</p>
-              <p className="text-sm text-gray-400 max-w-sm mx-auto">
-                Upload a prescription, medical report, image, or recording to automatically extract medicine reminders.
-              </p>
+              <p className="font-bold text-gray-700 text-lg">{t('medicines.noMedicinesAdded')}</p>
+              <p className="text-sm text-gray-400 max-w-sm mx-auto">{t('medicines.noMedicinesDesc')}</p>
             </div>
 
             {uploadMsg && (
@@ -238,9 +246,9 @@ export default function MedicinesPage() {
             )}
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
-              <UploadSourceBtn icon={FileText} label="PDF Prescription" accept=".pdf"
+              <UploadSourceBtn icon={FileText} label={t('medicines.pdfPrescription')} accept=".pdf"
                 onFile={f => handleUpload(f, 'PDF Prescription')} loading={uploading} />
-              <UploadSourceBtn icon={Image} label="Prescription Image" accept="image/*"
+              <UploadSourceBtn icon={Image} label={t('medicines.prescriptionImage')} accept="image/*"
                 onFile={f => handleUpload(f, 'Prescription Image')} loading={uploading} />
             </div>
 
@@ -251,7 +259,7 @@ export default function MedicinesPage() {
             </div>
 
             <Button className="w-full" variant="outline" onClick={() => setShowAddModal(true)}>
-              <Plus className="h-4 w-4 mr-1.5" /> Add Medicine Manually
+              <Plus className="h-4 w-4 mr-1.5" /> {t('medicines.addManually')}
             </Button>
           </CardContent>
         </Card>
@@ -276,12 +284,12 @@ export default function MedicinesPage() {
         <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/10" />
         <div className="relative flex items-start justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-1">MEDICATION HUB</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-1">{t('medicines.medicationHub')}</p>
             <h1 className="text-2xl font-bold">{t('medicines.title')}</h1>
             <p className="text-white/80 text-sm mt-1">
               {myMeds.length > 0
-                ? `${myMeds.length} medicine${myMeds.length > 1 ? 's' : ''} · Week ${pregnancy?.gestationalWeek}`
-                : `Week ${pregnancy?.gestationalWeek} · Upload a prescription to start`}
+                ? t('medicines.medsWeek', { count: myMeds.length, week: pregnancy?.gestationalWeek })
+                : t('medicines.uploadStart', { week: pregnancy?.gestationalWeek })}
             </p>
           </div>
           <div className="flex gap-2 shrink-0">
@@ -295,7 +303,7 @@ export default function MedicinesPage() {
         {myMeds.length > 0 && (
           <div className="mt-4">
             <div className="flex justify-between text-xs text-white/70 mb-1">
-              <span>Today's adherence</span><span>{taken}/{myMeds.length} taken</span>
+              <span>{t('medicines.todaysAdherence')}</span><span>{t('medicines.takenCount', { taken, total: myMeds.length })}</span>
             </div>
             <div className="h-2 rounded-full bg-white/20">
               <motion.div initial={{ width: 0 }} animate={{ width: `${adherence}%` }}
@@ -308,7 +316,7 @@ export default function MedicinesPage() {
       <Card className="border-dashed border-primary-200 bg-primary-50/30">
         <CardContent className="p-4">
           <p className="text-xs font-semibold text-primary-600 mb-3 flex items-center gap-1.5">
-            <Upload className="h-3.5 w-3.5" /> Add from prescription / report
+            <Upload className="h-3.5 w-3.5" /> {t('medicines.addFromPrescription')}
           </p>
           {uploadMsg && (
             <div className={cn('rounded-xl p-2.5 text-xs text-center font-medium mb-3',
@@ -318,9 +326,9 @@ export default function MedicinesPage() {
             </div>
           )}
           <div className="flex gap-2 flex-wrap">
-            <UploadSourceBtn icon={FileText} label="PDF" accept=".pdf"
+            <UploadSourceBtn icon={FileText} label={t('medicines.pdfLabel')} accept=".pdf"
               onFile={f => handleUpload(f, 'PDF')} loading={uploading} />
-            <UploadSourceBtn icon={Image} label="Image" accept="image/*"
+            <UploadSourceBtn icon={Image} label={t('medicines.imageLabel')} accept="image/*"
               onFile={f => handleUpload(f, 'Image')} loading={uploading} />
           </div>
         </CardContent>
@@ -330,11 +338,11 @@ export default function MedicinesPage() {
       <Card className="bg-gradient-to-br from-indigo-50 to-violet-50 border-indigo-100">
         <CardContent className="p-4 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-indigo-500">Adherence Score</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-indigo-500">{t('medicines.adherenceScore')}</p>
             <p className="text-3xl font-bold text-gray-800">{adherence}%</p>
             <p className={cn('text-sm font-semibold',
               adherence >= 90 ? 'text-emerald-600' : adherence >= 70 ? 'text-amber-600' : 'text-red-600')}>
-              {adherence >= 90 ? '🌟 Excellent' : adherence >= 70 ? '👍 Good' : '⚠️ Needs Improvement'}
+              {adherence >= 90 ? t('medicines.excellent') : adherence >= 70 ? t('medicines.good') : t('medicines.needsImprovement')}
             </p>
           </div>
           <div className="relative h-16 w-16">
@@ -358,7 +366,7 @@ export default function MedicinesPage() {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Pill className="h-5 w-5 text-primary-500" /> Today's Medications
+            <Pill className="h-5 w-5 text-primary-500" /> {t('medicines.todaysMedications')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 pt-0">
@@ -387,7 +395,7 @@ export default function MedicinesPage() {
                 </div>
                 <div className="flex flex-col items-end gap-1.5 shrink-0">
                   <Badge variant={status === 'taken' ? 'green' : status === 'missed' ? 'red' : 'yellow'} className="text-[10px]">
-                    {status === 'taken' ? '✓ Taken' : status === 'missed' ? '✗ Missed' : status === 'upcoming' ? '⏰ Soon' : 'Pending'}
+                    {status === 'taken' ? t('medicines.statusTaken') : status === 'missed' ? t('medicines.statusMissed') : status === 'upcoming' ? t('medicines.statusSoon') : t('medicines.statusPending')}
                   </Badge>
                   <div className="flex gap-1">
                     <Button size="sm" variant={med.taken ? 'outline' : 'default'}
@@ -412,11 +420,11 @@ export default function MedicinesPage() {
         <CardContent className="p-4 flex items-start gap-3">
           <Sparkles className="h-5 w-5 text-primary-500 shrink-0 mt-0.5" />
           <div>
-            <p className="text-xs font-bold text-primary-600 mb-1">Smart Insight</p>
+            <p className="text-xs font-bold text-primary-600 mb-1">{t('medicines.smartInsight')}</p>
             <p className="text-sm text-gray-700">
-              {adherence === 100 ? 'All medicines taken today! Keep up the excellent adherence.' :
-               taken === 0 ? `${myMeds.length} medicines pending today. Tap ✓ to mark each as taken.` :
-               `${myMeds.length - taken} medicine${myMeds.length - taken > 1 ? 's' : ''} still pending. Regular intake is important for pregnancy health.`}
+              {adherence === 100 ? t('medicines.allTaken') :
+               taken === 0 ? t('medicines.noneTaken', { count: myMeds.length }) :
+               t('medicines.somePending', { count: myMeds.length - taken })}
             </p>
           </div>
         </CardContent>

@@ -11,6 +11,7 @@ import {
   format, startOfMonth, endOfMonth, eachDayOfInterval,
   getDay, isSameDay, isBefore, addDays, differenceInDays,
 } from 'date-fns';
+import { enUS, hi, ta, te, bn, enIN } from 'date-fns/locale';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { DEMO_USERS } from '@/lib/demo-data';
@@ -25,9 +26,14 @@ import { cn } from '@/lib/utils';
 import welcomeIllustration from '@/assets/illustrations/welcome-home.svg';
 import { getFetalData } from '@/lib/fetalData';
 
+// Map i18n language codes to date-fns locales
+const dateFnsLocales: Record<string, object> = {
+  en: enUS, hi, ta, te, mr: enIN, bn,
+};
+
 // ─── Section 1: Professional Medical Pregnancy Summary Card ──────────────────
 function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType<typeof usePregData>> }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fetalData = getFetalData(pregnancy.gestationalWeek);
   const daysLeft = pregnancy.dueDate
     ? Math.max(0, differenceInDays(new Date(pregnancy.dueDate), new Date()))
@@ -36,11 +42,22 @@ function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType
   const weeksLeft = Math.max(0, 40 - pregnancy.gestationalWeek);
   const [showInsight, setShowInsight] = useState(false);
 
+  // Translate fetalData values via week-keyed locale keys
+  const fetalStage = t(`fetal.week${fetalData.week}.stage`, fetalData.stage);
+  const fetalBrain = t(`fetal.week${fetalData.week}.brain`, fetalData.brainDevelopment);
+  const fetalHearing = t(`fetal.week${fetalData.week}.hearing`, fetalData.hearing);
+  const fetalLungs = t(`fetal.week${fetalData.week}.lungs`, fetalData.lungs);
+  const fetalMovement = t(`fetal.week${fetalData.week}.movement`, fetalData.movement);
+  const fetalInsight = t(`fetal.week${fetalData.week}.insight`, fetalData.insight);
+  const fetalMilestones = fetalData.milestones.map((m, i) =>
+    t(`fetal.week${fetalData.week}.m${i}`, m)
+  );
+
   const devStatus = [
-    { label: t('fetal.devStatus.brainGrowth'),     value: fetalData.brainDevelopment, icon: '🧠' },
-    { label: t('fetal.devStatus.hearing'),          value: fetalData.hearing,          icon: '👂' },
-    { label: t('fetal.devStatus.lungDevelopment'),  value: fetalData.lungs,            icon: '🫁' },
-    { label: t('fetal.devStatus.fetalMovement'),    value: fetalData.movement,         icon: '💪' },
+    { label: t('fetal.devStatus.brainGrowth'),     value: fetalBrain,    icon: '🧠' },
+    { label: t('fetal.devStatus.hearing'),          value: fetalHearing,  icon: '👂' },
+    { label: t('fetal.devStatus.lungDevelopment'),  value: fetalLungs,    icon: '🫁' },
+    { label: t('fetal.devStatus.fetalMovement'),    value: fetalMovement, icon: '💪' },
   ];
 
   const trimesterLabel = fetalData.trimester === 1 ? t('fetal.trimesterLabels.first')
@@ -72,7 +89,7 @@ function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType
               {/* ── Left: week + progress ── */}
               <div className="space-y-3">
                 <div>
-                  <span className="text-4xl font-bold tracking-tight">Wk {pregnancy.gestationalWeek}</span>
+                  <span className="text-4xl font-bold tracking-tight">{t('fetal.weekProgress.wk1').replace('1','').trim()} {pregnancy.gestationalWeek}</span>
                   <p className="text-white/75 text-xs mt-0.5 font-medium">{trimesterLabel} · {pregnancy.villageName}</p>
                 </div>
 
@@ -127,7 +144,7 @@ function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType
                   </div>
                   <div className="pt-1 border-t border-white/20">
                     <p className="text-[9px] text-white/55 font-medium">{t('woman.stage')}</p>
-                    <p className="text-xs font-bold">{fetalData.stage}</p>
+                    <p className="text-xs font-bold">{fetalStage}</p>
                   </div>
                 </div>
 
@@ -162,7 +179,7 @@ function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-            {fetalData.milestones.map((m, i) => (
+            {fetalMilestones.map((m, i) => (
               <div key={i} className="flex items-start gap-2">
                 <CheckCircle className="h-3.5 w-3.5 text-primary-400 shrink-0 mt-0.5" />
                 <span className="text-xs text-gray-700 leading-snug">{m}</span>
@@ -189,7 +206,7 @@ function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType
                     <p className="text-[10px] font-bold uppercase tracking-wide text-primary-600 mb-1">
                       {t('woman.clinicalInsight', { week: pregnancy.gestationalWeek })}
                     </p>
-                    <p className="text-xs text-gray-700 leading-relaxed">{fetalData.insight}</p>
+                    <p className="text-xs text-gray-700 leading-relaxed">{fetalInsight}</p>
                   </div>
                 </div>
               </div>
@@ -249,11 +266,12 @@ function CareTeamCard({ pregnancy }: { pregnancy: NonNullable<ReturnType<typeof 
 type CalDayStatus = 'complete-green' | 'complete-yellow' | 'complete-red' | 'partial' | 'none' | 'future';
 
 function MiniCalendar({ pregnancyId }: { pregnancyId: string }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { dailyEntries, getDailyEntry } = useData();
   const today = new Date();
   const [viewDate, setViewDate] = useState(today);
   const [selected, setSelected] = useState<string | null>(format(today, 'yyyy-MM-dd'));
+  const dateFnsLocale = dateFnsLocales[i18n.language] || dateFnsLocales.en;
 
   const yr = viewDate.getFullYear();
   const mo = viewDate.getMonth();
@@ -297,7 +315,7 @@ function MiniCalendar({ pregnancyId }: { pregnancyId: string }) {
                 <ChevronLeft className="h-4 w-4 text-gray-500" />
               </button>
               <span className="text-xs font-semibold text-gray-600 w-20 text-center">
-                {format(viewDate, 'MMM yyyy')}
+                {format(viewDate, 'MMM yyyy', { locale: dateFnsLocale })}
               </span>
               <button onClick={() => setViewDate(d => new Date(d.getFullYear(), d.getMonth() + 1))}
                 className="rounded-lg p-1.5 hover:bg-gray-100 transition-colors">
@@ -316,10 +334,10 @@ function MiniCalendar({ pregnancyId }: { pregnancyId: string }) {
           </div>
         </CardHeader>
         <CardContent className="pt-0">
-          {/* Day headers */}
+          {/* Day headers — use locale-specific single letters from translation */}
           <div className="grid grid-cols-7 mb-1">
-            {['S','M','T','W','T','F','S'].map((d, i) => (
-              <div key={i} className="text-center text-[10px] font-semibold text-gray-400 py-1">{d}</div>
+            {(t('journey.weekDays', { returnObjects: true }) as string[]).map((d: string, i: number) => (
+              <div key={i} className="text-center text-[10px] font-semibold text-gray-400 py-1">{d.charAt(0)}</div>
             ))}
           </div>
           {/* Day cells */}
@@ -355,7 +373,7 @@ function MiniCalendar({ pregnancyId }: { pregnancyId: string }) {
                 {selectedEntry ? (
                   <div className={cn('rounded-2xl border p-3 space-y-2', selectedEntry.riskLevel === 'RED' ? 'bg-red-50 border-red-200' : selectedEntry.riskLevel === 'YELLOW' ? 'bg-amber-50 border-amber-200' : 'bg-emerald-50 border-emerald-200')}>
                     <div className="flex items-center justify-between">
-                      <p className="text-xs font-bold text-gray-700">{format(new Date(selected), 'dd MMM yyyy')}</p>
+                      <p className="text-xs font-bold text-gray-700">{format(new Date(selected), 'dd MMM yyyy', { locale: dateFnsLocale })}</p>
                       <Badge variant={selectedEntry.riskLevel === 'RED' ? 'red' : selectedEntry.riskLevel === 'YELLOW' ? 'yellow' : 'green'}>
                         {selectedEntry.riskLevel} · {selectedEntry.riskScore}/100
                       </Badge>
@@ -376,7 +394,7 @@ function MiniCalendar({ pregnancyId }: { pregnancyId: string }) {
                   </div>
                 ) : (
                   <div className="rounded-2xl bg-gray-50 border border-gray-100 p-3 flex items-center justify-between">
-                    <p className="text-xs text-gray-500">{format(new Date(selected), 'dd MMM')} {t('woman.noCheckin')}</p>
+                    <p className="text-xs text-gray-500">{format(new Date(selected), 'dd MMM', { locale: dateFnsLocale })} {t('woman.noCheckin')}</p>
                     {selected === format(today, 'yyyy-MM-dd') && (
                       <Link to="/dashboard/woman/checkin">
                         <Button size="sm" className="text-xs h-7 rounded-xl">{t('woman.addEntryBtn')}</Button>
@@ -585,7 +603,7 @@ export default function WomanHome() {
                     <Clock className="h-3 w-3" /> {t('woman.tapToReport')}
                   </p>
                 </div>
-                <Badge className="bg-primary-500 text-white shrink-0 text-xs">Start</Badge>
+                <Badge className="bg-primary-500 text-white shrink-0 text-xs">{t('woman.startAction')}</Badge>
               </motion.div>
             </Link>
           )}
