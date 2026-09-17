@@ -91,7 +91,20 @@
     "monthlyCheckinCalendar": "মাসিক চেক-ইন ক্যালেন্ডার",
     "improving": "উন্নতি হচ্ছে ↓",
     "worsening": "বাড়ছে ↑",
-    "stable": "স্থিতিশীল →"
+    "stable": "স্থিতিশীল →",
+    "ashaWorkerBadge": "ASHA কর্মী",
+    "careTeamUnavailable": "কেয়ার টিম তথ্য পাওয়া যাচ্ছে না।",
+    "viewAll": "সব দেখুন",
+    "nutritionReviewLabel": "পুষ্টি পর্যালোচনা",
+    "nutritionReviewSublabel": "সাপ্তাহিক খাদ্য ও সাপ্লিমেন্ট পরীক্ষা",
+    "tetanusLabel": "টিটেনাস টক্সয়েড (TT) ডোজ",
+    "tetanusSublabel": "ASHA কর্মীর সাথে যোগাযোগ করুন",
+    "actionTypes": {
+      "appointment": "অ্যাপয়েন্টমেন্ট",
+      "medicine": "ওষুধ",
+      "task": "কাজ",
+      "vaccine": "টিকা"
+    }
   },
   "journey": {
     "title": "গর্ভাবস্থার যাত্রা",
@@ -220,6 +233,119 @@
         "desc": "জনসংখ্যা পর্যবেক্ষণ"
       }
     }
+  },
+  "fetal": {
+    "trimesterLabels": {
+      "first": "প্রথম ত্রৈমাসিক",
+      "second": "দ্বিতীয় ত্রৈমাসিক",
+      "third": "তৃতীয় ত্রৈমাসিক"
+    },
+    "devStatus": {
+      "brainGrowth": "মস্তিষ্কের বিকাশ",
+      "hearing": "শ্রবণশক্তি",
+      "lungDevelopment": "ফুসফুসের বিকাশ",
+      "fetalMovement": "ভ্রূণের নড়াচড়া"
+    },
+    "weekProgress": {
+      "wk1": "স॰ 1",
+      "wk12": "স॰ 12",
+      "wk28": "স॰ 28",
+      "wk40": "স॰ 40"
+    }
+  },
+  "reports": {
+    "title": "গর্ভাবস্থার স্বাস্থ্য রিপোর্ট",
+    "womanTitle": "স্বাস্থ্য রিপোর্ট",
+    "patientProfile": "রোগীর প্রোফাইল",
+    "currentRiskAssessment": "বর্তমান ঝুঁকি মূল্যায়ন",
+    "reportedSymptoms": "রিপোর্ট করা লক্ষণ",
+    "riskFactors": "ঝুঁকির কারণ",
+    "aiSummary": "AI সারসংক্ষেপ",
+    "recommendations": "সুপারিশ",
+    "followUpActions": "ফলো-আপ কার্যক্রম",
+    "clinicalReasoning": "ক্লিনিকাল যুক্তি:",
+    "suggestedAction": "প্রস্তাবিত পদক্ষেপ:",
+    "viewReport": "রিপোর্ট দেখুন"
+  },
+  "highRisk": {
+    "title": "উচ্চ ঝুঁকি গর্ভাবস্থা পর্যবেক্ষণ কেন্দ্র",
+    "riskScore": "ঝুঁকি স্কোর",
+    "currentWeek": "বর্তমান সপ্তাহ",
+    "noHistory": "এখনো ইতিহাস নেই",
+    "noFactors": "কোনো সক্রিয় কারণ নেই",
+    "monitoringProtocol": "পর্যবেক্ষণ প্রোটোকল",
+    "protocol1": "দৈনিক BP পর্যবেক্ষণ প্রস্তাবিত",
+    "protocol2": "দিনে দুইবার শিশুর নড়াচড়া গণনা করুন",
+    "protocol3": "সাপ্তাহিক ASHA হোম ভিজিট",
+    "protocol4": "দ্বি-সাপ্তাহিক PHC চেক-আপ",
+    "protocol5": "যেকোনো নতুন লক্ষণ তাৎক্ষণিকভাবে রিপোর্ট করুন"
+  },
+  "nutrition": {
+    "title": "পুষ্টি পরিকল্পনাকারী",
+    "subtitle": "ব্যক্তিগতকৃত ভারতীয় গর্ভাবস্থার খাদ্য পরিকল্পনা · সপ্তাহ {{week}}",
+    "generating": "Gemini AI আপনার খাদ্য পরিকল্পনা তৈরি করছে…",
+    "breakfast": "সকালের নাস্তা",
+    "lunch": "দুপুরের খাবার",
+    "snacks": "স্ন্যাকস",
+    "dinner": "রাতের খাবার",
+    "supplements": "দৈনিক সাপ্লিমেন্ট",
+    "tips": "পুষ্টি টিপস",
+    "disclaimer": "ব্যক্তিগত পরামর্শের জন্য আপনার ডাক্তারের সাথে যোগাযোগ করুন"
+  },
+  "hospitals": {
+    "title": "নিকটতম হাসপাতাল",
+    "useLocation": "আমার অবস্থান ব্যবহার করুন",
+    "nearest": "নিকটতম",
+    "available24h": "24/7",
+    "fromYou": "আপনার থেকে",
+    "callBtn": "কল",
+    "directionsBtn": "দিকনির্দেশনা",
+    "emergencyNumbers": "📞 জরুরি নম্বর",
+    "ambulance": "অ্যাম্বুলেন্স"
+  },
+  "emergency": {
+    "tabs": {
+      "sos": "SOS ও সতর্কতা",
+      "hospitals": "হাসপাতাল খুঁজুন"
+    }
+  },
+  "predictiveRisk": {
+    "title": "পূর্বানুমান ঝুঁকি ইঞ্জিন",
+    "analyzing": "Gemini AI আপনার ঝুঁকির পথ বিশ্লেষণ করছে…",
+    "next7Days": "পরবর্তী 7 দিন",
+    "next30Days": "পরবর্তী 30 দিন",
+    "noData": "প্রথম চেক-ইন সম্পন্ন করুন",
+    "improving": "উন্নতি হচ্ছে",
+    "stable": "স্থিতিশীল",
+    "worsening": "অবনতি হচ্ছে"
+  },
+  "digitalTwin": {
+    "title": "AI গর্ভাবস্থা ডিজিটাল টুইন",
+    "healthScore": "স্বাস্থ্য স্কোর",
+    "building": "আপনার ডিজিটাল স্বাস্থ্য টুইন তৈরি হচ্ছে…",
+    "noData": "ডিজিটাল টুইন সক্রিয় করতে প্রথম চেক-ইন সম্পন্ন করুন",
+    "improving": "উন্নতি হচ্ছে",
+    "stable": "স্থিতিশীল",
+    "worsening": "অবনতি হচ্ছে"
+  },
+  "reportAnalyzer": {
+    "title": "মেডিকেল রিপোর্ট বিশ্লেষক",
+    "uploadOrEnter": "রিপোর্ট আপলোড বা প্রবেশ করুন",
+    "dropFile": "ফাইল এখানে টানুন বা ক্লিক করুন",
+    "analyzeBtn": "রিপোর্ট বিশ্লেষণ করুন",
+    "aiSummary": "AI সারসংক্ষেপ",
+    "keyFindings": "মূল অনুসন্ধান",
+    "noReports": "এখনো কোনো রিপোর্ট বিশ্লেষণ করা হয়নি।",
+    "reportTypes": {
+      "blood_test": "রক্ত পরীক্ষা",
+      "ultrasound": "আল্ট্রাসাউন্ড",
+      "prescription": "প্রেসক্রিপশন",
+      "lab_report": "ল্যাব রিপোর্ট"
+    }
+  },
+  "alerts": {
+    "title": "সতর্কতা ইতিহাস",
+    "recipients": "প্রাপকরা"
   },
   "onboarding": {
     "welcome": "আপনার স্বাস্থ্য প্রোফাইল সেট আপ করি",

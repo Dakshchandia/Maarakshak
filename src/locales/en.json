@@ -173,7 +173,14 @@
       "medicine": "Medicine",
       "task": "Task",
       "vaccine": "Vaccine"
-    }
+    },
+    "ashaWorkerBadge": "ASHA Worker",
+    "careTeamUnavailable": "Care team info not available.",
+    "viewAll": "View all",
+    "nutritionReviewLabel": "Nutrition Review",
+    "nutritionReviewSublabel": "Weekly diet & supplement check",
+    "tetanusLabel": "Tetanus Toxoid (TT) Dose",
+    "tetanusSublabel": "Check with ASHA worker"
   },
   "journey": {
     "title": "Pregnancy Journey",
@@ -632,6 +639,25 @@
     "score": "Score",
     "trimester": "Trimester",
     "lastReport": "Last report:"
+  },
+  "fetal": {
+    "trimesterLabels": {
+      "first": "First Trimester",
+      "second": "Second Trimester",
+      "third": "Third Trimester"
+    },
+    "devStatus": {
+      "brainGrowth": "Brain Growth",
+      "hearing": "Hearing",
+      "lungDevelopment": "Lung Development",
+      "fetalMovement": "Fetal Movement"
+    },
+    "weekProgress": {
+      "wk1": "Wk 1",
+      "wk12": "Wk 12",
+      "wk28": "Wk 28",
+      "wk40": "Wk 40"
+    }
   },
   "onboarding": {
     "welcome": "Let's set up your health profile",

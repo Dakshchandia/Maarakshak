@@ -37,14 +37,14 @@ function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType
   const [showInsight, setShowInsight] = useState(false);
 
   const devStatus = [
-    { label: 'Brain Growth',     value: fetalData.brainDevelopment, icon: '🧠' },
-    { label: 'Hearing',          value: fetalData.hearing,          icon: '👂' },
-    { label: 'Lung Development', value: fetalData.lungs,            icon: '🫁' },
-    { label: 'Fetal Movement',   value: fetalData.movement,         icon: '💪' },
+    { label: t('fetal.devStatus.brainGrowth'),     value: fetalData.brainDevelopment, icon: '🧠' },
+    { label: t('fetal.devStatus.hearing'),          value: fetalData.hearing,          icon: '👂' },
+    { label: t('fetal.devStatus.lungDevelopment'),  value: fetalData.lungs,            icon: '🫁' },
+    { label: t('fetal.devStatus.fetalMovement'),    value: fetalData.movement,         icon: '💪' },
   ];
 
-  const trimesterLabel = fetalData.trimester === 1 ? 'First Trimester'
-    : fetalData.trimester === 2 ? 'Second Trimester' : 'Third Trimester';
+  const trimesterLabel = fetalData.trimester === 1 ? t('fetal.trimesterLabels.first')
+    : fetalData.trimester === 2 ? t('fetal.trimesterLabels.second') : t('fetal.trimesterLabels.third');
 
   const riskBg = pregnancy.riskLevel === 'RED'
     ? 'from-red-600 via-rose-600 to-pink-600'
@@ -91,7 +91,7 @@ function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType
                     />
                   </div>
                   <div className="flex justify-between text-[9px] text-white/45 mt-1">
-                    <span>Wk 1</span><span>Wk 12</span><span>Wk 28</span><span>Wk 40</span>
+                    <span>{t('fetal.weekProgress.wk1')}</span><span>{t('fetal.weekProgress.wk12')}</span><span>{t('fetal.weekProgress.wk28')}</span><span>{t('fetal.weekProgress.wk40')}</span>
                   </div>
                 </div>
 
@@ -233,11 +233,11 @@ function CareTeamCard({ pregnancy }: { pregnancy: NonNullable<ReturnType<typeof 
                 <p className="text-sm text-gray-600 flex items-center gap-1">
                   <Phone className="h-3 w-3" /> {ashaWorker.phone || 'N/A'}
                 </p>
-                <Badge variant="outline" className="mt-1">ASHA Worker</Badge>
+                <Badge variant="outline" className="mt-1">{t('woman.ashaWorkerBadge')}</Badge>
               </div>
             </div>
           ) : (
-             <p className="text-sm text-gray-500">Care team info not available.</p>
+             <p className="text-sm text-gray-500">{t('woman.careTeamUnavailable')}</p>
           )}
         </CardContent>
       </Card>
@@ -379,7 +379,7 @@ function MiniCalendar({ pregnancyId }: { pregnancyId: string }) {
                     <p className="text-xs text-gray-500">{format(new Date(selected), 'dd MMM')} {t('woman.noCheckin')}</p>
                     {selected === format(today, 'yyyy-MM-dd') && (
                       <Link to="/dashboard/woman/checkin">
-                        <Button size="sm" className="text-xs h-7 rounded-xl">Add Entry</Button>
+                        <Button size="sm" className="text-xs h-7 rounded-xl">{t('woman.addEntryBtn')}</Button>
                       </Link>
                     )}
                   </div>
@@ -439,12 +439,12 @@ function UpcomingActions({ pregnancyId }: { pregnancyId: string }) {
     // Demo nutrition + vaccination if list is short
     ...(myAppts.length < 2 ? [{
       id: 'nutr-1', date: new Date(today.getTime() + 7 * 86400000),
-      label: 'Nutrition Review', sublabel: 'Weekly diet & supplement check',
+      label: t('woman.nutritionReviewLabel'), sublabel: t('woman.nutritionReviewSublabel'),
       icon: Apple, iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600', type: 'task',
     }] : []),
     ...(pendingMeds.length === 0 ? [{
       id: 'vacc-1', date: new Date(today.getTime() + 14 * 86400000),
-      label: 'Tetanus Toxoid (TT) Dose', sublabel: 'Check with ASHA worker',
+      label: t('woman.tetanusLabel'), sublabel: t('woman.tetanusSublabel'),
       icon: Syringe, iconBg: 'bg-rose-100', iconColor: 'text-rose-600', type: 'vaccine',
     }] : []),
   ].sort((a, b) => a.date.getTime() - b.date.getTime()).slice(0, 6);
@@ -478,7 +478,7 @@ function UpcomingActions({ pregnancyId }: { pregnancyId: string }) {
               {t('woman.upcomingActions')}
             </span>
             <Link to="/dashboard/woman/medical">
-              <Button variant="ghost" size="sm" className="text-xs h-7 text-primary-600 hover:text-primary-700">View all</Button>
+              <Button variant="ghost" size="sm" className="text-xs h-7 text-primary-600 hover:text-primary-700">{t('woman.viewAll')}</Button>
             </Link>
           </CardTitle>
         </CardHeader>

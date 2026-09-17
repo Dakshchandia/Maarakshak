@@ -91,7 +91,20 @@
     "monthlyCheckinCalendar": "నెలవారీ తనిఖీ క్యాలెండర్",
     "improving": "మెరుగవుతోంది ↓",
     "worsening": "పెరుగుతోంది ↑",
-    "stable": "స్థిరంగా →"
+    "stable": "స్థిరంగా →",
+    "ashaWorkerBadge": "ASHA వర్కర్",
+    "careTeamUnavailable": "కేర్ టీమ్ సమాచారం అందుబాటులో లేదు.",
+    "viewAll": "అన్నీ చూడండి",
+    "nutritionReviewLabel": "పోషణ సమీక్ష",
+    "nutritionReviewSublabel": "వారపు ఆహారం & సప్లిమెంట్ తనిఖీ",
+    "tetanusLabel": "టెటనస్ టాక్సాయిడ్ (TT) డోస్",
+    "tetanusSublabel": "ASHA వర్కర్‌తో తనిఖీ చేయండి",
+    "actionTypes": {
+      "appointment": "అపాయింట్‌మెంట్",
+      "medicine": "మందు",
+      "task": "పని",
+      "vaccine": "టీకా"
+    }
   },
   "journey": {
     "title": "గర్భకాల ప్రయాణం",
@@ -220,6 +233,121 @@
         "desc": "జనాభా పర్యవేక్షణ"
       }
     }
+  },
+  "fetal": {
+    "trimesterLabels": {
+      "first": "మొదటి త్రైమాసికం",
+      "second": "రెండవ త్రైమాసికం",
+      "third": "మూడవ త్రైమాసికం"
+    },
+    "devStatus": {
+      "brainGrowth": "మెదడు అభివృద్ధి",
+      "hearing": "వినికిడి",
+      "lungDevelopment": "ఊపిరితిత్తుల అభివృద్ధి",
+      "fetalMovement": "గర్భస్థ శిశు కదలిక"
+    },
+    "weekProgress": {
+      "wk1": "వా 1",
+      "wk12": "వా 12",
+      "wk28": "వా 28",
+      "wk40": "వా 40"
+    }
+  },
+  "reports": {
+    "title": "గర్భకాల ఆరోగ్య నివేదిక",
+    "womanTitle": "ఆరోగ్య నివేదికలు",
+    "patientProfile": "రోగి ప్రొఫైల్",
+    "currentRiskAssessment": "ప్రస్తుత రిస్క్ అసెస్మెంట్",
+    "symptomsFactors": "లక్షణాలు & రిస్క్ కారకాలు",
+    "reportedSymptoms": "నివేదించిన లక్షణాలు",
+    "riskFactors": "రిస్క్ కారకాలు",
+    "aiSummary": "AI సారాంశం",
+    "recommendations": "సిఫారసులు",
+    "followUpActions": "ఫాలో-అప్ చర్యలు",
+    "doctorFormat": "డాక్టర్ ఫార్మాట్ · {{date}}",
+    "clinicalReasoning": "క్లినికల్ రీజనింగ్:",
+    "suggestedAction": "సూచించిన చర్య:",
+    "viewReport": "నివేదిక చూడండి"
+  },
+  "highRisk": {
+    "title": "అధిక రిస్క్ గర్భకాల పర్యవేక్షణ కేంద్రం",
+    "riskScore": "రిస్క్ స్కోర్",
+    "currentWeek": "ప్రస్తుత వారం",
+    "noHistory": "ఇంకా చరిత్ర లేదు",
+    "noFactors": "సక్రియ కారకాలు లేవు",
+    "monitoringProtocol": "పర్యవేక్షణ ప్రోటోకాల్",
+    "protocol1": "రోజువారీ BP పర్యవేక్షణ సిఫారసు",
+    "protocol2": "రోజుకు రెండుసార్లు శిశు కదలిక లెక్కించండి",
+    "protocol3": "వారపు ASHA హోమ్ విజిట్‌లు",
+    "protocol4": "ద్వి-వారపు PHC తనిఖీలు",
+    "protocol5": "కొత్త లక్షణాలను వెంటనే నివేదించండి"
+  },
+  "nutrition": {
+    "title": "పోషణ ప్లానర్",
+    "subtitle": "వ్యక్తిగతీకరించిన భారతీయ గర్భకాల భోజన ప్రణాళిక · వారం {{week}}",
+    "generating": "Gemini AI మీ భోజన ప్రణాళిక రూపొందిస్తోంది…",
+    "breakfast": "అల్పాహారం",
+    "lunch": "భోజనం",
+    "snacks": "స్నాక్స్",
+    "dinner": "రాత్రి భోజనం",
+    "supplements": "రోజువారీ సప్లిమెంట్లు",
+    "tips": "పోషణ చిట్కాలు",
+    "disclaimer": "వ్యక్తిగత సలహా కోసం మీ డాక్టర్‌ని సంప్రదించండి"
+  },
+  "hospitals": {
+    "title": "సమీప ఆసుపత్రులు",
+    "useLocation": "నా స్థానం ఉపయోగించు",
+    "nearest": "సమీప",
+    "available24h": "24/7",
+    "fromYou": "మీ నుండి",
+    "callBtn": "కాల్",
+    "directionsBtn": "దిశలు",
+    "emergencyNumbers": "📞 అత్యవసర నంబర్లు",
+    "ambulance": "అంబులెన్స్"
+  },
+  "emergency": {
+    "tabs": {
+      "sos": "SOS & అలర్ట్‌లు",
+      "hospitals": "ఆసుపత్రి కనుగొనండి"
+    }
+  },
+  "predictiveRisk": {
+    "title": "అంచనా రిస్క్ ఇంజిన్",
+    "analyzing": "Gemini AI మీ రిస్క్ మార్గాన్ని విశ్లేషిస్తోంది…",
+    "next7Days": "తదుపరి 7 రోజులు",
+    "next30Days": "తదుపరి 30 రోజులు",
+    "noData": "మొదటి తనిఖీ పూర్తి చేయండి",
+    "improving": "మెరుగవుతోంది",
+    "stable": "స్థిరంగా",
+    "worsening": "క్షీణిస్తోంది"
+  },
+  "digitalTwin": {
+    "title": "AI గర్భకాల డిజిటల్ ట్విన్",
+    "healthScore": "ఆరోగ్య స్కోర్",
+    "building": "మీ డిజిటల్ ఆరోగ్య ట్విన్ నిర్మిస్తోంది…",
+    "noData": "మొదటి తనిఖీ పూర్తి చేయండి",
+    "improving": "మెరుగవుతోంది",
+    "stable": "స్థిరంగా",
+    "worsening": "క్షీణిస్తోంది"
+  },
+  "reportAnalyzer": {
+    "title": "వైద్య నివేదిక విశ్లేషకుడు",
+    "uploadOrEnter": "నివేదికను అప్‌లోడ్ చేయండి లేదా నమోదు చేయండి",
+    "dropFile": "ఫైల్ ఇక్కడ వదలండి లేదా క్లిక్ చేయండి",
+    "analyzeBtn": "నివేదిక విశ్లేషించండి",
+    "aiSummary": "AI సారాంశం",
+    "keyFindings": "ముఖ్య అంశాలు",
+    "noReports": "ఇంకా నివేదికలు విశ్లేషించబడలేదు.",
+    "reportTypes": {
+      "blood_test": "రక్త పరీక్ష",
+      "ultrasound": "అల్ట్రాసౌండ్",
+      "prescription": "ప్రిస్క్రిప్షన్",
+      "lab_report": "లాబ్ నివేదిక"
+    }
+  },
+  "alerts": {
+    "title": "అలర్ట్ చరిత్ర",
+    "recipients": "గ్రహీతలు"
   },
   "onboarding": {
     "welcome": "మీ ఆరోగ్య ప్రొఫైల్ సెటప్ చేద్దాం",

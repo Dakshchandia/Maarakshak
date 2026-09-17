@@ -91,7 +91,20 @@
     "monthlyCheckinCalendar": "मासिक तपासणी दिनदर्शिका",
     "improving": "सुधारत आहे ↓",
     "worsening": "वाढत आहे ↑",
-    "stable": "स्थिर →"
+    "stable": "स्थिर →",
+    "ashaWorkerBadge": "ASHA कार्यकर्ता",
+    "careTeamUnavailable": "काळजी पथकाची माहिती उपलब्ध नाही.",
+    "viewAll": "सर्व पहा",
+    "nutritionReviewLabel": "पोषण आढावा",
+    "nutritionReviewSublabel": "साप्ताहिक आहार आणि सप्लिमेंट तपासणी",
+    "tetanusLabel": "टेटनस टॉक्सॉइड (TT) डोस",
+    "tetanusSublabel": "ASHA कार्यकर्त्याशी तपासा",
+    "actionTypes": {
+      "appointment": "भेट",
+      "medicine": "औषध",
+      "task": "काम",
+      "vaccine": "लस"
+    }
   },
   "journey": {
     "title": "गर्भावस्था प्रवास",
@@ -220,6 +233,121 @@
         "desc": "लोकसंख्या देखरेख"
       }
     }
+  },
+  "fetal": {
+    "trimesterLabels": {
+      "first": "पहिली तिमाही",
+      "second": "दुसरी तिमाही",
+      "third": "तिसरी तिमाही"
+    },
+    "devStatus": {
+      "brainGrowth": "मेंदू विकास",
+      "hearing": "ऐकण्याची शक्ती",
+      "lungDevelopment": "फुफ्फुस विकास",
+      "fetalMovement": "भ्रूणाची हालचाल"
+    },
+    "weekProgress": {
+      "wk1": "आ॰ 1",
+      "wk12": "आ॰ 12",
+      "wk28": "आ॰ 28",
+      "wk40": "आ॰ 40"
+    }
+  },
+  "reports": {
+    "title": "गर्भावस्था आरोग्य अहवाल",
+    "womanTitle": "आरोग्य अहवाल",
+    "patientProfile": "रुग्ण प्रोफाइल",
+    "currentRiskAssessment": "सद्य धोका मूल्यांकन",
+    "symptomsFactors": "लक्षणे आणि धोका घटक",
+    "reportedSymptoms": "नोंदवलेली लक्षणे",
+    "riskFactors": "धोका घटक",
+    "aiSummary": "AI सारांश",
+    "recommendations": "शिफारसी",
+    "followUpActions": "पाठपुरावा कृती",
+    "doctorFormat": "डॉक्टर फॉरमॅट · {{date}}",
+    "clinicalReasoning": "नैदानिक तर्क:",
+    "suggestedAction": "सुचवलेली कृती:",
+    "viewReport": "अहवाल पहा"
+  },
+  "highRisk": {
+    "title": "उच्च धोका गर्भावस्था देखरेख केंद्र",
+    "riskScore": "धोका गुण",
+    "currentWeek": "सद्य आठवडा",
+    "noHistory": "अद्याप इतिहास नाही",
+    "noFactors": "कोणतेही सक्रिय घटक नाहीत",
+    "monitoringProtocol": "देखरेख प्रोटोकॉल",
+    "protocol1": "दैनिक BP देखरेख शिफारस",
+    "protocol2": "दिवसातून दोनदा भ्रूण हालचाल मोजा",
+    "protocol3": "साप्ताहिक ASHA घरभेटी",
+    "protocol4": "द्वि-साप्ताहिक PHC तपासणी",
+    "protocol5": "कोणत्याही नवीन लक्षणांची तत्काळ नोंद करा"
+  },
+  "nutrition": {
+    "title": "पोषण नियोजक",
+    "subtitle": "वैयक्तिक भारतीय गर्भावस्था जेवण योजना · आठवडा {{week}}",
+    "generating": "Gemini AI तुमची जेवण योजना तयार करत आहे…",
+    "breakfast": "नाश्ता",
+    "lunch": "दुपारचे जेवण",
+    "snacks": "स्नॅक्स",
+    "dinner": "रात्रीचे जेवण",
+    "supplements": "दैनिक पूरक",
+    "tips": "पोषण सूचना",
+    "disclaimer": "वैयक्तिक सल्ल्यासाठी डॉक्टरांशी संपर्क करा"
+  },
+  "hospitals": {
+    "title": "जवळील रुग्णालये",
+    "useLocation": "माझे स्थान वापरा",
+    "nearest": "जवळील",
+    "available24h": "24/7",
+    "fromYou": "तुमच्यापासून",
+    "callBtn": "कॉल",
+    "directionsBtn": "दिशा निर्देश",
+    "emergencyNumbers": "📞 आपत्कालीन क्रमांक",
+    "ambulance": "रुग्णवाहिका"
+  },
+  "emergency": {
+    "tabs": {
+      "sos": "SOS आणि इशारे",
+      "hospitals": "रुग्णालय शोधा"
+    }
+  },
+  "predictiveRisk": {
+    "title": "अंदाजित धोका इंजिन",
+    "analyzing": "Gemini AI तुमचा धोका मार्ग विश्लेषण करत आहे…",
+    "next7Days": "पुढील 7 दिवस",
+    "next30Days": "पुढील 30 दिवस",
+    "noData": "पहिली तपासणी पूर्ण करा",
+    "improving": "सुधारत आहे",
+    "stable": "स्थिर",
+    "worsening": "बिघडत आहे"
+  },
+  "digitalTwin": {
+    "title": "AI गर्भावस्था डिजिटल ट्विन",
+    "healthScore": "आरोग्य गुण",
+    "building": "तुमचा डिजिटल आरोग्य ट्विन तयार होत आहे…",
+    "noData": "डिजिटल ट्विन सक्रिय करण्यासाठी पहिली तपासणी पूर्ण करा",
+    "improving": "सुधारत आहे",
+    "stable": "स्थिर",
+    "worsening": "बिघडत आहे"
+  },
+  "reportAnalyzer": {
+    "title": "वैद्यकीय अहवाल विश्लेषक",
+    "uploadOrEnter": "अहवाल अपलोड करा किंवा प्रविष्ट करा",
+    "dropFile": "फाईल येथे टाका किंवा क्लिक करा",
+    "analyzeBtn": "अहवाल विश्लेषण करा",
+    "aiSummary": "AI सारांश",
+    "keyFindings": "मुख्य निष्कर्ष",
+    "noReports": "अद्याप कोणताही अहवाल विश्लेषित नाही.",
+    "reportTypes": {
+      "blood_test": "रक्त तपासणी",
+      "ultrasound": "अल्ट्रासाउंड",
+      "prescription": "प्रिस्क्रिप्शन",
+      "lab_report": "लॅब अहवाल"
+    }
+  },
+  "alerts": {
+    "title": "इशारा इतिहास",
+    "recipients": "प्राप्तकर्ते"
   },
   "onboarding": {
     "welcome": "तुमची आरोग्य प्रोफाइल सेट करूया",

@@ -173,7 +173,14 @@
       "medicine": "दवा",
       "task": "कार्य",
       "vaccine": "टीका"
-    }
+    },
+    "ashaWorkerBadge": "ASHA कार्यकर्ता",
+    "careTeamUnavailable": "देखभाल टीम की जानकारी उपलब्ध नहीं है।",
+    "viewAll": "सभी देखें",
+    "nutritionReviewLabel": "पोषण समीक्षा",
+    "nutritionReviewSublabel": "साप्ताहिक आहार और सप्लिमेंट जांच",
+    "tetanusLabel": "टेटनस टॉक्सॉइड (TT) खुराक",
+    "tetanusSublabel": "ASHA कार्यकर्ता से जाँचें"
   },
   "journey": {
     "title": "गर्भावस्था यात्रा",
@@ -631,6 +638,25 @@
     "score": "स्कोर",
     "trimester": "तिमाही",
     "lastReport": "अंतिम रिपोर्ट:"
+  },
+  "fetal": {
+    "trimesterLabels": {
+      "first": "पहली तिमाही",
+      "second": "दूसरी तिमाही",
+      "third": "तीसरी तिमाही"
+    },
+    "devStatus": {
+      "brainGrowth": "मस्तिष्क विकास",
+      "hearing": "श्रवण शक्ति",
+      "lungDevelopment": "फेफड़ों का विकास",
+      "fetalMovement": "भ्रूण की हलचल"
+    },
+    "weekProgress": {
+      "wk1": "स॰ 1",
+      "wk12": "स॰ 12",
+      "wk28": "स॰ 28",
+      "wk40": "स॰ 40"
+    }
   },
   "onboarding": {
     "welcome": "आपकी स्वास्थ्य प्रोफ़ाइल सेटअप करते हैं",
