@@ -67,11 +67,14 @@ app.get('/api/hospitals/nearby', async (req, res) => {
       'https://z.overpass-api.de/api/interpreter',
     ];
 
-    let overpassData: { elements: Array<{
+    type OverpassElement = {
       id: number; type: string; lat?: number; lon?: number;
       center?: { lat: number; lon: number };
       tags?: Record<string, string>;
-    }> } | null = null;
+    };
+    type OverpassResponse = { elements: OverpassElement[] };
+
+    let overpassData: OverpassResponse | null = null;
 
     for (const endpoint of OVERPASS_ENDPOINTS) {
       try {
@@ -85,7 +88,7 @@ app.get('/api/hospitals/nearby', async (req, res) => {
         });
         clearTimeout(timer);
         if (r.ok) {
-          overpassData = await r.json() as typeof overpassData;
+          overpassData = await r.json() as OverpassResponse;
           break;
         }
       } catch (e) {
@@ -137,7 +140,7 @@ app.get('/api/hospitals/nearby', async (req, res) => {
       lat: number; lng: number; available24h: boolean; services: string[];
     }> = [];
 
-    for (const el of overpassData.elements) {
+    for (const el of (overpassData?.elements ?? [])) {
       const tags = el.tags || {};
       const name = (tags.name || tags['name:en'] || '').trim();
       if (!name) continue;
