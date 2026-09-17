@@ -182,8 +182,8 @@ export function DashboardLayout({ children, titleKey, navItems }: DashboardLayou
 
   const renderNav = (onNavigate?: () => void) =>
     grouped
-      ? <GroupedNav groups={navItems as NavGroup[]} location={location} onNavigate={onNavigate} />
-      : <FlatNav items={navItems as NavItem[]} location={location} onNavigate={onNavigate} />;
+      ? <GroupedNav key={user?.language} groups={navItems as NavGroup[]} location={location} onNavigate={onNavigate} />
+      : <FlatNav key={user?.language} items={navItems as NavItem[]} location={location} onNavigate={onNavigate} />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-pink-50">

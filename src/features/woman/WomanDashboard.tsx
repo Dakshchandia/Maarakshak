@@ -18,8 +18,9 @@ import EmergencyPage from './pages/EmergencyPage';
 import NotificationsPage from '@/features/shared/NotificationsPage';
 
 export default function WomanDashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
+  // Re-compute nav whenever language changes
   const nav: NavGroup[] = [
     {
       label: t('nav.home'),
