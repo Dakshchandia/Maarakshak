@@ -384,36 +384,19 @@ export function VoiceRecorder({
     const text = transcription.trim();
     if (!text) return;
     setRecordingState('processing');
-    console.log('[VoiceRecorder] Processing transcript:', text);
 
     try {
-      // Step 1: Extract symptoms
+      // Only extract symptoms — risk analysis happens in Daily Check-in flow
       let symptoms: string[];
       try {
-        console.log('[VoiceRecorder] Calling /api/ai/symptoms');
         const res = await api.extractSymptoms(text, language);
-        symptoms = res.symptoms;
-        console.log('[VoiceRecorder] AI symptoms:', symptoms);
-      } catch (e) {
-        console.warn('[VoiceRecorder] Symptom API failed, using local:', e);
+        symptoms = res.symptoms?.length ? res.symptoms : extractSymptomsLocal(text);
+      } catch {
         symptoms = extractSymptomsLocal(text);
       }
       setExtractedSymptoms(symptoms);
 
-      // Step 2: Risk assessment
-      let report: Partial<RiskReport>;
-      try {
-        console.log('[VoiceRecorder] Calling /api/risk/assess');
-        const res = await api.assessRisk({ symptoms, gestationalWeek, transcription: text, pregnancyId });
-        report = res.report;
-        console.log('[VoiceRecorder] Risk report:', report.riskLevel, report.riskScore);
-      } catch (e) {
-        console.warn('[VoiceRecorder] Risk API failed, using local:', e);
-        report = assessRiskLocal(symptoms, gestationalWeek);
-      }
-      setRiskResult(report);
-
-      // Step 3: Fire callback
+      // Fire callback with transcript — Daily Check-in will do the full AI analysis
       const symptom: Symptom = {
         id: `s-${Date.now()}`,
         pregnancyId, womanId,
@@ -423,20 +406,21 @@ export function VoiceRecorder({
         source: 'voice',
         createdAt: new Date().toISOString(),
       };
-      const fullReport: RiskReport = {
+      // Pass minimal report — real risk analysis happens in Daily Check-in
+      const minimalReport: RiskReport = {
         id: `r-${Date.now()}`,
         pregnancyId, womanId,
-        riskLevel: report.riskLevel || 'GREEN',
-        riskScore: report.riskScore || 0,
-        riskFactors: report.riskFactors || [],
-        clinicalReasoning: report.clinicalReasoning || '',
-        suggestedAction: report.suggestedAction || '',
-        followUpRecommendation: report.followUpRecommendation || '',
+        riskLevel: 'GREEN',
+        riskScore: 0,
+        riskFactors: symptoms,
+        clinicalReasoning: '',
+        suggestedAction: '',
+        followUpRecommendation: '',
         symptoms,
         gestationalWeek,
         createdAt: new Date().toISOString(),
       };
-      onSymptomReported(symptom, fullReport);
+      onSymptomReported(symptom, minimalReport);
     } finally {
       setRecordingState('idle');
     }
@@ -614,11 +598,11 @@ export function VoiceRecorder({
         >
           {recordingState === 'processing'
             ? <><Loader2 className="h-5 w-5 animate-spin" /> Analyzing…</>
-            : <><Sparkles className="h-5 w-5" /> Analyze Symptoms with AI</>
+            : <><Sparkles className="h-5 w-5" /> Confirm Symptoms</>
           }
         </Button>
 
-        {/* ── Results ── */}
+        {/* ── Extracted symptoms only (no risk result — analysis happens in Daily Check-in) ── */}
         <AnimatePresence>
           {extractedSymptoms.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
@@ -626,26 +610,7 @@ export function VoiceRecorder({
               <div className="flex flex-wrap gap-2">
                 {extractedSymptoms.map(s => <Badge key={s} variant="outline">{s}</Badge>)}
               </div>
-            </motion.div>
-          )}
-
-          {riskResult && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={cn(
-                'rounded-2xl border p-5 space-y-2',
-                riskResult.riskLevel === 'RED' ? 'risk-red' :
-                riskResult.riskLevel === 'YELLOW' ? 'risk-yellow' : 'risk-green'
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xl font-bold">Risk: {riskResult.riskLevel}</span>
-                <span className="text-3xl font-bold">{riskResult.riskScore}/100</span>
-              </div>
-              <p className="text-sm leading-relaxed">{riskResult.clinicalReasoning}</p>
-              <p className="text-sm font-semibold">{riskResult.suggestedAction}</p>
-              <p className="text-xs opacity-80">{riskResult.followUpRecommendation}</p>
+              <p className="text-xs text-emerald-600 font-medium">✓ Symptoms captured — click "Continue to Vitals" to get AI analysis</p>
             </motion.div>
           )}
         </AnimatePresence>

@@ -5,7 +5,7 @@ import {
   Mic, Type, CheckSquare, Sparkles, Loader2, AlertTriangle,
   Heart, Droplets, Moon, Scale, Pill, SmilePlus,
   ChevronDown, ChevronUp, CheckCircle, ArrowRight,
-  Activity, FileText, Zap,
+  Activity, FileText, Zap, MessageCircle,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,6 +17,7 @@ import { VoiceRecorder } from '@/components/voice/VoiceRecorder';
 import { api } from '@/lib/api';
 import type { DailyEntry, RiskLevel, Symptom, RiskReport } from '@/types';
 import { cn } from '@/lib/utils';
+import AssistantPage from './AssistantPage';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -44,7 +45,7 @@ const MOODS = [
 ] as const;
 
 type InputMode = 'chips' | 'voice' | 'text';
-type Step = 'symptoms' | 'vitals' | 'analyzing' | 'result';
+type Step = 'symptoms' | 'vitals' | 'analyzing' | 'result' | 'assistant';
 
 // ─── Risk colour helpers ──────────────────────────────────────────────────────
 
@@ -112,56 +113,25 @@ async function analyzeWithAI(params: {
   week: number;
   language: string;
 }): Promise<{ score: number; level: RiskLevel; reasoning: string; action: string; precautions: string[]; warnings: string[]; nextSteps: string }> {
-  try {
-    const prompt = `You are a maternal health AI. Analyze this daily pregnancy health check-in and return a JSON risk assessment.
-
-Patient data:
-- Gestational week: ${params.week}
-- Symptoms reported: ${params.symptoms.join(', ') || 'None'}
-- Description: "${params.transcription}"
-- Weight: ${params.weight ? params.weight + ' kg' : 'not recorded'}
-- Blood pressure: ${params.bp || 'not recorded'}
-- Water intake: ${params.water ? params.water + ' glasses' : 'not recorded'}
-- Sleep: ${params.sleep ? params.sleep + ' hours' : 'not recorded'}
-- Medicines taken today: ${params.medicineTaken !== undefined ? (params.medicineTaken ? 'Yes' : 'No') : 'not recorded'}
-- Mood: ${params.mood || 'not recorded'}
-- Notes: "${params.notes || ''}"
-
-Return ONLY valid JSON (no markdown) in this exact format:
-{
-  "score": <0-100 integer>,
-  "level": <"GREEN" | "YELLOW" | "RED">,
-  "reasoning": "<2 sentence clinical explanation>",
-  "action": "<single recommended action>",
-  "precautions": ["<precaution 1>", "<precaution 2>", "<precaution 3>"],
-  "warnings": ["<warning sign to watch for>"],
-  "nextSteps": "<what to do in next 24 hours>"
-}
-
-Scoring: 0-34=GREEN, 35-64=YELLOW, 65-100=RED. Be conservative — maternal safety is priority.`;
-
-    const result = await api.extractSymptoms(prompt, params.language);
-    // extractSymptoms is a generic API call — we use it for raw Gemini JSON
-    // Actually use assessRisk endpoint for structured output
-    const riskRes = await api.assessRisk({
-      symptoms: params.symptoms,
-      gestationalWeek: params.week,
-      bloodPressure: params.bp,
-      transcription: params.transcription,
-    });
-    const r = riskRes.report;
-    return {
-      score: r.riskScore,
-      level: r.riskLevel as RiskLevel,
-      reasoning: r.clinicalReasoning,
-      action: r.suggestedAction,
-      precautions: r.riskFactors.length ? r.riskFactors : ['Continue medications', 'Stay hydrated', 'Rest adequately'],
-      warnings: r.symptoms,
-      nextSteps: r.followUpRecommendation,
-    };
-  } catch {
-    return localRiskAssess(params.symptoms, params.week);
-  }
+  // Call the real backend AI endpoint — Gemini processes the symptoms server-side
+  // Never falls back silently to local mock — throw so caller can show error
+  const riskRes = await api.assessRisk({
+    symptoms: params.symptoms,
+    gestationalWeek: params.week,
+    bloodPressure: params.bp,
+    transcription: params.transcription,
+    previousComplications: [],
+  });
+  const r = riskRes.report;
+  return {
+    score: r.riskScore,
+    level: r.riskLevel as RiskLevel,
+    reasoning: r.clinicalReasoning,
+    action: r.suggestedAction,
+    precautions: r.riskFactors?.length ? r.riskFactors : ['Continue prescribed medications', 'Stay hydrated', 'Rest adequately'],
+    warnings: r.symptoms?.length ? r.symptoms : [],
+    nextSteps: r.followUpRecommendation || '',
+  };
 }
 
 // ─── Step 1: Symptom Input ────────────────────────────────────────────────────
@@ -403,7 +373,7 @@ function VitalsStep({
 
 // ─── Step 3: Analysis Result ──────────────────────────────────────────────────
 
-function ResultStep({ entry, onNewEntry }: { entry: DailyEntry; onNewEntry: () => void }) {
+function ResultStep({ entry, onNewEntry, onContinueToAssistant }: { entry: DailyEntry; onNewEntry: () => void; onContinueToAssistant: () => void }) {
   const { t } = useTranslation();
   const [showDetails, setShowDetails] = useState(false);
   const level = entry.riskLevel || 'GREEN';
@@ -495,6 +465,16 @@ function ResultStep({ entry, onNewEntry }: { entry: DailyEntry; onNewEntry: () =
       )}
 
       <Button onClick={onNewEntry} variant="outline" className="w-full">{t('checkin.newCheckin')}</Button>
+
+      {/* Continue to AI Assistant CTA */}
+      <Button
+        onClick={onContinueToAssistant}
+        className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white"
+        size="lg"
+      >
+        <MessageCircle className="h-5 w-5 mr-2" />
+        Continue to AI Assistant →
+      </Button>
     </motion.div>
   );
 }
@@ -533,6 +513,9 @@ export default function DailyCheckInPage() {
   // Result
   const [savedEntry, setSavedEntry] = useState<DailyEntry | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null);
+  // Symptom context to pass into assistant
+  const [assistantContext, setAssistantContext] = useState<string>('');
 
   const toggleChip = useCallback((id: string) => {
     setSelectedChips(prev => {
@@ -573,15 +556,33 @@ export default function DailyCheckInPage() {
 
   const handleAnalyze = async () => {
     if (!pregnancy) return;
+
+    const allSymptoms = getAllSymptoms();
+    const transcription = textInput.trim() || voiceTranscript.trim() ||
+      selectedChips.map(id => {
+        const labelMap: Record<string, string> = {
+          headache: 'Headache', fever: 'Fever', bleeding: 'Bleeding',
+          dizziness: 'Dizziness', swelling: 'Swelling', reduced_fm: 'Reduced Fetal Movement',
+          vomiting: 'Vomiting/Nausea', high_bp: 'High Blood Pressure',
+          ab_pain: 'Abdominal Pain', fatigue: 'Fatigue', vision: 'Blurred Vision',
+          no_symptoms: 'No symptoms today',
+        };
+        return labelMap[id] || id;
+      }).join(', ');
+
+    // Empty input validation
+    if (!transcription.trim() && allSymptoms.length === 0) {
+      setAnalyzeError('Please describe your symptoms before analyzing. You can use the symptom chips, voice input, or type a description.');
+      return;
+    }
+
+    setAnalyzeError(null);
     setIsAnalyzing(true);
     setStep('analyzing');
 
-    const allSymptoms = getAllSymptoms();
-    const transcription = textInput || voiceTranscript || selectedChips.map(id => QUICK_SYMPTOMS.find(s => s.id === id)?.label || id).join(', ');
-
     try {
       const result = await analyzeWithAI({
-        symptoms: allSymptoms,
+        symptoms: allSymptoms.length ? allSymptoms : [transcription],
         transcription,
         weight: weight ? parseFloat(weight) : undefined,
         bp: bp || undefined,
@@ -676,9 +677,20 @@ export default function DailyCheckInPage() {
 
       setSavedEntry(entry);
       setStep('result');
-    } catch {
+      // Build context string for assistant
+      setAssistantContext(
+        allSymptoms.length
+          ? `I just completed my daily check-in. My symptoms are: ${allSymptoms.join(', ')}. My risk level is ${result.level} (${result.score}/100). ${result.reasoning}`
+          : `I just completed my daily check-in. My risk level is ${result.level} (${result.score}/100). ${result.reasoning}`
+      );
+    } catch (err) {
       setIsAnalyzing(false);
       setStep('vitals');
+      setAnalyzeError(
+        err instanceof Error && err.message
+          ? `Analysis failed: ${err.message}. Please try again.`
+          : 'AI analysis failed. Please check your connection and try again.'
+      );
     }
     setIsAnalyzing(false);
   };
@@ -697,6 +709,7 @@ export default function DailyCheckInPage() {
     setNotes('');
     setSavedEntry(null);
     setMode('chips');
+    setAssistantContext('');
   };
 
   const STEPS = ['symptoms', 'vitals', 'analyzing', 'result'];
@@ -758,6 +771,12 @@ export default function DailyCheckInPage() {
           <AnimatePresence mode="wait">
             {step === 'symptoms' && (
               <motion.div key="symptoms" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                {analyzeError && (
+                  <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                    <p className="text-sm text-amber-700">{analyzeError}</p>
+                  </div>
+                )}
                 <SymptomStep
                   mode={mode} setMode={setMode}
                   selectedChips={selectedChips} toggleChip={toggleChip}
@@ -773,6 +792,21 @@ export default function DailyCheckInPage() {
 
             {step === 'vitals' && (
               <motion.div key="vitals" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                {analyzeError && (
+                  <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 flex items-start gap-3">
+                    <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-red-700">Analysis Failed</p>
+                      <p className="text-sm text-red-600 mt-0.5">{analyzeError}</p>
+                      <button
+                        onClick={() => setAnalyzeError(null)}
+                        className="mt-2 text-xs font-semibold text-red-500 underline"
+                      >
+                        Dismiss & Retry
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <VitalsStep
                   weight={weight} setWeight={setWeight}
                   bp={bp} setBp={setBp}
@@ -818,12 +852,25 @@ export default function DailyCheckInPage() {
 
             {step === 'result' && savedEntry && (
               <motion.div key="result" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <ResultStep entry={savedEntry} onNewEntry={handleNewEntry} />
+                <ResultStep entry={savedEntry} onNewEntry={handleNewEntry} onContinueToAssistant={() => setStep('assistant')} />
               </motion.div>
             )}
           </AnimatePresence>
         </CardContent>
       </Card>
+
+      {/* ── Assistant step — shown after result ── */}
+      {step === 'assistant' && (
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+          <div className="flex items-center gap-3 mb-3">
+            <Button variant="outline" size="sm" onClick={() => setStep('result')}>
+              ← Back to Result
+            </Button>
+            <p className="text-sm text-gray-500">AI Assistant — ask follow-up questions about your symptoms</p>
+          </div>
+          <AssistantPage initialMessage={assistantContext} />
+        </motion.div>
+      )}
     </div>
   );
 }

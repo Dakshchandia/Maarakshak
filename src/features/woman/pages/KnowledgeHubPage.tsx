@@ -7,7 +7,6 @@ import { useData } from '@/contexts/DataContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import knowledgeIllustration from '@/assets/illustrations/knowledge-hub.svg';
 
 interface Article {
   week: number; title: string; emoji: string;
@@ -101,19 +100,6 @@ export default function KnowledgeHubPage() {
 
   return (
     <div className="space-y-6 pb-10">
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500 p-6 text-white">
-        <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/10" />
-        {/* Illustration */}
-        <img src={knowledgeIllustration} alt="" aria-hidden="true"
-          className="absolute right-0 bottom-0 h-28 w-auto opacity-25 pointer-events-none select-none" />
-        <div className="relative z-10">
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-1">{t('knowledge.education')}</p>
-          <h1 className="text-2xl font-bold">{t('knowledge.title')}</h1>
-          <p className="text-white/80 text-sm mt-1">{t('knowledge.subtitle', { week: currentWeek })}</p>
-        </div>
-      </motion.div>
-
       <div className="grid grid-cols-2 gap-2 rounded-2xl bg-gray-100 p-1">
         {[['timeline', BookOpen, t('knowledge.weekGuide')], ['warnings', AlertTriangle, t('knowledge.warningSigns')]].map(([id, Icon, label]) => (
           <button key={id as string} onClick={() => setTab(id as 'timeline' | 'warnings')}

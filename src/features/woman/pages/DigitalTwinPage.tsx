@@ -70,27 +70,6 @@ export default function DigitalTwinPage() {
 
   return (
     <div className="space-y-6 pb-10">
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-500 via-pink-500 to-purple-500 p-6 text-white">
-        <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-white/10" />
-        <div className="relative">
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-1">{t('digitalTwin.aiIntelligence')}</p>
-          <h1 className="text-2xl font-bold">{t('digitalTwin.title')}</h1>
-          <p className="text-white/80 text-sm mt-1">{t('digitalTwin.subtitle')}</p>
-          <div className="mt-4 flex items-center gap-3">
-            {twin && (
-              <div className="rounded-2xl bg-white/20 px-4 py-2 text-center backdrop-blur-sm">
-                <p className="text-2xl font-bold">{twin.healthScore}</p>
-                <p className="text-xs text-white/70">{t('digitalTwin.healthScore')}</p>
-              </div>
-            )}
-            <Button size="sm" variant="outline" onClick={loadTwin} disabled={loading}
-              className="ml-auto border-white/30 text-white bg-transparent hover:bg-white/20">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />} {t('digitalTwin.refresh')}
-            </Button>
-          </div>
-        </div>
-      </motion.div>
 
       {loading ? (
         <Card><CardContent className="py-16 flex flex-col items-center gap-4">

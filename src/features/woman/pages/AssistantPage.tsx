@@ -225,7 +225,7 @@ function getIntelligentFallback(message: string, lang: string): string {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function AssistantPage() {
+export default function AssistantPage({ initialMessage }: { initialMessage?: string } = {}) {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { pregnancies } = useData();
@@ -255,6 +255,14 @@ export default function AssistantPage() {
   const [showSuggested, setShowSuggested] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // If launched from Daily Check-in with context, auto-send it once
+  useEffect(() => {
+    if (initialMessage) {
+      setShowSuggested(false);
+      sendMessage(initialMessage);
+    }
+  }, []);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });

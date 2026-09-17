@@ -11,6 +11,41 @@ import {
 const STORAGE_KEY = 'maaraksha_report_data';
 const STORAGE_VERSION = 'v2'; // bump to clear old demo data cache
 
+// ── Load user pregnancy from onboarding profile ───────────────────────────────
+function loadUserPregnancy(): Pregnancy | null {
+  try {
+    const saved = localStorage.getItem('maaraksha_pregnancy_profile');
+    const userRaw = localStorage.getItem('maaraksha_user');
+    if (!saved || !userRaw) return null;
+    const profile = JSON.parse(saved);
+    const user = JSON.parse(userRaw);
+    if (!profile.pregnancyId || !profile.name) return null;
+
+    const week = profile.gestationalWeek || (profile.gestationalMonth || 1) * 4;
+    const trimester: 1 | 2 | 3 = week <= 13 ? 1 : week <= 27 ? 2 : 3;
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + (40 - week) * 7);
+
+    const pregnancy: Pregnancy = {
+      id: profile.pregnancyId,
+      womanId: user.id || profile.userId,
+      womanName: profile.name,
+      villageId: user.villageId || 'v1',
+      villageName: user.villageName || '',
+      districtId: user.districtId || 'd1',
+      gestationalWeek: week,
+      dueDate: dueDate.toISOString().split('T')[0],
+      trimester,
+      riskLevel: 'GREEN',
+      riskScore: 10,
+      isHighRisk: false,
+      lastReportAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+    };
+    return pregnancy;
+  } catch { return null; }
+}
+
 function loadReportData(): { medicines: MedicineReminder[]; appointments: Appointment[] } {
   try {
     // Version check — if old version, clear and start fresh (removes old demo medicine cache)
@@ -78,12 +113,50 @@ export function DataProvider({ children }: { children: ReactNode }) {
   // Load report-extracted items from localStorage on startup
   const savedData = loadReportData();
 
-  const [pregnancies, setPregnancies] = useState(DEMO_PREGNANCIES);
+  // Check if a real user pregnancy exists from onboarding
+  const userPregnancy = loadUserPregnancy();
+
+  // If user has completed onboarding, use their pregnancy; otherwise show demo pregnancies
+  const initialPregnancies = userPregnancy
+    ? [userPregnancy, ...DEMO_PREGNANCIES.filter(p => p.id !== userPregnancy.id)]
+    : DEMO_PREGNANCIES;
+
+  const [pregnancies, setPregnancies] = useState(initialPregnancies);
   const [symptoms, setSymptoms] = useState(DEMO_SYMPTOMS);
   const [riskReports, setRiskReports] = useState(DEMO_RISK_REPORTS);
   const [alerts, setAlerts] = useState(DEMO_ALERTS);
   const [notifications, setNotifications] = useState(DEMO_NOTIFICATIONS);
-  // Appointments: demo appointments kept for ASHA/family dashboards, but women only see report-extracted
+
+  // Listen for onboarding completion — inject real user pregnancy
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const profile = (e as CustomEvent).detail;
+      if (!profile?.pregnancyId || !profile?.name) return;
+      const week = profile.gestationalWeek || (profile.gestationalMonth || 1) * 4;
+      const trimester: 1 | 2 | 3 = week <= 13 ? 1 : week <= 27 ? 2 : 3;
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + (40 - week) * 7);
+      const newPreg: Pregnancy = {
+        id: profile.pregnancyId,
+        womanId: profile.userId,
+        womanName: profile.name,
+        villageId: 'v1',
+        villageName: '',
+        districtId: 'd1',
+        gestationalWeek: week,
+        dueDate: dueDate.toISOString().split('T')[0],
+        trimester,
+        riskLevel: 'GREEN',
+        riskScore: 10,
+        isHighRisk: false,
+        lastReportAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      };
+      setPregnancies(prev => [newPreg, ...prev.filter(p => p.id !== newPreg.id)]);
+    };
+    window.addEventListener('maaraksha:onboarding-complete', handler);
+    return () => window.removeEventListener('maaraksha:onboarding-complete', handler);
+  }, []);  // Appointments: demo appointments kept for ASHA/family dashboards, but women only see report-extracted
   const [appointments, setAppointments] = useState<Appointment[]>([
     ...DEMO_APPOINTMENTS,
     ...savedData.appointments,

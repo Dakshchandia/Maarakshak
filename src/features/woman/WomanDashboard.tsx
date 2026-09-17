@@ -2,20 +2,18 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import {
   LayoutDashboard, ClipboardCheck, Heart, Stethoscope,
-  MessageCircle, AlertTriangle, Bell, TrendingUp,
-  BookOpen, Utensils, FileText, Pill, Calendar,
-  MapPin, Upload, Activity,
+  AlertTriangle, Bell,
+  Utensils, FileText, Pill, Calendar,
+  MapPin, Upload,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { NavGroup } from '@/components/layout/DashboardLayout';
 import WomanHome from './pages/WomanHome';
 import DailyCheckInPage from './pages/DailyCheckInPage';
-import PredictiveRiskPage from './pages/PredictiveRiskPage';
-import DigitalTwinPage from './pages/DigitalTwinPage';
-import PregnancyHubPage from './pages/PregnancyHubPage';
+import JourneyPage from './pages/JourneyPage';
+import NutritionPlannerPage from './pages/NutritionPlannerPage';
 import MedicalCenterPage from './pages/MedicalCenterPage';
-import AssistantPage from './pages/AssistantPage';
 import EmergencyPage from './pages/EmergencyPage';
 import NotificationsPage from '@/features/shared/NotificationsPage';
 
@@ -30,21 +28,17 @@ export default function WomanDashboard() {
       direct: true,
     },
     {
-      label: t('nav.dailyHealth'),
+      label: t('nav.dailyCheckin'),
       icon: <ClipboardCheck className="h-4 w-4" />,
-      children: [
-        { path: '/dashboard/woman/checkin',      label: t('nav.dailyCheckin'),    icon: <ClipboardCheck className="h-3.5 w-3.5" /> },
-        { path: '/dashboard/woman/predict',       label: t('nav.aiRiskForecast'), icon: <TrendingUp className="h-3.5 w-3.5" /> },
-        { path: '/dashboard/woman/digital-twin',  label: t('nav.healthTwin'),     icon: <Activity className="h-3.5 w-3.5" /> },
-      ],
+      path: '/dashboard/woman/checkin',
+      direct: true,
     },
     {
       label: t('nav.pregnancyJourney'),
       icon: <Heart className="h-4 w-4" />,
       children: [
-        { path: '/dashboard/woman/journey',    label: t('nav.timelineCalendar'), icon: <Heart className="h-3.5 w-3.5" /> },
-        { path: '/dashboard/woman/knowledge',  label: t('nav.knowledgeHub'),     icon: <BookOpen className="h-3.5 w-3.5" /> },
-        { path: '/dashboard/woman/nutrition',  label: t('nav.nutritionPlanner'), icon: <Utensils className="h-3.5 w-3.5" /> },
+        { path: '/dashboard/woman/journey',   label: t('nav.timelineCalendar'), icon: <Heart className="h-3.5 w-3.5" /> },
+        { path: '/dashboard/woman/nutrition', label: t('nav.nutritionPlanner'), icon: <Utensils className="h-3.5 w-3.5" /> },
       ],
     },
     {
@@ -56,12 +50,6 @@ export default function WomanDashboard() {
         { path: '/dashboard/woman/medical?tab=medicines',    label: t('nav.medicines'),      icon: <Pill className="h-3.5 w-3.5" /> },
         { path: '/dashboard/woman/medical?tab=appointments', label: t('nav.appointments'),   icon: <Calendar className="h-3.5 w-3.5" /> },
       ],
-    },
-    {
-      label: t('nav.assistant'),
-      icon: <MessageCircle className="h-4 w-4" />,
-      path: '/dashboard/woman/assistant',
-      direct: true,
     },
     {
       label: t('nav.emergencyHospitals'),
@@ -85,13 +73,10 @@ export default function WomanDashboard() {
         <Route index                  element={<WomanHome />} />
         <Route path="checkin"         element={<DailyCheckInPage />} />
         <Route path="voice"           element={<DailyCheckInPage />} />
-        <Route path="predict"         element={<PredictiveRiskPage />} />
-        <Route path="digital-twin"    element={<DigitalTwinPage />} />
-        <Route path="journey"         element={<PregnancyHubPage />} />
-        <Route path="knowledge"       element={<PregnancyHubPage defaultTab="knowledge" />} />
-        <Route path="nutrition"       element={<PregnancyHubPage defaultTab="nutrition" />} />
+        <Route path="journey"         element={<JourneyPage />} />
+        <Route path="knowledge"       element={<JourneyPage />} />
+        <Route path="nutrition"       element={<NutritionPlannerPage />} />
         <Route path="medical"         element={<MedicalCenterPage />} />
-        <Route path="assistant"       element={<AssistantPage />} />
         <Route path="emergency"       element={<EmergencyPage />} />
         <Route path="hospitals"       element={<EmergencyPage defaultTab="hospitals" />} />
         <Route path="notifications"   element={<NotificationsPage />} />

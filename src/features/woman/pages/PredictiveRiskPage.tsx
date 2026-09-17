@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
@@ -148,38 +148,13 @@ export default function PredictiveRiskPage() {
     }
   };
 
-  useEffect(() => { loadPrediction(); }, []);
+  // Do NOT auto-load on mount — user must click "Generate Forecast" button
 
   const TrendIcon7 = prediction ? trendIcon(prediction.next7Days.trend) : Minus;
   const TrendIcon30 = prediction ? trendIcon(prediction.next30Days.trend) : Minus;
 
   return (
     <div className="space-y-6 pb-10">
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6 text-white">
-        <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-white/10" />
-        <div className="relative">
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-1">{t('predictiveRisk.aiPowered')}</p>
-          <h1 className="text-2xl font-bold">{t('predictiveRisk.title')}</h1>
-          <p className="text-white/80 text-sm mt-1">{t('predictiveRisk.subtitle')}</p>
-          <div className="mt-4 flex items-center gap-3">
-            <div className="rounded-2xl bg-white/20 px-4 py-2 text-center backdrop-blur-sm">
-              <p className="text-lg font-bold">{pregnancy?.riskScore}/100</p>
-              <p className="text-xs text-white/70">Current Score</p>
-            </div>
-            <div className="rounded-2xl bg-white/20 px-4 py-2 text-center backdrop-blur-sm">
-              <p className="text-lg font-bold">Week {pregnancy?.gestationalWeek}</p>
-              <p className="text-xs text-white/70">Gestation</p>
-            </div>
-            <Button size="sm" variant="outline" onClick={loadPrediction} disabled={loading}
-              className="ml-auto border-white/30 text-white hover:bg-white/20 bg-transparent">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-              Refresh
-            </Button>
-          </div>
-        </div>
-      </motion.div>
 
       {loading ? (
         <Card>
