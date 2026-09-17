@@ -118,7 +118,7 @@ export interface DailyEntry {
   createdAt: string;
 }
 
-export type UserRole = 'woman' | 'asha' | 'family' | 'phc' | 'district';
+export type UserRole = 'woman' | 'asha' | 'family' | 'phc';
 
 export type RiskLevel = 'GREEN' | 'YELLOW' | 'RED';
 

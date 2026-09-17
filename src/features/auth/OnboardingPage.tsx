@@ -23,13 +23,12 @@ const ROLES: {
   { id: 'woman',    emoji: '🤰', label: 'Pregnant Patient',  desc: 'Track my pregnancy, health & medicines', icon: Heart,      color: 'text-pink-600',   bg: 'bg-pink-50 border-pink-200' },
   { id: 'asha',     emoji: '👩‍⚕️', label: 'ASHA Worker',      desc: 'Monitor village pregnancy cases',       icon: Users,      color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-200' },
   { id: 'family',   emoji: '👨‍👩‍👧', label: 'Family Member',    desc: 'Monitor my family member\'s health',    icon: Heart,      color: 'text-violet-600', bg: 'bg-violet-50 border-violet-200' },
-  { id: 'phc',      emoji: '🏥', label: 'PHC / Doctor',      desc: 'Clinical reports & population analytics', icon: Building,  color: 'text-blue-600',   bg: 'bg-blue-50 border-blue-200' },
-  { id: 'district', emoji: '📊', label: 'District Officer',  desc: 'Population health monitoring',          icon: BarChart3,  color: 'text-amber-600',  bg: 'bg-amber-50 border-amber-200' },
+  { id: 'phc',      emoji: '🏥', label: 'Doctor / District Officer', desc: 'Clinical reports, analytics & population monitoring', icon: Building,  color: 'text-blue-600',   bg: 'bg-blue-50 border-blue-200' },
 ];
 
 export default function OnboardingPage() {
   const { t } = useTranslation();
-  const { user, needsOnboarding, completeOnboarding, loginWithClerkUser } = useAuth();
+  const { user, needsOnboarding, completeOnboarding, loginWithClerkUser, setLanguage } = useAuth();
   const navigate = useNavigate();
 
   // Step -1 = role selection (first screen for all new users)
@@ -221,6 +220,24 @@ export default function OnboardingPage() {
                     <label className="mb-2 block text-sm font-medium text-gray-700">{t('onboarding.yourAge', { defaultValue: 'Your Age' })}</label>
                     <Input type="number" value={age} onChange={e => setAge(e.target.value)} placeholder="e.g. 28" min={15} max={55} className="h-12 rounded-xl text-base" />
                   </div>
+                  {name.trim().length >= 2 && Number(age) >= 15 && Number(age) <= 55 && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+                      <label className="mb-2 block text-sm font-medium text-gray-700">{t('onboarding.selectLanguage', { defaultValue: 'Preferred Language' })}</label>
+                      <select
+                        value={user?.language || 'en'}
+                        onChange={e => setLanguage(e.target.value as any)}
+                        className="w-full h-12 rounded-xl border border-gray-200 px-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      >
+                        <option value="" disabled>Select language</option>
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                        <option value="ta">தமிழ் (Tamil)</option>
+                        <option value="te">తెలుగు (Telugu)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                        <option value="bn">বাংলা (Bengali)</option>
+                      </select>
+                    </motion.div>
+                  )}
                 </>
               )}
 

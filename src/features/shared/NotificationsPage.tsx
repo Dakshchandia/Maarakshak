@@ -14,7 +14,7 @@ export default function NotificationsPage() {
 
   const filtered = notifications.filter(n =>
     n.userId === user?.id || n.userId === 'all' ||
-    user?.role === 'asha' || user?.role === 'phc' || user?.role === 'district'
+    user?.role === 'asha' || user?.role === 'phc'
   );
 
   const markAllRead = () => filtered.forEach(n => { if (!n.read) markNotificationRead(n.id); });

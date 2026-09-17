@@ -15,7 +15,7 @@ import { isClerkConfigured, clerkAppearance } from '@/lib/clerk';
 import type { UserRole } from '@/types';
 
 const ROLE_EMOJIS: Record<UserRole, string> = {
-  woman: '🤰', asha: '👩‍⚕️', family: '👨‍👩‍👧', phc: '🏥', district: '📊',
+  woman: '🤰', asha: '👩‍⚕️', family: '👨‍👩‍👧', phc: '🏥',
 };
 
 // ── Demo section (shown only when Clerk is NOT configured) ────────────────────
@@ -28,7 +28,7 @@ function DemoLoginSection() {
   const [loading, setLoading] = useState(false);
   const { login, loginDemo } = useAuth();
   const navigate = useNavigate();
-  const roles: UserRole[] = ['woman', 'asha', 'family', 'phc', 'district'];
+  const roles: UserRole[] = ['woman', 'asha', 'family', 'phc'];
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

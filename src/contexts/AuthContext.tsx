@@ -239,7 +239,6 @@ export function getDashboardPath(role: UserRole): string {
     asha: '/dashboard/asha',
     family: '/dashboard/family',
     phc: '/dashboard/phc',
-    district: '/dashboard/district',
   };
   return paths[role];
 }

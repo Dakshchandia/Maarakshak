@@ -14,8 +14,7 @@ const ROLES: { id: UserRole; emoji: string; label: string; desc: string }[] = [
   { id: 'woman',    emoji: '🤰', label: 'Pregnant Woman',   desc: 'Track my health & pregnancy journey' },
   { id: 'asha',     emoji: '👩‍⚕️', label: 'ASHA Worker',     desc: 'Manage my village pregnancy cases' },
   { id: 'family',   emoji: '👨‍👩‍👧', label: 'Family Member',   desc: "Monitor my family member's health" },
-  { id: 'phc',      emoji: '🏥', label: 'PHC / Doctor',     desc: 'Clinical reports & analytics' },
-  { id: 'district', emoji: '📊', label: 'District Officer',  desc: 'Population health monitoring' },
+  { id: 'phc',      emoji: '🏥', label: 'Doctor / District Officer', desc: 'Clinical reports, analytics & population monitoring' },
 ];
 
 // ── Demo sign-up flow ──────────────────────────────────────────────────────────

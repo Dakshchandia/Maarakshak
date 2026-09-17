@@ -5,11 +5,11 @@ import type {
 } from '@/types';
 
 export const DEMO_USERS: User[] = [
-  { id: 'u1', email: 'priya@demo.com', name: 'Priya Sharma', role: 'woman', phone: '+91 98765 43210', villageId: 'v1', districtId: 'd1', linkedPregnancyId: 'p1', language: 'hi', createdAt: '2025-01-15T00:00:00Z' },
-  { id: 'u2', email: 'lakshmi@demo.com', name: 'Lakshmi Devi', role: 'asha', phone: '+91 98765 43211', villageId: 'v1', districtId: 'd1', phcId: 'phc1', language: 'hi', createdAt: '2024-06-01T00:00:00Z' },
-  { id: 'u3', email: 'rajesh@demo.com', name: 'Rajesh Sharma', role: 'family', phone: '+91 98765 43212', villageId: 'v1', districtId: 'd1', linkedPregnancyId: 'p1', language: 'hi', createdAt: '2025-01-15T00:00:00Z' },
+  { id: 'u1', email: 'priya@demo.com', name: 'Priya Sharma', role: 'woman', phone: '+91 98765 43210', villageId: 'v1', districtId: 'd1', linkedPregnancyId: 'p1', language: 'en', createdAt: '2025-01-15T00:00:00Z' },
+  { id: 'u2', email: 'lakshmi@demo.com', name: 'Lakshmi Devi', role: 'asha', phone: '+91 98765 43211', villageId: 'v1', districtId: 'd1', phcId: 'phc1', language: 'en', createdAt: '2024-06-01T00:00:00Z' },
+  { id: 'u3', email: 'rajesh@demo.com', name: 'Rajesh Sharma', role: 'family', phone: '+91 98765 43212', villageId: 'v1', districtId: 'd1', linkedPregnancyId: 'p1', language: 'en', createdAt: '2025-01-15T00:00:00Z' },
   { id: 'u4', email: 'meera@demo.com', name: 'Dr. Meera Patel', role: 'phc', phone: '+91 98765 43213', districtId: 'd1', phcId: 'phc1', language: 'en', createdAt: '2023-01-01T00:00:00Z' },
-  { id: 'u5', email: 'anil@demo.com', name: 'Dr. Anil Kumar', role: 'district', phone: '+91 98765 43214', districtId: 'd1', language: 'en', createdAt: '2022-01-01T00:00:00Z' },
+  { id: 'u5', email: 'anil@demo.com', name: 'Dr. Anil Kumar', role: 'phc', phone: '+91 98765 43214', districtId: 'd1', language: 'en', createdAt: '2022-01-01T00:00:00Z' },
 ];
 
 export const DEMO_DISTRICTS: District[] = [

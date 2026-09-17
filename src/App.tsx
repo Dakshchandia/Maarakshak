@@ -13,7 +13,7 @@ import WomanDashboard from '@/features/woman/WomanDashboard';
 import AshaDashboard from '@/features/asha/AshaDashboard';
 import FamilyDashboard from '@/features/family/FamilyDashboard';
 import PhcDashboard from '@/features/phc/PhcDashboard';
-import DistrictDashboard from '@/features/district/DistrictDashboard';
+
 import { Loader2 } from 'lucide-react';
 
 // Handles OAuth redirect (Google Sign-In callback)
@@ -60,7 +60,7 @@ export default function App() {
         <Route path="/dashboard/asha/*"     element={<ProtectedRoute roles={['asha']}><AshaDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/family/*"   element={<ProtectedRoute roles={['family']}><FamilyDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/phc/*"      element={<ProtectedRoute roles={['phc']}><PhcDashboard /></ProtectedRoute>} />
-        <Route path="/dashboard/district/*" element={<ProtectedRoute roles={['district']}><DistrictDashboard /></ProtectedRoute>} />
+
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
