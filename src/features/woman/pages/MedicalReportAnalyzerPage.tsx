@@ -190,7 +190,7 @@ export default function MedicalReportAnalyzerPage() {
           </div>
 
           <textarea className="w-full rounded-2xl border border-gray-200 bg-gray-50 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none"
-            rows={4} placeholder={`Paste your ${REPORT_TYPES_I18N.find(rt=>rt.id===selectedType)?.label} values here...\nExample:\nHemoglobin: 9.2 g/dL\nBlood Pressure: 142/92 mmHg\nBlood Sugar (Fasting): 110 mg/dL`}
+            rows={4} placeholder={t('reportAnalyzer.pasteValues', { type: REPORT_TYPES_I18N.find(rt=>rt.id===selectedType)?.label ?? '' })}
             value={reportText} onChange={e => setReportText(e.target.value)} />
 
           <Button onClick={handleTextSubmit} disabled={!reportText.trim() || analyzing} className="w-full bg-gradient-to-r from-blue-500 to-indigo-500" size="lg">
@@ -209,7 +209,7 @@ export default function MedicalReportAnalyzerPage() {
                     <FileText className="h-4 w-4 text-blue-500" /> {r.fileName}
                   </CardTitle>
                   <Badge variant={r.status === 'complete' ? 'green' : r.status === 'failed' ? 'red' : 'default'}>
-                    {r.status === 'analyzing' ? <><Loader2 className="h-3 w-3 animate-spin mr-1" />Analyzing</> : r.status}
+                    {r.status === 'analyzing' ? <><Loader2 className="h-3 w-3 animate-spin mr-1" />{t('reportAnalyzer.analyzing')}</> : r.status}
                   </Badge>
                 </div>
               </CardHeader>

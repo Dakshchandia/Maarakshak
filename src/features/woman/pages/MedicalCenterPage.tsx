@@ -14,10 +14,10 @@ interface Props { defaultTab?: string; }
 export default function MedicalCenterPage({ defaultTab }: Props) {
   const { t } = useTranslation();
   const TABS = [
-    { id: 'reports',      label: t('nav.healthReports'),  icon: FileText },
-    { id: 'analyzer',     label: t('nav.reportAnalyzer'), icon: Upload },
-    { id: 'medicines',    label: t('nav.medicines'),      icon: Pill },
-    { id: 'appointments', label: t('nav.appointments'),   icon: Calendar },
+    { id: 'reports',      labelKey: 'nav.healthReports',  icon: FileText },
+    { id: 'analyzer',     labelKey: 'nav.reportAnalyzer', icon: Upload },
+    { id: 'medicines',    labelKey: 'nav.medicines',      icon: Pill },
+    { id: 'appointments', labelKey: 'nav.appointments',   icon: Calendar },
   ];
   const [params] = useSearchParams();
   const initial = defaultTab || params.get('tab') || 'reports';
@@ -25,7 +25,6 @@ export default function MedicalCenterPage({ defaultTab }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* Scrollable tab bar */}
       <div className="glass-card rounded-2xl p-1.5">
         <div className="flex gap-1 overflow-x-auto">
           {TABS.map(tabItem => {
@@ -39,7 +38,7 @@ export default function MedicalCenterPage({ defaultTab }: Props) {
                     : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 )}>
                 <tabItem.icon className="h-3.5 w-3.5" />
-                {tabItem.label}
+                {t(tabItem.labelKey)}
               </button>
             );
           })}

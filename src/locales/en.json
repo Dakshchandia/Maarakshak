@@ -563,6 +563,7 @@
     "pasteValues": "Paste your {{type}} values here...",
     "analyzeBtn": "Analyze Report",
     "analyzingBtn": "Analyzing with Gemini AI…",
+    "pasteValues": "Paste your {{type}} values here...\nExample:\nHemoglobin: 9.2 g/dL\nBlood Pressure: 142/92 mmHg\nBlood Sugar (Fasting): 110 mg/dL",
     "aiSummary": "AI Summary",
     "keyFindings": "Key Findings",
     "valuesAttention": "Values Needing Attention",
