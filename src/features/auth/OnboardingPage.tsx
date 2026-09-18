@@ -4,13 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
   Baby, Scale, Calendar, User, ArrowRight, Sparkles, Activity,
-  Heart, Users, Building, BarChart3, CheckCircle,
+  Heart, Users, Building, BarChart3, CheckCircle, Globe,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/common/Logo';
 import { useAuth, getDashboardPath } from '@/contexts/AuthContext';
-import type { UserRole } from '@/types';
+import type { UserRole, Language } from '@/types';
 import { cn } from '@/lib/utils';
 
 const MONTHS = Array.from({ length: 9 }, (_, i) => i + 1);
@@ -53,43 +53,29 @@ export default function OnboardingPage() {
     return null;
   }
 
-  // ── Role confirmed — for non-woman roles, complete immediately ────────────
+  // ── Role confirmed ────────────
   const handleRoleConfirm = () => {
     if (!selectedRole) return;
-    if (selectedRole !== 'woman') {
-      // Non-woman roles: complete onboarding immediately with just the role
-      completeOnboarding({
-        name: user.name || name || 'User',
-        age: 30,
-        gestationalMonth: 0,
-        weight: 60,
-        symptoms: [],
-        additionalInfo: '',
-        previousReports: '',
-        role: selectedRole,
-      });
-      navigate(getDashboardPath(selectedRole), { replace: true });
-      return;
-    }
     setRoleConfirmed(true);
   };
 
-  // ── Pregnancy onboarding complete ─────────────────────────────────────────
+  // ── Onboarding complete ─────────────────────────────────────────
   const handleFinish = () => {
     completeOnboarding({
       name: name.trim(),
       age: Number(age),
-      gestationalMonth: Number(gestationalMonth),
-      weight: Number(weight),
+      gestationalMonth: Number(gestationalMonth) || 0,
+      weight: Number(weight) || 60,
       symptoms,
       additionalInfo,
       previousReports,
-      role: 'woman',
+      role: selectedRole || 'woman',
     });
-    navigate(getDashboardPath('woman'), { replace: true });
+    navigate(getDashboardPath(selectedRole || 'woman'), { replace: true });
   };
 
   const pregSteps = [
+    { title: t('onboarding.step0Title', { defaultValue: 'Language' }),       subtitle: t('onboarding.step0Subtitle', { defaultValue: 'Choose your preferred language' }), icon: Globe },
     { title: t('onboarding.step1Title', { defaultValue: 'About You' }),       subtitle: t('onboarding.step1Subtitle', { defaultValue: 'Tell us about yourself' }), icon: User },
     { title: t('onboarding.step2Title', { defaultValue: 'Your Pregnancy' }),   subtitle: t('onboarding.step2Subtitle', { defaultValue: 'How far along are you?' }),  icon: Baby },
     { title: t('onboarding.step3Title', { defaultValue: 'Health Details' }),   subtitle: t('onboarding.step3Subtitle', { defaultValue: 'Help us personalise care' }),icon: Scale },
@@ -97,13 +83,15 @@ export default function OnboardingPage() {
   ];
 
   const pregCanProceed = () => {
-    if (step === 0) return name.trim().length >= 2 && Number(age) >= 15 && Number(age) <= 55;
-    if (step === 1) return gestationalMonth !== '' && Number(gestationalMonth) >= 1 && Number(gestationalMonth) <= 9;
-    if (step === 2) return Number(weight) >= 30 && Number(weight) <= 200;
+    if (step === 0) return user?.language !== undefined && user?.language !== '';
+    if (step === 1) return name.trim().length >= 2 && Number(age) >= 15 && Number(age) <= 55;
+    if (step === 2) return gestationalMonth !== '' && Number(gestationalMonth) >= 1 && Number(gestationalMonth) <= 9;
+    if (step === 3) return Number(weight) >= 30 && Number(weight) <= 200;
     return true;
   };
 
-  const CurrentIcon = pregSteps[step].icon;
+  const stepsToShow = selectedRole === 'woman' ? pregSteps : pregSteps.slice(0, 2);
+  const CurrentIcon = stepsToShow[step]?.icon || User;
 
   // ── SCREEN 1: Role Selection ───────────────────────────────────────────────
   if (!roleConfirmed) {
@@ -180,14 +168,14 @@ export default function OnboardingPage() {
           <div className="mt-6 flex items-center justify-center gap-2">
             <Sparkles className="h-4 w-4 text-primary-500" />
             <p className="text-sm font-medium text-primary-600">
-              {t('onboarding.welcome', { defaultValue: "Let's set up your health profile" })}
+              {t('onboarding.welcome', { defaultValue: "Let's set up your profile" })}
             </p>
           </div>
         </div>
 
         {/* Progress dots */}
         <div className="mb-8 flex justify-center gap-2">
-          {pregSteps.map((_, i) => (
+          {stepsToShow.map((_, i) => (
             <div key={i} className={`h-2 rounded-full transition-all duration-500 ${
               i === step ? 'w-8 bg-gradient-to-r from-primary-500 to-purple-600'
               : i < step ? 'w-2 bg-primary-400' : 'w-2 bg-gray-200'
@@ -201,8 +189,8 @@ export default function OnboardingPage() {
               <CurrentIcon className="h-7 w-7 text-primary-600" />
             </div>
             <div>
-              <h2 className="font-display text-2xl font-bold text-gray-900">{pregSteps[step].title}</h2>
-              <p className="text-sm text-gray-500">{pregSteps[step].subtitle}</p>
+              <h2 className="font-display text-2xl font-bold text-gray-900">{stepsToShow[step]?.title}</h2>
+              <p className="text-sm text-gray-500">{stepsToShow[step]?.subtitle}</p>
             </div>
           </div>
 
@@ -211,7 +199,36 @@ export default function OnboardingPage() {
               transition={{ duration: 0.3 }} className="space-y-5">
 
               {step === 0 && (
-                <>
+                <div className="space-y-4">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">{t('onboarding.selectLanguage', { defaultValue: 'Preferred Language' })}</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { value: 'en', label: 'English' },
+                      { value: 'hi', label: 'हिंदी (Hindi)' },
+                      { value: 'ta', label: 'தமிழ் (Tamil)' },
+                      { value: 'te', label: 'తెలుగు (Telugu)' },
+                      { value: 'mr', label: 'मराठी (Marathi)' },
+                      { value: 'bn', label: 'বাংলা (Bengali)' }
+                    ].map((lang) => (
+                      <button
+                        key={lang.value}
+                        type="button"
+                        onClick={() => setLanguage(lang.value as Language)}
+                        className={`flex flex-col items-center justify-center rounded-2xl border-2 p-4 transition-all ${
+                          user?.language === lang.value
+                            ? 'border-primary-500 bg-primary-50 shadow-md text-primary-700 font-bold'
+                            : 'border-gray-100 bg-white hover:border-primary-200 text-gray-700'
+                        }`}
+                      >
+                        {lang.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {step === 1 && (
+                <div className="space-y-5">
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-700">{t('onboarding.yourName', { defaultValue: 'Your Name' })}</label>
                     <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Priya Sharma" className="h-12 rounded-xl text-base" />
@@ -220,28 +237,10 @@ export default function OnboardingPage() {
                     <label className="mb-2 block text-sm font-medium text-gray-700">{t('onboarding.yourAge', { defaultValue: 'Your Age' })}</label>
                     <Input type="number" value={age} onChange={e => setAge(e.target.value)} placeholder="e.g. 28" min={15} max={55} className="h-12 rounded-xl text-base" />
                   </div>
-                  {name.trim().length >= 2 && Number(age) >= 15 && Number(age) <= 55 && (
-                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-                      <label className="mb-2 block text-sm font-medium text-gray-700">{t('onboarding.selectLanguage', { defaultValue: 'Preferred Language' })}</label>
-                      <select
-                        value={user?.language || 'en'}
-                        onChange={e => setLanguage(e.target.value as any)}
-                        className="w-full h-12 rounded-xl border border-gray-200 px-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                      >
-                        <option value="" disabled>Select language</option>
-                        <option value="en">English</option>
-                        <option value="hi">हिंदी (Hindi)</option>
-                        <option value="ta">தமிழ் (Tamil)</option>
-                        <option value="te">తెలుగు (Telugu)</option>
-                        <option value="mr">मराठी (Marathi)</option>
-                        <option value="bn">বাংলা (Bengali)</option>
-                      </select>
-                    </motion.div>
-                  )}
-                </>
+                </div>
               )}
 
-              {step === 1 && (
+              {step === 2 && (
                 <div>
                   <label className="mb-3 block text-sm font-medium text-gray-700">{t('onboarding.pregnancyMonth', { defaultValue: 'Which month of pregnancy?' })}</label>
                   <div className="grid grid-cols-3 gap-3">
@@ -261,7 +260,7 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {step === 2 && (
+              {step === 3 && (
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-700">{t('onboarding.yourWeight', { defaultValue: 'Your current weight' })}</label>
                   <div className="relative">
@@ -272,7 +271,7 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {step === 3 && (
+              {step === 4 && (
                 <div className="space-y-4">
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-700">Select any pre-existing conditions:</label>
@@ -324,8 +323,16 @@ export default function OnboardingPage() {
             )}
             <Button className="flex-1 rounded-2xl" size="lg"
               disabled={!pregCanProceed()}
-              onClick={() => step < 3 ? setStep(step + 1) : handleFinish()}>
-              {step < 3
+              onClick={() => {
+                if (selectedRole !== 'woman' && step === 1) {
+                  handleFinish();
+                } else if (step < stepsToShow.length - 1) {
+                  setStep(step + 1);
+                } else {
+                  handleFinish();
+                }
+              }}>
+              {step < stepsToShow.length - 1
                 ? <>{t('common.getStarted', { defaultValue: 'Continue' })} <ArrowRight className="h-5 w-5" /></>
                 : <>{t('onboarding.startJourney', { defaultValue: 'Start Journey' })} <Sparkles className="h-5 w-5" /></>}
             </Button>
