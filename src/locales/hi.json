@@ -145,6 +145,7 @@
     "weeklyInsight": "साप्ताहिक जानकारी ▼",
     "hideInsight": "जानकारी छुपाएं ▲",
     "clinicalInsight": "नैदानिक जानकारी · सप्ताह {{week}}",
+    "weekPrefix": "स॰",
     "checkInComplete": "आज की जांच ✓",
     "tapToReport": "आज की रिपोर्ट के लिए दबाएं",
     "addEntry": "आज की स्वास्थ्य प्रविष्टि जोड़ें",

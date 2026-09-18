@@ -24,7 +24,7 @@ import { AIHealthInsights } from '@/components/common/AIHealthInsights';
 import { getRiskColor, formatDate } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 import welcomeIllustration from '@/assets/illustrations/welcome-home.svg';
-import { getFetalData } from '@/lib/fetalData';
+import { getFetalData, getTranslatedFetalFields } from '@/lib/fetalData';
 
 // Map i18n language codes to date-fns locales
 const dateFnsLocales: Record<string, object> = {
@@ -35,6 +35,7 @@ const dateFnsLocales: Record<string, object> = {
 function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType<typeof usePregData>> }) {
   const { t, i18n } = useTranslation();
   const fetalData = getFetalData(pregnancy.gestationalWeek);
+  const translated = getTranslatedFetalFields(pregnancy.gestationalWeek, i18n.language);
   const daysLeft = pregnancy.dueDate
     ? Math.max(0, differenceInDays(new Date(pregnancy.dueDate), new Date()))
     : null;
@@ -42,16 +43,14 @@ function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType
   const weeksLeft = Math.max(0, 40 - pregnancy.gestationalWeek);
   const [showInsight, setShowInsight] = useState(false);
 
-  // Translate fetalData values via week-keyed locale keys
-  const fetalStage = t(`fetal.week${fetalData.week}.stage`, fetalData.stage);
-  const fetalBrain = t(`fetal.week${fetalData.week}.brain`, fetalData.brainDevelopment);
-  const fetalHearing = t(`fetal.week${fetalData.week}.hearing`, fetalData.hearing);
-  const fetalLungs = t(`fetal.week${fetalData.week}.lungs`, fetalData.lungs);
-  const fetalMovement = t(`fetal.week${fetalData.week}.movement`, fetalData.movement);
-  const fetalInsight = t(`fetal.week${fetalData.week}.insight`, fetalData.insight);
-  const fetalMilestones = fetalData.milestones.map((m, i) =>
-    t(`fetal.week${fetalData.week}.m${i}`, m)
-  );
+  // Use translated lookup first, then fall back to English
+  const fetalStage     = translated?.stage     ?? fetalData.stage;
+  const fetalBrain     = translated?.brain     ?? fetalData.brainDevelopment;
+  const fetalHearing   = translated?.hearing   ?? fetalData.hearing;
+  const fetalLungs     = translated?.lungs     ?? fetalData.lungs;
+  const fetalMovement  = translated?.movement  ?? fetalData.movement;
+  const fetalMilestones = translated?.milestones ?? fetalData.milestones;
+  const fetalInsight = fetalData.insight;
 
   const devStatus = [
     { label: t('fetal.devStatus.brainGrowth'),     value: fetalBrain,    icon: '🧠' },
@@ -89,7 +88,7 @@ function PregnancySummaryCard({ pregnancy }: { pregnancy: NonNullable<ReturnType
               {/* ── Left: week + progress ── */}
               <div className="space-y-3">
                 <div>
-                  <span className="text-4xl font-bold tracking-tight">{t('fetal.weekProgress.wk1').replace('1','').trim()} {pregnancy.gestationalWeek}</span>
+                  <span className="text-4xl font-bold tracking-tight">{t('woman.weekPrefix', 'Wk')} {pregnancy.gestationalWeek}</span>
                   <p className="text-white/75 text-xs mt-0.5 font-medium">{trimesterLabel} · {pregnancy.villageName}</p>
                 </div>
 

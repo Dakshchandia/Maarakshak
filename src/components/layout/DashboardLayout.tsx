@@ -23,18 +23,15 @@ const LANGUAGES: { code: Language; label: string }[] = [
 
 export interface NavItem {
   path: string;
-  label: string;
+  labelKey: string;
   icon: React.ReactNode;
 }
 
 export interface NavGroup {
-  label: string;
+  labelKey: string;
   icon: React.ReactNode;
-  /** If provided, clicking the group header navigates here */
   path?: string;
-  /** Sub-items shown in collapsible section */
   children?: NavItem[];
-  /** If true, render as a direct link with no sub-items */
   direct?: boolean;
 }
 
@@ -55,22 +52,13 @@ function GroupedNav({ groups, location, onNavigate }: {
   location: { pathname: string };
   onNavigate?: () => void;
 }) {
-  // Subscribe to language changes to force re-render when language switches
-  const { i18n } = useTranslation();
-  const [, forceUpdate] = useState(0);
-  useEffect(() => {
-    const onLangChange = () => forceUpdate(n => n + 1);
-    i18n.on('languageChanged', onLangChange);
-    return () => i18n.off('languageChanged', onLangChange);
-  }, [i18n]);
+  const { t } = useTranslation();
 
-  // Auto-expand whichever group contains the active path
   const activeGroup = groups.findIndex(g =>
     (g.path && location.pathname === g.path) ||
     g.children?.some(c => location.pathname === c.path || location.pathname.startsWith(c.path + '/'))
   );
   const [expanded, setExpanded] = useState<number[]>(activeGroup >= 0 ? [activeGroup] : [0]);
-
   const toggle = (i: number) =>
     setExpanded(prev => prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i]);
 
@@ -90,7 +78,7 @@ function GroupedNav({ groups, location, onNavigate }: {
                   : 'text-gray-700 hover:bg-primary-50')}>
               <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-lg',
                 isGroupActive ? 'text-white' : 'text-gray-500')}>{group.icon}</span>
-              {group.label}
+              {t(group.labelKey)}
             </Link>
           );
         }
@@ -108,7 +96,7 @@ function GroupedNav({ groups, location, onNavigate }: {
                 isGroupActive ? 'bg-primary-100 text-primary-600' : 'bg-gray-100 text-gray-500')}>
                 {group.icon}
               </span>
-              <span className="flex-1 truncate">{group.label}</span>
+              <span className="flex-1 truncate">{t(group.labelKey)}</span>
               {group.children?.length ? (
                 isExpanded ? <ChevronDown className="h-3.5 w-3.5 text-gray-400 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 text-gray-400 shrink-0" />
               ) : null}
@@ -133,7 +121,7 @@ function GroupedNav({ groups, location, onNavigate }: {
                               ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-sm'
                               : 'text-gray-600 hover:bg-primary-50 hover:text-primary-700')}>
                           <span className="shrink-0">{child.icon}</span>
-                          {child.label}
+                          {t(child.labelKey)}
                         </Link>
                       );
                     })}
@@ -154,6 +142,7 @@ function FlatNav({ items, location, onNavigate }: {
   location: { pathname: string };
   onNavigate?: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-0.5">
       {items.map(item => {
@@ -163,7 +152,7 @@ function FlatNav({ items, location, onNavigate }: {
             className={cn('flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors',
               isActive ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg' : 'text-gray-600 hover:bg-primary-50')}>
             {item.icon}
-            {item.label}
+            {t(item.labelKey)}
           </Link>
         );
       })}
@@ -191,8 +180,8 @@ export function DashboardLayout({ children, titleKey, navItems }: DashboardLayou
 
   const renderNav = (onNavigate?: () => void) =>
     grouped
-      ? <GroupedNav key={t('nav.home')} groups={navItems as NavGroup[]} location={location} onNavigate={onNavigate} />
-      : <FlatNav key={t('nav.home')} items={navItems as NavItem[]} location={location} onNavigate={onNavigate} />;
+      ? <GroupedNav groups={navItems as NavGroup[]} location={location} onNavigate={onNavigate} />
+      : <FlatNav items={navItems as NavItem[]} location={location} onNavigate={onNavigate} />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-pink-50">

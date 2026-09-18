@@ -145,6 +145,7 @@
     "weeklyInsight": "Weekly insight",
     "hideInsight": "Hide insight",
     "clinicalInsight": "Clinical Insight · Week {{week}}",
+    "weekPrefix": "Wk",
     "checkInComplete": "Today's Check-in ✓",
     "tapToReport": "Tap to report today",
     "addEntry": "Add Today's Health Entry",
