@@ -48,8 +48,7 @@ export const DEMO_RISK_REPORTS: RiskReport[] = [
 ];
 
 export const DEMO_ALERTS: Alert[] = [
-  { id: 'a1', pregnancyId: 'p2', womanName: 'Sunita Meena', riskLevel: 'RED', type: 'email', recipients: [{ name: 'Rajesh Meena', role: 'Family', contact: 'rajesh.m@email.com', status: 'delivered' }, { name: 'Dr. Meera Patel', role: 'PHC', contact: 'meera@phc.gov.in', status: 'delivered' }], message: 'URGENT: Sunita Meena (Chomu) flagged RED risk - reduced fetal movement, BP 158/102. Immediate referral required.', status: 'delivered', createdAt: '2026-06-23T08:10:00Z' },
-  { id: 'a2', pregnancyId: 'p4', womanName: 'Rekha Devi', riskLevel: 'RED', type: 'email', recipients: [{ name: 'Family Contact', role: 'Family', contact: 'family@email.com', status: 'sent' }], message: 'URGENT: Rekha Devi (Sanganer) flagged RED risk - BP 162/105, anemia. Refer to PHC immediately.', status: 'sent', createdAt: '2026-06-23T06:35:00Z' },
+  { id: 'a0', pregnancyId: 'p1', womanName: 'Priya Sharma', riskLevel: 'YELLOW', type: 'email', recipients: [{ name: 'Rajesh Sharma', role: 'Family', contact: 'rajesh@demo.com', status: 'delivered' }, { name: 'ASHA Lakshmi Devi', role: 'ASHA', contact: '+91 98765 43211', status: 'delivered' }], message: 'ALERT: Priya Sharma (Bassi) flagged YELLOW risk — elevated BP 138/88 and oedema reported. ASHA visit scheduled within 48 hours.', status: 'delivered', createdAt: '2026-06-22T10:38:00Z' },
 ];
 
 export const DEMO_NOTIFICATIONS: Notification[] = [
@@ -57,7 +56,17 @@ export const DEMO_NOTIFICATIONS: Notification[] = [
   { id: 'n2', userId: 'u1', title: 'Medicine Reminder', message: 'Time to take Iron + Folic Acid supplement', type: 'reminder', read: false, createdAt: '2026-06-23T08:00:00Z' },
   { id: 'n3', userId: 'u1', title: 'ANC Appointment', message: 'Your ANC visit is scheduled for June 25 at Bassi PHC', type: 'appointment', read: true, createdAt: '2026-06-20T09:00:00Z' },
   { id: 'n4', userId: 'u2', title: 'Priority Alert', message: 'Sunita Meena (RED) needs immediate follow-up in Chomu', type: 'alert', read: false, createdAt: '2026-06-23T08:10:00Z' },
-  { id: 'n5', userId: 'u3', title: 'Family Alert', message: 'Priya\'s health report shows YELLOW risk. Please ensure she rests and takes medicines.', type: 'alert', read: false, createdAt: '2026-06-22T10:40:00Z' },
+  { id: 'n5', userId: 'u3', title: '⚠️ Health Alert', message: 'Priya\'s health report shows YELLOW risk. Please ensure she rests and takes medicines regularly.', type: 'alert', read: false, createdAt: '2026-06-22T10:40:00Z' },
+  { id: 'n6', userId: 'u3', title: '💊 Medicine Reminder', message: 'Priya\'s Iron + Folic Acid tablet is due. Please make sure she takes it today.', type: 'reminder', read: false, createdAt: '2026-06-23T08:05:00Z' },
+  { id: 'n7', userId: 'u3', title: '📅 Upcoming ANC Appointment', message: 'Priya\'s ANC visit is scheduled for June 25 at Bassi PHC, 10:00 AM. Please arrange transport.', type: 'appointment', read: false, createdAt: '2026-06-21T09:00:00Z' },
+  { id: 'n8', userId: 'u3', title: '🩺 ASHA Worker Visit Scheduled', message: 'ASHA Lakshmi Devi will visit your home within 48 hours for a routine check-up.', type: 'appointment', read: true, createdAt: '2026-06-20T14:00:00Z' },
+  { id: 'n9', userId: 'u3', title: '📊 Weekly Health Update', message: 'Priya\'s risk score this week: 62/100 (YELLOW). Blood pressure 138/88 — monitoring is recommended.', type: 'alert', read: true, createdAt: '2026-06-19T18:00:00Z' },
+  // Broadcast notifications — visible to ALL family members regardless of account
+  { id: 'nf1', userId: 'all', title: '⚠️ Health Risk Alert', message: 'Your family member\'s risk level has been updated to YELLOW. Please ensure she gets adequate rest and takes prescribed medicines.', type: 'alert', read: false, createdAt: '2026-06-22T10:40:00Z' },
+  { id: 'nf2', userId: 'all', title: '💊 Daily Medicine Reminder', message: 'Reminder: Iron + Folic Acid tablet is due today. Consistent intake is critical for a healthy pregnancy.', type: 'reminder', read: false, createdAt: '2026-06-23T08:05:00Z' },
+  { id: 'nf3', userId: 'all', title: '📅 ANC Appointment – June 25', message: 'ANC visit scheduled at Bassi PHC on June 25, 10:00 AM. Please arrange transport and accompany her.', type: 'appointment', read: false, createdAt: '2026-06-21T09:00:00Z' },
+  { id: 'nf4', userId: 'all', title: '🩺 ASHA Worker Visit Scheduled', message: 'ASHA Lakshmi Devi will visit within 48 hours for a routine maternal health check-up.', type: 'appointment', read: true, createdAt: '2026-06-20T14:00:00Z' },
+  { id: 'nf5', userId: 'all', title: '📊 Weekly Health Summary', message: 'This week\'s risk score is 62/100 (YELLOW). Blood pressure reading: 138/88. Continue monitoring and report new symptoms promptly.', type: 'alert', read: true, createdAt: '2026-06-19T18:00:00Z' },
 ];
 
 export const DEMO_APPOINTMENTS: Appointment[] = [
@@ -122,12 +131,31 @@ export const DEMO_RISK_HISTORY: RiskHistoryEntry[] = [
 ];
 
 export const DEMO_ANALYTICS: AnalyticsSnapshot[] = [
-  { id: 'an1', districtId: 'd1', week: '2026-W20', greenCount: 45, yellowCount: 12, redCount: 3, totalPregnancies: 60 },
-  { id: 'an2', districtId: 'd1', week: '2026-W21', greenCount: 44, yellowCount: 13, redCount: 4, totalPregnancies: 61 },
-  { id: 'an3', districtId: 'd1', week: '2026-W22', greenCount: 43, yellowCount: 14, redCount: 4, totalPregnancies: 61 },
-  { id: 'an4', districtId: 'd1', week: '2026-W23', greenCount: 42, yellowCount: 15, redCount: 5, totalPregnancies: 62 },
-  { id: 'an5', districtId: 'd1', week: '2026-W24', greenCount: 41, yellowCount: 16, redCount: 5, totalPregnancies: 62 },
-  { id: 'an6', districtId: 'd1', week: '2026-W25', greenCount: 40, yellowCount: 17, redCount: 6, totalPregnancies: 63 },
+  { id: 'an-15', districtId: 'd1', week: '2026-W01', greenCount: 502, yellowCount: 145, redCount: 38, totalPregnancies: 685 },
+  { id: 'an-14', districtId: 'd1', week: '2026-W02', greenCount: 550, yellowCount: 160, redCount: 45, totalPregnancies: 755 },
+  { id: 'an-13', districtId: 'd1', week: '2026-W03', greenCount: 600, yellowCount: 175, redCount: 50, totalPregnancies: 825 },
+  { id: 'an-12', districtId: 'd1', week: '2026-W04', greenCount: 654, yellowCount: 182, redCount: 52, totalPregnancies: 888 },
+  { id: 'an-11', districtId: 'd1', week: '2026-W05', greenCount: 680, yellowCount: 195, redCount: 55, totalPregnancies: 930 },
+  { id: 'an-10', districtId: 'd1', week: '2026-W06', greenCount: 720, yellowCount: 208, redCount: 60, totalPregnancies: 988 },
+  { id: 'an-09', districtId: 'd1', week: '2026-W07', greenCount: 750, yellowCount: 220, redCount: 64, totalPregnancies: 1034 },
+  { id: 'an-08', districtId: 'd1', week: '2026-W08', greenCount: 780, yellowCount: 235, redCount: 66, totalPregnancies: 1081 },
+  { id: 'an-07', districtId: 'd1', week: '2026-W09', greenCount: 820, yellowCount: 245, redCount: 68, totalPregnancies: 1133 },
+  { id: 'an-06', districtId: 'd1', week: '2026-W10', greenCount: 860, yellowCount: 260, redCount: 70, totalPregnancies: 1190 },
+  { id: 'an-05', districtId: 'd1', week: '2026-W11', greenCount: 900, yellowCount: 275, redCount: 72, totalPregnancies: 1247 },
+  { id: 'an-04', districtId: 'd1', week: '2026-W12', greenCount: 940, yellowCount: 290, redCount: 75, totalPregnancies: 1305 },
+  { id: 'an-03', districtId: 'd1', week: '2026-W13', greenCount: 980, yellowCount: 305, redCount: 78, totalPregnancies: 1363 },
+  { id: 'an-02', districtId: 'd1', week: '2026-W14', greenCount: 1020, yellowCount: 320, redCount: 81, totalPregnancies: 1421 },
+  { id: 'an-01', districtId: 'd1', week: '2026-W15', greenCount: 1060, yellowCount: 332, redCount: 85, totalPregnancies: 1477 },
+  { id: 'an1', districtId: 'd1', week: '2026-W16', greenCount: 1102, yellowCount: 345, redCount: 88, totalPregnancies: 1535 },
+  { id: 'an2', districtId: 'd1', week: '2026-W17', greenCount: 1150, yellowCount: 360, redCount: 95, totalPregnancies: 1605 },
+  { id: 'an3', districtId: 'd1', week: '2026-W18', greenCount: 1200, yellowCount: 390, redCount: 105, totalPregnancies: 1695 },
+  { id: 'an4', districtId: 'd1', week: '2026-W19', greenCount: 1254, yellowCount: 412, redCount: 118, totalPregnancies: 1784 },
+  { id: 'an5', districtId: 'd1', week: '2026-W20', greenCount: 1310, yellowCount: 435, redCount: 124, totalPregnancies: 1869 },
+  { id: 'an6', districtId: 'd1', week: '2026-W21', greenCount: 1352, yellowCount: 468, redCount: 132, totalPregnancies: 1952 },
+  { id: 'an7', districtId: 'd1', week: '2026-W22', greenCount: 1410, yellowCount: 495, redCount: 140, totalPregnancies: 2045 },
+  { id: 'an8', districtId: 'd1', week: '2026-W23', greenCount: 1465, yellowCount: 520, redCount: 148, totalPregnancies: 2133 },
+  { id: 'an9', districtId: 'd1', week: '2026-W24', greenCount: 1512, yellowCount: 555, redCount: 156, totalPregnancies: 2223 },
+  { id: 'an10', districtId: 'd1', week: '2026-W25', greenCount: 1560, yellowCount: 582, redCount: 168, totalPregnancies: 2310 },
 ];
 
 export function getDemoStats(role: string, userId?: string): DashboardStats {

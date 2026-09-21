@@ -35,20 +35,91 @@ interface RiskTrendChartProps {
 
 export function RiskTrendChart({ labels, green, yellow, red }: RiskTrendChartProps) {
   return (
-    <div className="h-64">
+    <div className="h-96">
       <Line
         data={{
           labels,
           datasets: [
-            { label: 'Green', data: green, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.4 },
-            { label: 'Yellow', data: yellow, borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.4 },
-            { label: 'Red', data: red, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.4 },
+            { 
+              label: 'Low Risk (Green)', 
+              data: green, 
+              borderColor: '#10b981', 
+              backgroundColor: 'rgba(16,185,129,0.1)', 
+              fill: true, 
+              tension: 0.4,
+              borderWidth: 3,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#10b981',
+              pointBorderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            },
+            { 
+              label: 'Medium Risk (Yellow)', 
+              data: yellow, 
+              borderColor: '#f59e0b', 
+              backgroundColor: 'rgba(245,158,11,0.1)', 
+              fill: true, 
+              tension: 0.4,
+              borderWidth: 3,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#f59e0b',
+              pointBorderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            },
+            { 
+              label: 'High Risk (Red)', 
+              data: red, 
+              borderColor: '#ef4444', 
+              backgroundColor: 'rgba(239,68,68,0.1)', 
+              fill: true, 
+              tension: 0.4,
+              borderWidth: 3,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#ef4444',
+              pointBorderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            },
           ],
         }}
         options={{
           ...chartDefaults,
-          plugins: { legend: { display: true, position: 'bottom' } },
-          scales: { y: { beginAtZero: true } },
+          interaction: { mode: 'index', intersect: false },
+          plugins: { 
+            legend: { 
+              display: true, 
+              position: 'bottom',
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+                font: { family: 'Inter, sans-serif', weight: 'bold' }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              titleColor: '#1f2937',
+              bodyColor: '#4b5563',
+              borderColor: '#e5e7eb',
+              borderWidth: 1,
+              padding: 12,
+              boxPadding: 4,
+              usePointStyle: true,
+            }
+          },
+          scales: { 
+            x: { 
+              grid: { display: false },
+              ticks: { font: { family: 'Inter, sans-serif' }, color: '#6b7280' }
+            },
+            y: { 
+              beginAtZero: true,
+              grid: { color: 'rgba(0, 0, 0, 0.04)' },
+              border: { dash: [4, 4] },
+              ticks: { font: { family: 'Inter, sans-serif' }, color: '#6b7280' }
+            } 
+          },
         }}
       />
     </div>
@@ -63,20 +134,43 @@ interface RiskDistributionChartProps {
 
 export function RiskDistributionChart({ green, yellow, red }: RiskDistributionChartProps) {
   return (
-    <div className="mx-auto h-56 w-56">
+    <div className="mx-auto h-80 w-80">
       <Doughnut
         data={{
           labels: ['Low Risk', 'Medium Risk', 'High Risk'],
           datasets: [{
             data: [green, yellow, red],
             backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-            borderWidth: 0,
+            hoverBackgroundColor: ['#059669', '#d97706', '#dc2626'],
+            borderWidth: 3,
+            borderColor: '#ffffff',
+            hoverOffset: 8,
           }],
         }}
         options={{
           ...chartDefaults,
-          plugins: { legend: { display: true, position: 'bottom' } },
-          cutout: '65%',
+          plugins: { 
+            legend: { 
+              display: true, 
+              position: 'bottom',
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+                font: { family: 'Inter, sans-serif', weight: 'bold' }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              titleColor: '#1f2937',
+              bodyColor: '#4b5563',
+              borderColor: '#e5e7eb',
+              borderWidth: 1,
+              padding: 12,
+              boxPadding: 4,
+              usePointStyle: true,
+            }
+          },
+          cutout: '70%',
         }}
       />
     </div>

@@ -23,7 +23,7 @@ export default function DistrictAnalytics() {
       <h2 className="text-xl font-bold">{t('district.analytics')}</h2>
 
       <Card>
-        <CardHeader><CardTitle>{t('district.sixWeekTrend')}</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t('district.riskTrend', { defaultValue: 'Longitudinal Risk Trend' })}</CardTitle></CardHeader>
         <CardContent>
           <RiskTrendChart
             labels={DEMO_ANALYTICS.map(a => a.week.replace('2026-', ''))}

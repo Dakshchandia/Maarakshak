@@ -8,14 +8,18 @@ import { Badge } from '@/components/ui/badge';
 export default function AnalyticsPage() {
   const { t } = useTranslation();
   const { pregnancies } = useData();
+  
+  // Use the latest district-level analytics for the pie chart and summary
+  // to make the data scale realistic (thousands of pregnancies)
+  const latestAnalytics = DEMO_ANALYTICS[DEMO_ANALYTICS.length - 1];
   const stats = {
-    green: pregnancies.filter(p => p.riskLevel === 'GREEN').length,
-    yellow: pregnancies.filter(p => p.riskLevel === 'YELLOW').length,
-    red: pregnancies.filter(p => p.riskLevel === 'RED').length,
+    green: latestAnalytics.greenCount,
+    yellow: latestAnalytics.yellowCount,
+    red: latestAnalytics.redCount,
   };
 
   const insights = [
-    'RED cases increased by 20% in week 25 — primarily in Chomu and Sanganer villages',
+    'RED cases increased by 15% in week 25 — primarily in Chomu and Sanganer villages',
     'ASHA follow-up compliance at 87% — above target of 80%',
     'Voice reporting adoption increased 35% since MaaRaksha deployment',
     'Preeclampsia early detection rate improved by 40% compared to paper register baseline',
@@ -81,17 +85,17 @@ export default function AnalyticsPage() {
           <CardHeader><CardTitle>{t('district.trimesterBreakdown', { defaultValue: 'Trimester Breakdown' })}</CardTitle></CardHeader>
           <CardContent>
             <div className="grid gap-4 sm:grid-cols-3">
-              {[1, 2, 3].map(tri => {
-                const count = pregnancies.filter(p => p.trimester === tri).length;
-                const red = pregnancies.filter(p => p.trimester === tri && p.riskLevel === 'RED').length;
-                return (
-                  <div key={tri} className="rounded-xl bg-gray-50 p-4 text-center">
-                    <p className="text-2xl font-bold">T{tri}</p>
-                    <p className="text-sm text-gray-500">{count} {t('district.pregnancies', { defaultValue: 'pregnancies' })}</p>
-                    <p className="text-xs text-red-500 mt-1">{red} {t('common.high', { defaultValue: 'high' }).toLowerCase()} risk</p>
-                  </div>
-                );
-              })}
+              {[
+                { tri: 1, count: 685, red: 32 },
+                { tri: 2, count: 820, red: 58 },
+                { tri: 3, count: 805, red: 78 }
+              ].map(({ tri, count, red }) => (
+                <div key={tri} className="rounded-xl bg-gray-50 p-4 text-center">
+                  <p className="text-2xl font-bold">T{tri}</p>
+                  <p className="text-sm text-gray-500">{count} {t('district.pregnancies', { defaultValue: 'pregnancies' })}</p>
+                  <p className="text-xs text-red-500 mt-1">{red} {t('common.high', { defaultValue: 'high' }).toLowerCase()} risk</p>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>

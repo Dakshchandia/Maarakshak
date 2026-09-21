@@ -14,8 +14,14 @@ export default function FamilyHome() {
   const { pregnancies, alerts, notifications, riskHistory } = useData();
   const pregnancy = pregnancies.find(p => p.id === user?.linkedPregnancyId) || pregnancies[0];
   const relatedAlerts = alerts.filter(a => a.pregnancyId === pregnancy?.id);
-  const myNotifs = notifications.filter(n => n.userId === user?.id);
-  const history = riskHistory.filter(r => r.pregnancyId === pregnancy?.id);
+  // Include notifications for this user AND broadcast ('all') notifications
+  const myNotifs = notifications.filter(n => n.userId === user?.id || n.userId === 'all');
+  // Use this pregnancy's history; if none, fall back to p1's history as demo data
+  const history = (() => {
+    const h = riskHistory.filter(r => r.pregnancyId === pregnancy?.id);
+    if (h.length > 0) return h;
+    return riskHistory.filter(r => r.pregnancyId === 'p1');
+  })();
 
   return (
     <div className="space-y-6">
