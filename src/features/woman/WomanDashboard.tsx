@@ -1,10 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import {
   LayoutDashboard, ClipboardCheck, Heart, Stethoscope,
   AlertTriangle, Bell,
   Utensils, FileText, Pill, Calendar,
   MapPin, Upload,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { NavGroup } from '@/components/layout/DashboardLayout';
 import WomanHome from './pages/WomanHome';

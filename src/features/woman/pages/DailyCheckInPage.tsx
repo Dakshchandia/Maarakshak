@@ -17,6 +17,7 @@ import { VoiceRecorder } from '@/components/voice/VoiceRecorder';
 import { api } from '@/lib/api';
 import type { DailyEntry, RiskLevel, Symptom, RiskReport } from '@/types';
 import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import AssistantPage from './AssistantPage';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -453,7 +454,7 @@ function ResultStep({ entry, onNewEntry, onContinueToAssistant }: { entry: Daily
         <CheckCircle className="h-6 w-6 text-emerald-500 shrink-0" />
         <div>
           <p className="text-sm font-semibold text-emerald-700">{t('checkin.savedToCalendar')}</p>
-          <p className="text-xs text-emerald-600">{t('checkin.savedDesc', { date: format(new Date(entry.date), 'dd MMM yyyy') })}</p>
+          <p className="text-xs text-emerald-600">{t('checkin.savedDesc', { date: formatDate(new Date(entry.date), currentLang) })}</p>
         </div>
       </div>
 
@@ -727,11 +728,11 @@ export default function DailyCheckInPage() {
         <div className="absolute right-8 bottom-0 h-20 w-20 rounded-full bg-white/10" />
         <div className="relative">
           <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-1">
-            {format(new Date(), 'EEEE, d MMMM yyyy')}
+            {formatDate(new Date(), currentLang)}
           </p>
           <h1 className="text-2xl font-bold">{t('checkin.title')}</h1>
           <p className="text-white/80 text-sm mt-1">
-            Week {pregnancy?.gestationalWeek} · {pregnancy?.villageName}
+            {t('woman.weekPrefix', 'Wk')} {pregnancy?.gestationalWeek} · {pregnancy?.villageName}
           </p>
         </div>
       </motion.div>

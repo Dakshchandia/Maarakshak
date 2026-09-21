@@ -5,6 +5,8 @@ import {
   format, startOfMonth, endOfMonth, eachDayOfInterval,
   getDay, isSameDay, isBefore, addDays,
 } from 'date-fns';
+import { enUS, hi, ta, te, bn, enIN } from 'date-fns/locale';
+import { formatDate } from '@/lib/utils';
 import {
   CheckCircle, Circle, ChevronLeft, ChevronRight, X,
   Droplets, Pill, Calendar, Baby, AlertTriangle, Heart,
@@ -19,6 +21,10 @@ import { Button } from '@/components/ui/button';
 import { PREGNANCY_MILESTONES } from '@/lib/demo-data';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
+
+const DATE_FNS_LOCALES: Record<string, object> = {
+  en: enUS, hi, ta, te, mr: enIN, bn,
+};
 
 type RiskLv = 'GREEN' | 'YELLOW' | 'RED';
 
@@ -138,7 +144,8 @@ const riskConfig: Record<RiskLv, { bg: string; text: string; border: string; dot
 // ─── Day Detail Panel ─────────────────────────────────────────────────────────
 
 function DayDetailPanel({ day, data, onClose }: { day: Date; data: DayData; onClose: () => void }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dfLocale = DATE_FNS_LOCALES[i18n.language] || DATE_FNS_LOCALES.en;
   const cfg = data.riskLevel ? riskConfig[data.riskLevel] : null;
   const medicinesTaken = data.medicines?.filter(m => m.taken).length ?? 0;
   const totalMeds = data.medicines?.length ?? 0;
@@ -154,7 +161,7 @@ function DayDetailPanel({ day, data, onClose }: { day: Date; data: DayData; onCl
       <div className="sticky top-0 z-10 flex items-center justify-between bg-gradient-to-r from-primary-500 to-pink-500 px-6 py-5">
         <div>
           <p className="text-xs font-medium text-white/70 uppercase tracking-wide">{t('journey.dailyReport')}</p>
-          <h2 className="text-xl font-bold text-white">{format(day, 'MMMM d, yyyy')}</h2>
+          <h2 className="text-xl font-bold text-white">{formatDate(day, i18n.language)}</h2>
           {data.milestone && (
             <p className="mt-1 text-xs text-white/80">👶 {data.milestone.title}</p>
           )}
@@ -623,7 +630,8 @@ function EnhancedTimeline({ currentWeek }: { currentWeek: number }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function JourneyPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dfLocale = DATE_FNS_LOCALES[i18n.language] || DATE_FNS_LOCALES.en;
   const { user } = useAuth();
   const { pregnancies, dailyEntries } = useData();
   const pregnancy = pregnancies.find(p => p.id === user?.linkedPregnancyId) || pregnancies[0];
@@ -752,7 +760,7 @@ export default function JourneyPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-xl">
-                  {format(new Date(viewYear, viewMonth), 'MMMM yyyy')}
+                  {format(new Date(viewYear, viewMonth), 'MMMM yyyy', { locale: dfLocale as never })}
                 </CardTitle>
                 <p className="mt-0.5 text-sm text-gray-400">{t('journey.clickDate')}</p>
               </div>
@@ -794,7 +802,7 @@ export default function JourneyPage() {
                 <div className="flex items-center gap-3">
                   <div className={`h-3 w-3 rounded-full ${selectedData.riskLevel ? riskConfig[selectedData.riskLevel].dot : selectedData.submitted ? 'bg-emerald-400' : 'bg-gray-300'}`} />
                   <div>
-                    <p className="text-sm font-semibold text-gray-700">{format(selectedDay, 'EEEE, MMMM d')}</p>
+                    <p className="text-sm font-semibold text-gray-700">{formatDate(selectedDay, i18n.language)}</p>
                     <p className="text-xs text-gray-400">
                       {!selectedData.submitted ? t('journey.noReportSubmitted') : `${selectedData.riskLevel ? t(riskConfig[selectedData.riskLevel].labelKey) : t('journey.dailyReport')} · ${t('risk.score')} ${selectedData.riskScore ?? '-'}/100`}
                     </p>

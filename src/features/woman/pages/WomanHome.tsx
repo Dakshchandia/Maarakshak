@@ -553,7 +553,7 @@ function UpcomingActions({ pregnancyId }: { pregnancyId: string }) {
 
 // ─── Main WomanHome ───────────────────────────────────────────────────────────
 export default function WomanHome() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { pregnancies, riskHistory, notifications, triggerSOS, getDailyEntry } = useData();
   const pregnancy = pregnancies.find(p => p.id === user?.linkedPregnancyId) || pregnancies[0];
@@ -622,7 +622,7 @@ export default function WomanHome() {
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard title={t('woman.gestationalWeek')} value={pregnancy?.gestationalWeek || 0} icon={Baby} color="from-pink-500 to-rose-500" />
-          <StatCard title={t('woman.dueDate')} value={pregnancy ? formatDate(pregnancy.dueDate) : '-'} icon={Calendar} color="from-primary-500 to-pink-500" />
+          <StatCard title={t('woman.dueDate')} value={pregnancy ? formatDate(pregnancy.dueDate, i18n.language) : '-'} icon={Calendar} color="from-primary-500 to-pink-500" />
           <StatCard title={t('common.trimester')} value={`T${pregnancy?.trimester}`} icon={Heart} color="from-purple-500 to-pink-500" />
           <StatCard title={t('woman.notifications')} value={unread} subtitle={t('woman.unread')} icon={Activity} color="from-amber-500 to-orange-500" />
         </div>
