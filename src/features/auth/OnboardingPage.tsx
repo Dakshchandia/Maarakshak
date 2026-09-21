@@ -107,7 +107,7 @@ export default function OnboardingPage() {
             <Logo size="md" className="mx-auto" />
             <div className="mt-4">
               <h1 className="font-display text-2xl font-bold text-gray-900">
-                Welcome to MaaRaksha
+                Welcome to MaaRakshak
               </h1>
               <p className="mt-2 text-gray-500 text-sm">
                 Hi {user.name?.split(' ')[0] || 'there'}! Select your role to get started.

@@ -8,14 +8,14 @@ import {
   DEMO_NOTIFICATIONS, DEMO_APPOINTMENTS, DEMO_MEDICINES, DEMO_RISK_HISTORY,
 } from '@/lib/demo-data';
 
-const STORAGE_KEY = 'maaraksha_report_data';
+const STORAGE_KEY = 'maarakshak_report_data';
 const STORAGE_VERSION = 'v2'; // bump to clear old demo data cache
 
 // ── Load user pregnancy from onboarding profile ───────────────────────────────
 function loadUserPregnancy(): Pregnancy | null {
   try {
-    const saved = localStorage.getItem('maaraksha_pregnancy_profile');
-    const userRaw = localStorage.getItem('maaraksha_user');
+    const saved = localStorage.getItem('maarakshak_pregnancy_profile');
+    const userRaw = localStorage.getItem('maarakshak_user');
     if (!saved || !userRaw) return null;
     const profile = JSON.parse(saved);
     const user = JSON.parse(userRaw);
@@ -49,10 +49,10 @@ function loadUserPregnancy(): Pregnancy | null {
 function loadReportData(): { medicines: MedicineReminder[]; appointments: Appointment[] } {
   try {
     // Version check — if old version, clear and start fresh (removes old demo medicine cache)
-    const storedVersion = localStorage.getItem('maaraksha_storage_version');
+    const storedVersion = localStorage.getItem('maarakshak_storage_version');
     if (storedVersion !== STORAGE_VERSION) {
       localStorage.removeItem(STORAGE_KEY);
-      localStorage.setItem('maaraksha_storage_version', STORAGE_VERSION);
+      localStorage.setItem('maarakshak_storage_version', STORAGE_VERSION);
       return { medicines: [], appointments: [] };
     }
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -154,8 +154,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       };
       setPregnancies(prev => [newPreg, ...prev.filter(p => p.id !== newPreg.id)]);
     };
-    window.addEventListener('maaraksha:onboarding-complete', handler);
-    return () => window.removeEventListener('maaraksha:onboarding-complete', handler);
+    window.addEventListener('maarakshak:onboarding-complete', handler);
+    return () => window.removeEventListener('maarakshak:onboarding-complete', handler);
   }, []);  // Appointments: demo appointments kept for ASHA/family dashboards, but women only see report-extracted
   const [appointments, setAppointments] = useState<Appointment[]>([
     ...DEMO_APPOINTMENTS,

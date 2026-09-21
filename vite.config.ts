@@ -12,8 +12,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt'],
       manifest: {
-        name: 'MaaRaksha - Maternal Health Network',
-        short_name: 'MaaRaksha',
+        name: 'MaaRakshak - Maternal Health Network',
+        short_name: 'MaaRakshak',
         description: 'AI-Powered Maternal Health Early Warning Network',
         theme_color: '#e84393',
         background_color: '#fdf2f8',

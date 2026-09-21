@@ -196,7 +196,7 @@ export function DashboardLayout({ children, titleKey, navItems }: DashboardLayou
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-pink-500 shadow-md">
                 <Heart className="h-5 w-5 text-white" />
               </div>
-              <span className="hidden font-display text-lg font-bold gradient-text sm:block">MaaRaksha</span>
+              <span className="hidden font-display text-lg font-bold gradient-text sm:block">MaaRakshak</span>
             </Link>
             {isDemo && <Badge variant="outline" className="hidden sm:flex text-xs">{t('demoMode')}</Badge>}
           </div>
@@ -261,7 +261,7 @@ export function DashboardLayout({ children, titleKey, navItems }: DashboardLayou
                     <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-primary-500 to-pink-500 flex items-center justify-center">
                       <Heart className="h-4 w-4 text-white" />
                     </div>
-                    <span className="font-display font-bold gradient-text">MaaRaksha</span>
+                    <span className="font-display font-bold gradient-text">MaaRakshak</span>
                   </div>
                   <button onClick={() => setMobileOpen(false)} className="rounded-xl p-1.5 hover:bg-gray-100">
                     <X className="h-5 w-5 text-gray-500" />

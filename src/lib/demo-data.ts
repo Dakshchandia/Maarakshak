@@ -189,7 +189,7 @@ export function getDemoMedicalReport(pregnancyId: string): MedicalReport {
     symptoms: DEMO_SYMPTOMS.filter(s => s.pregnancyId === pregnancyId).flatMap(s => s.extractedSymptoms),
     riskFactors: reports[0]?.riskFactors || [],
     riskHistory: reports,
-    aiSummary: `Patient ${pregnancy.womanName} at ${pregnancy.gestationalWeek} weeks gestation presents with ${pregnancy.riskLevel} risk profile (score: ${pregnancy.riskScore}/100). Key monitoring parameters include blood pressure trends, fetal movement assessment, and symptom reporting via MaaRaksha voice interface.`,
+    aiSummary: `Patient ${pregnancy.womanName} at ${pregnancy.gestationalWeek} weeks gestation presents with ${pregnancy.riskLevel} risk profile (score: ${pregnancy.riskScore}/100). Key monitoring parameters include blood pressure trends, fetal movement assessment, and symptom reporting via MaaRakshak voice interface.`,
     clinicalNotes: reports[0]?.clinicalReasoning || 'No critical notes.',
     recommendations: [reports[0]?.suggestedAction || 'Continue routine ANC', reports[0]?.followUpRecommendation || 'Next visit in 2 weeks'].filter(Boolean),
     followUpActions: ['ASHA home visit', 'BP monitoring', 'Medication compliance check'],

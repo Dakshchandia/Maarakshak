@@ -22,7 +22,7 @@ export default function ReportsPage() {
   const exportPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(18);
-    doc.text('MaaRaksha - Smart Pregnancy Health Report', 20, 20);
+    doc.text('MaaRakshak - Smart Pregnancy Health Report', 20, 20);
     doc.setFontSize(10);
     doc.text(`Generated: ${formatDateTime(new Date())}`, 20, 30);
     doc.text(`Patient: ${report.patientProfile.Name}`, 20, 40);
@@ -33,7 +33,7 @@ export default function ReportsPage() {
     doc.text(doc.splitTextToSize(report.aiSummary, 170), 20, 84);
     doc.text('Recommendations:', 20, 110);
     report.recommendations.forEach((r, i) => doc.text(`• ${r}`, 20, 118 + i * 8));
-    doc.save(`MaaRaksha-Report-${report.patientProfile.Name}.pdf`);
+    doc.save(`MaaRakshak-Report-${report.patientProfile.Name}.pdf`);
   };
 
   const printReport = () => window.print();

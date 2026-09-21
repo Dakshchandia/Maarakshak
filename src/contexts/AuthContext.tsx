@@ -67,13 +67,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Restore persisted session
-    const saved = localStorage.getItem('maaraksha_user');
+    const saved = localStorage.getItem('maarakshak_user');
     if (saved) {
       const parsedUser: User = JSON.parse(saved);
       setUser(parsedUser);
-      setIsDemo(localStorage.getItem('maaraksha_demo') === 'true');
+      setIsDemo(localStorage.getItem('maarakshak_demo') === 'true');
       if (parsedUser.language) {
-        localStorage.setItem('maaraksha_lang', parsedUser.language);
+        localStorage.setItem('maarakshak_lang', parsedUser.language);
         i18n.changeLanguage(parsedUser.language);
       }
     }
@@ -100,11 +100,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const persistUser = (u: User | null, demo: boolean) => {
     if (u) {
-      localStorage.setItem('maaraksha_user', JSON.stringify(u));
-      localStorage.setItem('maaraksha_demo', String(demo));
+      localStorage.setItem('maarakshak_user', JSON.stringify(u));
+      localStorage.setItem('maarakshak_demo', String(demo));
     } else {
-      localStorage.removeItem('maaraksha_user');
-      localStorage.removeItem('maaraksha_demo');
+      localStorage.removeItem('maarakshak_user');
+      localStorage.removeItem('maarakshak_demo');
     }
     setUser(u);
     setIsDemo(demo);
@@ -132,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ── Clerk login (called by ClerkAuthSync once Clerk session loads) ─────────
   const loginWithClerkUser = useCallback((clerkUser: ClerkUserData) => {
     // If we already have this exact user persisted, just restore it
-    const existing = localStorage.getItem('maaraksha_user');
+    const existing = localStorage.getItem('maarakshak_user');
     if (existing) {
       const parsed: User = JSON.parse(existing);
       if (parsed.id === clerkUser.id) {
@@ -142,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // New Clerk user — create a MaaRaksha user record
+    // New Clerk user — create a MaaRakshak user record
     // Default role is 'woman'; role selection can be added to onboarding if needed
     const newUser: User = {
       id: clerkUser.id,
@@ -150,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: clerkUser.name || 'New User',
       role: 'woman',
       avatar: clerkUser.avatar,
-      language: (localStorage.getItem('maaraksha_lang') as Language) || 'en',
+      language: (localStorage.getItem('maarakshak_lang') as Language) || 'en',
       villageId: 'v1',
       districtId: 'd1',
       linkedPregnancyId: `p-${clerkUser.id}`,
@@ -189,9 +189,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       age: profile.age,
       pregnancyId: user.linkedPregnancyId || `p-${user.id}`,
     };
-    localStorage.setItem('maaraksha_pregnancy_profile', JSON.stringify(pregnancyProfile));
+    localStorage.setItem('maarakshak_pregnancy_profile', JSON.stringify(pregnancyProfile));
     window.dispatchEvent(
-      new CustomEvent('maaraksha:onboarding-complete', { detail: pregnancyProfile }),
+      new CustomEvent('maarakshak:onboarding-complete', { detail: pregnancyProfile }),
     );
   }, [user, isDemo]);
 
@@ -199,13 +199,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     if (auth) await fbSignOut(auth).catch(() => {});
     persistUser(null, false);
-    localStorage.removeItem('maaraksha_pregnancy_profile');
+    localStorage.removeItem('maarakshak_pregnancy_profile');
   }, []);
 
   // ── Language ───────────────────────────────────────────────────────────────
   const setLanguage = useCallback((lang: Language) => {
     if (user) persistUser({ ...user, language: lang }, isDemo);
-    localStorage.setItem('maaraksha_lang', lang);
+    localStorage.setItem('maarakshak_lang', lang);
     i18n.changeLanguage(lang);
   }, [user, isDemo]);
 

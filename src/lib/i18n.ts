@@ -8,7 +8,7 @@ import te from '@/locales/te.json';
 import mr from '@/locales/mr.json';
 import bn from '@/locales/bn.json';
 
-const savedLang = localStorage.getItem('maaraksha_lang') || 'en';
+const savedLang = localStorage.getItem('maarakshak_lang') || 'en';
 
 i18n.use(initReactI18next).init({
   resources: {

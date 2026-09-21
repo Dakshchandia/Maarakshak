@@ -1,5 +1,5 @@
 {
-  "appName": "MaaRaksha",
+  "appName": "MaaRakshak",
   "tagline": "AI-Powered Maternal Health Early Warning Network",
   "demoMode": "Demo Mode",
   "nav": {
@@ -366,7 +366,7 @@
     "resetChat": "Reset chat",
     "commonQuestions": "Common Questions",
     "notMedicalAdvice": "Not medical advice. Consult a doctor for serious symptoms.",
-    "greeting": "Namaste! I'm your MaaRaksha AI health assistant. Ask me about pregnancy symptoms, nutrition, when to seek help, or anything about your maternal health journey.",
+    "greeting": "Namaste! I'm your MaaRakshak AI health assistant. Ask me about pregnancy symptoms, nutrition, when to seek help, or anything about your maternal health journey.",
     "headacheReply": "Headaches during pregnancy can be normal, but severe headaches especially with swelling or vision changes may indicate preeclampsia. Please report via voice symptom reporting or contact your ASHA worker immediately.",
     "movementReply": "You should feel at least 10 fetal movements in 2 hours after week 28. Reduced movement is a warning sign — use the SOS button or voice report immediately.",
     "nutritionReply": "Focus on iron-rich foods (spinach, dal), calcium (milk, ragi), and folic acid. Take your prescribed supplements daily. Avoid raw foods and limit caffeine.",
@@ -655,7 +655,7 @@
     "markAllRead": "Mark All Read"
   },
   "login": {
-    "welcome": "Welcome to MaaRaksha",
+    "welcome": "Welcome to MaaRakshak",
     "subtitle": "Sign in or try a demo role instantly",
     "signIn": "Sign In",
     "orTryDemo": "OR TRY DEMO",

@@ -21,7 +21,7 @@ export default function AnalyticsPage() {
   const insights = [
     'RED cases increased by 15% in week 25 — primarily in Chomu and Sanganer villages',
     'ASHA follow-up compliance at 87% — above target of 80%',
-    'Voice reporting adoption increased 35% since MaaRaksha deployment',
+    'Voice reporting adoption increased 35% since MaaRakshak deployment',
     'Preeclampsia early detection rate improved by 40% compared to paper register baseline',
   ];
 

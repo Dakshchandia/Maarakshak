@@ -26,7 +26,7 @@ export default function LandingPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-pink-500">
               <Heart className="h-5 w-5 text-white" />
             </div>
-            <span className="font-display text-xl font-bold gradient-text">MaaRaksha</span>
+            <span className="font-display text-xl font-bold gradient-text">MaaRakshak</span>
           </div>
           <div className="hidden items-center gap-8 md:flex">
             {['Features', 'How It Works', 'Impact', 'FAQ', 'Team'].map(item => (
@@ -104,7 +104,7 @@ export default function LandingPage() {
       <section className="bg-gradient-to-b from-primary-50/50 to-white px-4 py-20" id="how-it-works">
         <div className="mx-auto max-w-7xl">
           <motion.div {...fadeUp} className="text-center">
-            <h2 className="font-display text-4xl font-bold">How MaaRaksha Works</h2>
+            <h2 className="font-display text-4xl font-bold">How MaaRakshak Works</h2>
           </motion.div>
           <div className="mt-12 grid gap-8 md:grid-cols-4">
             {[
@@ -218,7 +218,7 @@ export default function LandingPage() {
           <h2 className="text-center font-display text-4xl font-bold">Success Stories</h2>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {[
-              { name: 'Priya Sharma', village: 'Bassi, Jaipur', story: 'Voice-reported headache and swelling at week 28. MaaRaksha flagged YELLOW risk, ASHA visited within 24 hours.', outcome: 'Prevented preeclampsia progression' },
+              { name: 'Priya Sharma', village: 'Bassi, Jaipur', story: 'Voice-reported headache and swelling at week 28. MaaRakshak flagged YELLOW risk, ASHA visited within 24 hours.', outcome: 'Prevented preeclampsia progression' },
               { name: 'Sunita Meena', village: 'Chomu, Jaipur', story: 'Reduced fetal movement detected via voice. RED alert sent to family and PHC instantly.', outcome: 'Emergency referral saved mother and baby' },
               { name: 'Lakshmi Devi', role: 'ASHA Worker', village: 'Jaipur Rural', story: 'Priority dashboard helped manage 63 pregnancies efficiently, focusing on 6 high-risk cases first.', outcome: '3x faster follow-up response' },
             ].map(s => (
@@ -240,7 +240,7 @@ export default function LandingPage() {
           <h2 className="text-center font-display text-4xl font-bold">FAQ</h2>
           <div className="mt-10 space-y-4">
             {[
-              { q: 'Does it work offline?', a: 'Yes! MaaRaksha is a PWA that caches data and syncs when connectivity returns — designed for rural India.' },
+              { q: 'Does it work offline?', a: 'Yes! MaaRakshak is a PWA that caches data and syncs when connectivity returns — designed for rural India.' },
               { q: 'What languages are supported?', a: 'Hindi, English, Tamil, Telugu, Marathi, and Bengali with voice input support.' },
               { q: 'How accurate is the AI risk engine?', a: 'Our Gemini-powered engine analyzes clinical parameters aligned with WHO maternal health guidelines, with local fallback logic.' },
               { q: 'Is patient data secure?', a: 'All data is encrypted via Firebase with role-based access control and audit logging.' },
@@ -279,10 +279,10 @@ export default function LandingPage() {
           <p className="mt-4 text-gray-600">Join the maternal health revolution. Try the demo now.</p>
           <Link to="/login"><Button size="lg" className="mt-8">Launch Demo Dashboard <ArrowRight className="h-5 w-5" /></Button></Link>
           <div className="mt-10 flex flex-wrap justify-center gap-8 text-sm text-gray-500">
-            <span className="flex items-center gap-2"><Mail className="h-4 w-4" /> contact@maaraksha.in</span>
+            <span className="flex items-center gap-2"><Mail className="h-4 w-4" /> contact@maarakshak.in</span>
             <span className="flex items-center gap-2"><Phone className="h-4 w-4" /> +91 1800-MAA-HELP</span>
             <span className="flex items-center gap-2"><MapPin className="h-4 w-4" /> Jaipur, Rajasthan</span>
-            <span className="flex items-center gap-2"><Globe className="h-4 w-4" /> maaraksha.in</span>
+            <span className="flex items-center gap-2"><Globe className="h-4 w-4" /> maarakshak.in</span>
           </div>
         </div>
       </section>
@@ -290,7 +290,7 @@ export default function LandingPage() {
       <footer className="border-t bg-white px-4 py-8 text-center text-sm text-gray-500">
         <div className="flex items-center justify-center gap-2">
           <Heart className="h-4 w-4 text-primary-500" />
-          <span>© 2026 MaaRaksha. Every mother deserves to live.</span>
+          <span>© 2026 MaaRakshak. Every mother deserves to live.</span>
         </div>
       </footer>
     </div>

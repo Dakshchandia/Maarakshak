@@ -40,7 +40,7 @@ function DemoSignupFlow() {
           <CheckCircle className="h-10 w-10 text-white" />
         </motion.div>
         <div>
-          <h3 className="text-xl font-bold text-gray-800">Welcome to MaaRaksha!</h3>
+          <h3 className="text-xl font-bold text-gray-800">Welcome to MaaRakshak!</h3>
           <p className="text-sm text-gray-500 mt-1">Entering as {ROLES.find(r => r.id === done)?.label}…</p>
         </div>
         <div className="flex justify-center gap-1">
@@ -96,7 +96,7 @@ export default function SignupPage() {
         >
           <Logo size="lg" />
           <h2 className="mt-10 font-display text-4xl font-bold leading-tight text-gray-900 xl:text-5xl">
-            Join MaaRaksha,<br />
+            Join MaaRakshak,<br />
             <span className="gradient-text">protect every journey</span>
           </h2>
           <p className="mt-6 max-w-md text-lg leading-relaxed text-gray-600">

@@ -18,7 +18,7 @@ export const isClerkConfigured = Boolean(
   CLERK_PUBLISHABLE_KEY.startsWith('pk_'),
 );
 
-/** Clerk <SignIn> / <SignUp> appearance — matches MaaRaksha pink theme */
+/** Clerk <SignIn> / <SignUp> appearance — matches MaaRakshak pink theme */
 export const clerkAppearance = {
   variables: {
     colorPrimary: '#ec4899',

@@ -26,7 +26,7 @@ async function wakeBackend() {
   for (let i = 0; i < 3; i++) {
     try {
       const r = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(20000) });
-      if (r.ok) { console.log('[MaaRaksha] Backend ready'); return; }
+      if (r.ok) { console.log('[MaaRakshak] Backend ready'); return; }
     } catch { /* retry */ }
     await new Promise(r => setTimeout(r, 5000));
   }

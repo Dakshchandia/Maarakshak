@@ -141,14 +141,14 @@ export default function SplashScreen() {
           >
             <img
               src={logoImg}
-              alt="MaaRaksha"
+              alt="MaaRakshak"
               className="h-full w-full rounded-full object-cover ring-4 ring-white/90 brightness-110"
             />
           </motion.div>
         </div>
       </motion.div>
 
-      {/* MaaRaksha — pinned position, opacity only (no layout shift) */}
+      {/* MaaRakshak — pinned position, opacity only (no layout shift) */}
       <div className="absolute left-1/2 top-[42vh] z-20 w-full -translate-x-1/2 px-6 text-center">
         <motion.h1
           animate={showTitle ? {
@@ -162,7 +162,7 @@ export default function SplashScreen() {
           transition={{ opacity: { duration: 0.9 }, textShadow: { duration: 1.4, repeat: Infinity } }}
           className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl"
         >
-          MaaRaksha
+          MaaRakshak
         </motion.h1>
         <div className="mt-3 flex items-center justify-center gap-3">
           <motion.div

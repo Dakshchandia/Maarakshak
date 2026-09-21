@@ -245,7 +245,7 @@ export default function AssistantPage({ initialMessage }: { initialMessage?: str
     role: 'assistant',
     content: currentLang === 'hi'
       ? `🤱 नमस्ते! मैं माँरक्षा AI स्वास्थ्य सहायक हूँ।\n\nमैं आपकी गर्भावस्था के दौरान लक्षणों, पोषण और कब मदद लें — इसमें मार्गदर्शन करने के लिए यहाँ हूँ।\n\n**मैं आपकी किस बात में मदद कर सकता हूँ?**\nसिरदर्द, सूजन, शिशु की हलचल, उल्टी, पेट दर्द, या कोई अन्य चिंता के बारे में बताएं।\n\n⚠️ _मैं डॉक्टर नहीं हूँ। गंभीर लक्षणों के लिए हमेशा ASHA कार्यकर्ता या डॉक्टर से मिलें।_`
-      : `🤱 **Namaste! I'm MaaRaksha, your maternal health guide.**\n\nI'm here to help you understand pregnancy symptoms, nutrition, and when to seek medical care — in simple, easy-to-understand language.\n\n**How can I help you today?**\nTell me about any symptoms you're experiencing, nutrition questions, or concerns about your baby.\n\n⚠️ _I'm not a doctor. For serious symptoms, always consult your ASHA worker, nurse, or visit a health facility._`,
+      : `🤱 **Namaste! I'm MaaRakshak, your maternal health guide.**\n\nI'm here to help you understand pregnancy symptoms, nutrition, and when to seek medical care — in simple, easy-to-understand language.\n\n**How can I help you today?**\nTell me about any symptoms you're experiencing, nutrition questions, or concerns about your baby.\n\n⚠️ _I'm not a doctor. For serious symptoms, always consult your ASHA worker, nurse, or visit a health facility._`,
     timestamp: new Date(),
   });
 

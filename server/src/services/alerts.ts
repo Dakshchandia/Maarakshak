@@ -20,8 +20,8 @@ const transporter = process.env.SMTP_HOST ? nodemailer.createTransport({
 
 export async function sendEmailAlert(payload: AlertPayload) {
   const recipients = payload.recipients || [
-    { name: 'PHC Admin', role: 'PHC', contact: process.env.ALERT_EMAIL || 'alerts@maaraksha.demo' },
-    { name: 'Family Contact', role: 'Family', contact: process.env.FAMILY_ALERT_EMAIL || 'family@maaraksha.demo' },
+    { name: 'PHC Admin', role: 'PHC', contact: process.env.ALERT_EMAIL || 'alerts@maarakshak.demo' },
+    { name: 'Family Contact', role: 'Family', contact: process.env.FAMILY_ALERT_EMAIL || 'family@maarakshak.demo' },
   ];
 
   const alert: {
@@ -52,16 +52,16 @@ export async function sendEmailAlert(payload: AlertPayload) {
   if (transporter && payload.riskLevel === 'RED') {
     try {
       await transporter.sendMail({
-        from: process.env.SMTP_FROM || 'MaaRaksha <alerts@maaraksha.in>',
+        from: process.env.SMTP_FROM || 'MaaRakshak <alerts@maarakshak.in>',
         to: recipients.map(r => r.contact).join(','),
-        subject: `🚨 MaaRaksha RED ALERT: ${payload.womanName}`,
+        subject: `🚨 MaaRakshak RED ALERT: ${payload.womanName}`,
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #ef4444;">MaaRaksha Emergency Alert</h1>
+            <h1 style="color: #ef4444;">MaaRakshak Emergency Alert</h1>
             <p><strong>Patient:</strong> ${payload.womanName}</p>
             <p><strong>Risk Level:</strong> ${payload.riskLevel}</p>
             <p><strong>Message:</strong> ${payload.message}</p>
-            <p style="color: #666;">This is an automated alert from MaaRaksha Maternal Health Network.</p>
+            <p style="color: #666;">This is an automated alert from MaaRakshak Maternal Health Network.</p>
           </div>
         `,
       });
