@@ -7,7 +7,7 @@ MaaRaksha is a comprehensive, multi-role platform designed to tackle the high ma
 ![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![React](https://img.shields.io/badge/React-19-61dafb.svg?logo=react)
 ![Node.js](https://img.shields.io/badge/Node.js-Backend-339933.svg?logo=nodedotjs)
-![Gemini AI](https://img.shields.io/badge/Gemini-AI-orange.svg)
+![Gemini AI / MedGamma](https://img.shields.io/badge/Gemini_AI_/_MedGamma-orange.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 ---
@@ -20,7 +20,8 @@ Our platform leverages a modern, robust, and scalable technology stack tailored 
 flowchart LR
     A[👤 User] -->|Web/PWA| B[🌐 Frontend]
     B -->|REST API| C[⚙️ Backend / API]
-    C -->|AI Queries| D[🤖 Google Gemini AI]
+    C -->|AI Queries| D[🤖 Google Gemini AI / MedGamma]
+    C -->|Language Processing| E[🗣️ Sarvaam AI]
     B -->|Auth| F[🔐 Clerk Auth]
     C -->|Alerts| G[📧 Nodemailer]
 ```
@@ -29,7 +30,8 @@ flowchart LR
 |---|---|---|
 | **Frontend** | React 19, TypeScript, Vite, TailwindCSS v4 | High-performance, responsive, and accessible UI rendering. |
 | **Backend** | Node.js, Express.js | Fast, unopinionated backend for handling API requests and business logic. |
-| **AI / ML** | Google Gemini AI | AI-driven risk assessment, multilingual translation, and report OCR. |
+| **AI / ML** | Google Gemini AI / MedGamma | AI-driven risk assessment and medical report OCR. |
+| **Language Processing** | Sarvaam AI | Multilingual language translation and voice processing. |
 | **Authentication** | Clerk | Secure user authentication and session management. |
 | **Data Viz & UI** | Chart.js, Framer Motion | Data visualization for health trends and smooth micro-interactions. |
 | **Email Service** | Nodemailer | Sending real-time critical alerts to families and health workers. |
@@ -39,7 +41,7 @@ flowchart LR
 ## ✨ Features
 
 ### 👩‍🍼 Pregnant Women Features
-- **Multilingual Voice Check-ins:** Allows users to perform voice or text symptom reporting in 6 Indian languages, making the application highly accessible to rural populations.
+- **Multilingual Voice Check-ins:** Allows users to perform voice or text symptom reporting in 6 Indian languages (handled by **Sarvaam AI**), making the application highly accessible to rural populations.
 - **Daily Health Tracking:** Users can log vitals, symptoms, and mood to receive an immediate AI-generated risk forecast.
 - **Fetal Development Tracking:** Provides a week-by-week visual tracking of the baby's growth and developmental milestones.
 - **SOS Alerts:** A one-tap emergency button that immediately notifies family members and local health workers when critical care is needed.
@@ -69,7 +71,8 @@ flowchart LR
 flowchart TD
     User([End Users]) <--> |HTTPS| Frontend[Vercel: React PWA]
     Frontend <--> |REST API| Backend[Render: Node.js/Express]
-    Backend --> |Risk Assess / OCR| Gemini[Google Gemini AI]
+    Backend --> |Risk Assess / OCR| Gemini[Google Gemini AI / MedGamma]
+    Backend --> |Multilingual Processing| Sarvaam[Sarvaam AI]
     Backend --> |File Uploads| Multer[Multer Storage]
     Backend --> |Email Alerts| Nodemailer[Email Service]
     Frontend <--> |Auth / JWT| Clerk[Clerk Auth Service]
@@ -84,7 +87,7 @@ flowchart TD
     A[User Submits Symptoms/Vitals] --> B[Frontend Client]
     B --> C[Backend Express API]
     C --> D{Risk Assessment}
-    D -->|Calls AI| E[Gemini AI Model]
+    D -->|Calls AI| E[Google Gemini AI / MedGamma]
     E --> F[Generate Risk Score & Advice]
     F --> G{Is Risk High?}
     G -->|Yes| H[Trigger SOS/Alerts via Nodemailer]
@@ -169,14 +172,15 @@ The frontend will be available at `http://localhost:5173` and the backend at `ht
 
 ## 🧠 API / AI Integration
 
-MaaRaksha heavily relies on Google Gemini AI to process unstructured health data.
+MaaRaksha heavily relies on Google Gemini AI / MedGamma to process unstructured health data.
 
-- **Google Gemini API (`gemini-2.5-flash`):** Used as the primary engine for analyzing patient symptoms and vital signs.
+- **Google Gemini API / MedGamma (`gemini-2.5-flash`):** Used as the primary engine for analyzing patient symptoms and vital signs, providing medical OCR, and managing risk scoring.
+- **Sarvaam AI:** Handles all multilingual language processing, translations, and voice support for local Indian languages.
 - **Purpose:** 
   - Generates numerical risk scores and categorized risk levels (GREEN/YELLOW/RED).
   - Acts as a conversational AI health assistant.
   - Performs OCR and analysis on uploaded medical reports.
-- **Data Flow:** The frontend sends patient text/voice inputs or documents to the Node.js backend. The backend constructs a clinical prompt and securely queries the Gemini API. The response is formatted into JSON and passed back to the frontend for visualization.
+- **Data Flow:** The frontend sends patient text/voice inputs or documents to the Node.js backend. The backend constructs a clinical prompt and securely queries the Gemini API / MedGamma. The response is formatted into JSON and passed back to the frontend for visualization.
 - **Requirements:** `GEMINI_API_KEY` must be configured in the backend `.env` file.
 
 ---
