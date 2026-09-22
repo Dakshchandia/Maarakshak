@@ -853,7 +853,7 @@ export default function DailyCheckInPage() {
 
             {step === 'result' && savedEntry && (
               <motion.div key="result" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <ResultStep entry={savedEntry} onNewEntry={handleNewEntry} onContinueToAssistant={() => setStep('assistant')} />
+                <ResultStep entry={savedEntry} language={currentLang} onNewEntry={handleNewEntry} onContinueToAssistant={() => setStep('assistant')} />
               </motion.div>
             )}
           </AnimatePresence>
