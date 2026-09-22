@@ -1,8 +1,7 @@
 // API base URL — hardcoded for production, proxy for localhost dev
-// VITE_API_URL env var is intentionally IGNORED to prevent misconfiguration
 const API_BASE = (typeof window !== 'undefined' && window.location.hostname === 'localhost')
   ? '/api'
-  : 'https://pillars-v2v.onrender.com/api';
+  : 'https://maarakshak.onrender.com/api';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -129,4 +128,14 @@ export const api = {
     }),
 
   health: () => request<{ status: string; demo: boolean }>('/health'),
+
+  getNearbyHospitals: (lat: number, lng: number, radiusKm = 10) =>
+    request<{
+      facilities: Array<{
+        id: string; name: string; type: string; address: string;
+        distance: string; distanceKm: number; phone: string;
+        lat: number; lng: number; available24h: boolean; services: string[];
+      }>;
+      userLat: number; userLng: number;
+    }>(`/hospitals/nearby?lat=${lat}&lng=${lng}&radius=${radiusKm}`),
 };
