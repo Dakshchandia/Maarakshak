@@ -108,6 +108,7 @@ Return ONLY this exact JSON structure (no markdown, no explanation):
 
   try {
     const result = await generateJSON<RiskOutput>(prompt);
+    console.log('[riskEngine] Gemini raw result:', JSON.stringify(result).slice(0, 200));
 
     // Validate the response has required fields and sensible values
     if (

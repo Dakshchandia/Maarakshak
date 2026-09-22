@@ -73,9 +73,26 @@ export async function generateText(prompt: string): Promise<string> {
 }
 
 export async function generateJSON<T>(prompt: string): Promise<T> {
-  const text = await generateText(prompt + '\n\nRespond ONLY with valid JSON, no markdown.');
-  const cleaned = text.replace(/```json\n?|\n?```/g, '').trim();
-  return JSON.parse(cleaned) as T;
+  const text = await generateText(prompt + '\n\nRespond ONLY with valid JSON. No markdown, no explanation, no code blocks. Start directly with { and end with }');
+  
+  // Try multiple extraction strategies
+  let cleaned = text.trim();
+  
+  // Strategy 1: Remove all markdown code blocks (```json, ```, etc.)
+  cleaned = cleaned.replace(/^```[\w]*\n?/m, '').replace(/\n?```$/m, '').trim();
+  
+  // Strategy 2: Extract just the JSON object if there's surrounding text
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    cleaned = jsonMatch[0];
+  }
+  
+  try {
+    return JSON.parse(cleaned) as T;
+  } catch (parseErr) {
+    console.error('[generateJSON] Failed to parse:', cleaned.slice(0, 200));
+    throw new Error(`Gemini returned invalid JSON: ${(parseErr as Error).message}`);
+  }
 }
 
 export async function generateWithImage(
