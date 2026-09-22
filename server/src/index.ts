@@ -232,11 +232,24 @@ app.post('/api/ai/symptoms', async (req, res) => {
     const { transcription, language } = req.body;
     if (!transcription) return res.status(400).json({ error: 'Transcription required' });
     if (isGeminiConfigured()) {
-      const result = await generateJSON<{ symptoms: string[]; summary: string }>(`Extract maternal health symptoms from this patient report.\nLanguage: ${language || 'en'}\nReport: "${transcription}"\nReturn JSON with "symptoms" (array of clinical symptom names) and "summary" (one sentence).`);
-      return res.json(result);
+      try {
+        const result = await generateJSON<{ symptoms: string[]; summary: string }>(
+          `Extract maternal health symptoms from this patient report.\nLanguage: ${language || 'en'}\nReport: "${transcription}"\nReturn JSON with "symptoms" (array of clinical symptom names in English) and "summary" (one sentence in ${language || 'en'}).`
+        );
+        // Validate the result has expected fields
+        if (Array.isArray(result?.symptoms)) {
+          return res.json(result);
+        }
+      } catch (aiErr) {
+        console.warn('[ai/symptoms] Gemini failed, using local fallback:', (aiErr as Error).message?.slice(0, 100));
+      }
     }
+    // Fallback — always return valid response
     res.json({ symptoms: extractSymptomsLocal(transcription), summary: `Patient reported: ${transcription.slice(0, 100)}` });
-  } catch (err) { res.status(500).json({ error: err instanceof Error ? err.message : 'Symptom extraction failed' }); }
+  } catch (err) {
+    console.error('[ai/symptoms] Error:', err);
+    res.status(500).json({ error: err instanceof Error ? err.message : 'Symptom extraction failed' });
+  }
 });
 
 // ── AI Chat ───────────────────────────────────────────────────────────────────
