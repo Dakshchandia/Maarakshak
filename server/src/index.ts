@@ -47,11 +47,13 @@ app.get('/api/health', (_req, res) => {
 // ── Gemini test endpoint ──────────────────────────────────────────────────────
 app.get('/api/gemini-test', async (_req, res) => {
   try {
-    const { generateText } = await import('./services/gemini.js');
-    const result = await generateText('Say "Gemini is working" and nothing else.');
-    res.json({ success: true, result });
+    const { generateText, isGeminiConfigured } = await import('./services/gemini.js');
+    const configured = isGeminiConfigured();
+    if (!configured) return res.json({ success: false, error: 'Gemini not configured — GEMINI_API_KEY missing' });
+    const result = await generateText('Reply with exactly: OK');
+    res.json({ success: true, result, configured });
   } catch (err) {
-    res.json({ success: false, error: err instanceof Error ? err.message : String(err) });
+    res.json({ success: false, error: err instanceof Error ? err.message.slice(0, 300) : String(err) });
   }
 });
 

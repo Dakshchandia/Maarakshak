@@ -11,14 +11,15 @@ function getGenAI(): GoogleGenerativeAI | null {
   return _genAI;
 }
 
-// Model fallback chain — tries each until one succeeds
+// Model fallback chain — most stable first
 const MODEL_CHAIN = [
-  'gemini-2.5-flash',
-  'gemini-2.0-flash',
   'gemini-1.5-flash',
   'gemini-1.5-pro',
+  'gemini-2.0-flash',
   'gemini-2.0-flash-lite',
-  'gemini-flash-latest',
+  'gemini-2.5-flash',
+  'gemini-1.5-flash-latest',
+  'gemini-pro',
 ];
 
 export function isGeminiConfigured(): boolean {
