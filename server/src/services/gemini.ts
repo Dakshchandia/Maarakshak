@@ -14,6 +14,8 @@ function getGenAI(): GoogleGenerativeAI | null {
 const MODEL_CHAIN = [
   'gemini-2.5-flash',
   'gemini-2.0-flash',
+  'gemini-1.5-flash',
+  'gemini-1.5-pro',
   'gemini-2.0-flash-lite',
   'gemini-flash-latest',
 ];
@@ -53,8 +55,8 @@ async function tryGenerate(
     } catch (err) {
       lastError = err as Error;
       const msg = (err as Error).message || '';
-      // Only continue fallback for quota/not-found errors
-      if (msg.includes('429') || msg.includes('404') || msg.includes('not found') || msg.includes('quota')) {
+      // Only continue fallback for quota/not-found/server-error errors
+      if (msg.includes('429') || msg.includes('404') || msg.includes('not found') || msg.includes('quota') || msg.includes('503') || msg.includes('high demand')) {
         console.warn(`Model ${modelName} failed (${msg.slice(0, 80)}), trying next...`);
         continue;
       }
@@ -100,7 +102,7 @@ export async function generateWithImage(
       return result.response.text();
     } catch (err) {
       const msg = (err as Error).message || '';
-      if (msg.includes('429') || msg.includes('404') || msg.includes('not found') || msg.includes('quota')) {
+      if (msg.includes('429') || msg.includes('404') || msg.includes('not found') || msg.includes('quota') || msg.includes('503') || msg.includes('high demand')) {
         continue;
       }
       throw err;
@@ -178,7 +180,7 @@ async function generateWithPdfFile(
       lastError = err as Error;
       const msg = (err as Error).message || '';
       console.warn(`PDF analysis with ${modelName} failed: ${msg.slice(0, 120)}`);
-      if (msg.includes('429') || msg.includes('quota') || msg.includes('404') || msg.includes('not found')) {
+      if (msg.includes('429') || msg.includes('quota') || msg.includes('404') || msg.includes('not found') || msg.includes('503') || msg.includes('high demand')) {
         continue; // try next model
       }
       break; // non-quota error — don't retry

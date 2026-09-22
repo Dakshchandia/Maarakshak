@@ -19,7 +19,7 @@ import { Loader2 } from 'lucide-react';
 // Handles OAuth redirect (Google Sign-In callback)
 function SsoCallback() {
   if (isClerkConfigured) {
-    return <AuthenticateWithRedirectCallback />;
+    return <AuthenticateWithRedirectCallback signInFallbackRedirectUrl="/onboarding" signUpFallbackRedirectUrl="/onboarding" />;
   }
   return <Navigate to="/login" replace />;
 }
