@@ -152,7 +152,8 @@ function useAudioLevel(isRecording: boolean, stream: MediaStream | null) {
 
   useEffect(() => {
     if (isRecording && stream) {
-      const ctx = new AudioContext();
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioContextClass();
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 64;
       ctx.createMediaStreamSource(stream).connect(analyser);
