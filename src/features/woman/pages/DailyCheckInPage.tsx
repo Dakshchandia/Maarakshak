@@ -375,7 +375,8 @@ function VitalsStep({
 // ─── Step 3: Analysis Result ──────────────────────────────────────────────────
 
 function ResultStep({ entry, onNewEntry, onContinueToAssistant }: { entry: DailyEntry; onNewEntry: () => void; onContinueToAssistant: () => void }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'en';
   const [showDetails, setShowDetails] = useState(false);
   const level = entry.riskLevel || 'GREEN';
   const s = riskStyle[level];
