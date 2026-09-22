@@ -44,6 +44,17 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', demo: !isGeminiConfigured(), gemini: isGeminiConfigured(), timestamp: new Date().toISOString() });
 });
 
+// ── Gemini test endpoint ──────────────────────────────────────────────────────
+app.get('/api/gemini-test', async (_req, res) => {
+  try {
+    const { generateText } = await import('./services/gemini.js');
+    const result = await generateText('Say "Gemini is working" and nothing else.');
+    res.json({ success: true, result });
+  } catch (err) {
+    res.json({ success: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
 // ── Nearby Hospitals (OpenStreetMap Overpass API — free, no key required) ─────
 app.get('/api/hospitals/nearby', async (req, res) => {
   try {
