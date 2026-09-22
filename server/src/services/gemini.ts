@@ -5,7 +5,7 @@ let _genAI: GoogleGenerativeAI | null | undefined = undefined;
 
 function getGenAI(): GoogleGenerativeAI | null {
   if (_genAI !== undefined) return _genAI;
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyAQcbchob1p0GA7LQWyZ-K7Mh9-EnEoWwI';
   _genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
   return _genAI;
 }
@@ -83,7 +83,7 @@ export async function generateWithImage(
   mimeType: string,
 ): Promise<string> {
   const genAI = getGenAI();
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyAQcbchob1p0GA7LQWyZ-K7Mh9-EnEoWwI';
   if (!genAI || !apiKey) throw new Error('Gemini not configured');
 
   // PDFs must be uploaded via Files API — inlineData only works for images
