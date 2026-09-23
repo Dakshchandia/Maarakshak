@@ -113,25 +113,30 @@ async function analyzeWithAI(params: {
   notes?: string;
   week: number;
   language: string;
-}): Promise<{ score: number; level: RiskLevel; reasoning: string; action: string; precautions: string[]; warnings: string[]; nextSteps: string }> {
-  // Call the real backend AI endpoint — Gemini processes the symptoms server-side
-  // Never falls back silently to local mock — throw so caller can show error
+}): Promise<{ score: number; level: RiskLevel; reasoning: string; action: string; precautions: string[]; warnings: string[]; nextSteps: string; extractedSymptoms?: { label: string; negated: boolean }[] }> {
   const riskRes = await api.assessRisk({
-    symptoms: params.symptoms,
+    symptoms: params.symptoms,           // chip selections (English labels)
     gestationalWeek: params.week,
     bloodPressure: params.bp,
-    transcription: params.transcription,
+    transcription: params.transcription, // raw free text — backend extracts from this
     previousComplications: [],
   });
   const r = riskRes.report;
+
+  // Use extractedSymptoms from backend for accurate display count
+  const extracted: { label: string; negated: boolean }[] = r.extractedSymptoms ?? [];
+
   return {
     score: r.riskScore,
     level: r.riskLevel as RiskLevel,
     reasoning: r.clinicalReasoning,
     action: r.suggestedAction,
-    precautions: r.riskFactors?.length ? r.riskFactors : ['Continue prescribed medications', 'Stay hydrated', 'Rest adequately'],
+    precautions: r.riskFactors?.length
+      ? r.riskFactors
+      : ['Continue prescribed medications', 'Stay hydrated', 'Rest adequately'],
     warnings: r.symptoms?.length ? r.symptoms : [],
     nextSteps: r.followUpRecommendation || '',
+    extractedSymptoms: extracted,
   };
 }
 
@@ -550,10 +555,8 @@ export default function DailyCheckInPage() {
         };
         return labelMap[id] || id;
       });
-    const textSymptoms: string[] = [];
-    const combined = textInput || voiceTranscript;
-    if (combined) textSymptoms.push(combined);
-    return [...new Set([...chips, ...textSymptoms])];
+    // Do NOT push raw text as a symptom — the backend extracts symptoms from transcription
+    return [...new Set([...chips])];
   };
 
   const handleAnalyze = async () => {
@@ -584,7 +587,7 @@ export default function DailyCheckInPage() {
 
     try {
       const result = await analyzeWithAI({
-        symptoms: allSymptoms.length ? allSymptoms : [transcription],
+        symptoms: allSymptoms.length ? allSymptoms : [],
         transcription,
         weight: weight ? parseFloat(weight) : undefined,
         bp: bp || undefined,
@@ -597,12 +600,19 @@ export default function DailyCheckInPage() {
         language: currentLang,
       });
 
+      // Use extracted symptom labels for display — accurate count from backend
+      const displaySymptoms = result.extractedSymptoms && result.extractedSymptoms.length > 0
+        ? result.extractedSymptoms.filter(s => !s.negated).map(s => s.label)
+        : allSymptoms.length > 0
+          ? allSymptoms
+          : transcription ? [transcription.slice(0, 80)] : [];
+
       const entry: DailyEntry = {
         id: `de-${Date.now()}`,
         pregnancyId: pregnancy.id,
         womanId: user?.id || pregnancy.womanId,
         date: today,
-        symptoms: allSymptoms,
+        symptoms: displaySymptoms,  // accurate extracted labels, not raw text
         transcription,
         weight: weight ? parseFloat(weight) : undefined,
         bloodPressure: bp || undefined,

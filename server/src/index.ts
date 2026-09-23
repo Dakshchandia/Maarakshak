@@ -208,33 +208,56 @@ app.get('/api/hospitals/nearby', async (req, res) => {
 
 // ── Risk Assessment ───────────────────────────────────────────────────────────
 app.post('/api/risk/assess', async (req, res) => {
+  const requestId = `req-${Date.now()}`;
   try {
-    const { symptoms, gestationalWeek, bloodPressure, previousComplications, transcription, pregnancyId, womanId } = req.body;
-    const input = { symptoms: symptoms || [], gestationalWeek: gestationalWeek || 20, bloodPressure, previousComplications, transcription, pregnancyId };
+    const {
+      symptoms, gestationalWeek, bloodPressure,
+      previousComplications, transcription, pregnancyId, womanId,
+    } = req.body;
+
+    // Use actual gestational week from request; never silently default
+    const week = typeof gestationalWeek === 'number' ? gestationalWeek : undefined;
+
+    const input = {
+      symptoms: Array.isArray(symptoms) ? symptoms : [],
+      gestationalWeek: week ?? 20,
+      bloodPressure,
+      previousComplications: Array.isArray(previousComplications) ? previousComplications : [],
+      transcription: typeof transcription === 'string' ? transcription.trim() : '',
+      pregnancyId,
+    };
 
     const geminiReady = isGeminiConfigured();
-    console.log(`[risk/assess] Gemini configured: ${geminiReady} | symptoms: ${(symptoms || []).join(', ')} | week: ${gestationalWeek} | bp: ${bloodPressure || 'N/A'}`);
+    console.log(`[risk/assess][${requestId}] Gemini=${geminiReady} week=${week ?? 'missing->20'} chips=${input.symptoms.length} transcript="${(input.transcription || '').slice(0, 80)}"`);
 
     const assessment = geminiReady
       ? await assessRiskWithAI(input, generateJSON)
-      : (console.warn('[risk/assess] Gemini not configured — using local fallback'), assessRiskLocal(input));
+      : assessRiskLocal(input);
 
-    console.log(`[risk/assess] Result: score=${assessment.riskScore}, level=${assessment.riskLevel}`);
+    console.log(`[risk/assess][${requestId}] source=${assessment.analysisSource} score=${assessment.riskScore} level=${assessment.riskLevel} extracted=${assessment.extractedSymptoms?.length ?? 0}`);
 
     res.json({
       report: {
         id: `r-${Date.now()}`,
+        requestId,
         pregnancyId: pregnancyId || 'unknown',
         womanId: womanId || 'unknown',
-        ...assessment,
-        symptoms: symptoms || [],
-        gestationalWeek: gestationalWeek || 20,
+        riskLevel: assessment.riskLevel,
+        riskScore: assessment.riskScore,
+        riskFactors: assessment.riskFactors,
+        extractedSymptoms: assessment.extractedSymptoms ?? [],
+        clinicalReasoning: assessment.clinicalReasoning,
+        suggestedAction: assessment.suggestedAction,
+        followUpRecommendation: assessment.followUpRecommendation,
+        analysisSource: assessment.analysisSource,
+        symptoms: input.symptoms,
+        gestationalWeek: input.gestationalWeek,
         createdAt: new Date().toISOString(),
-        aiGenerated: geminiReady,
+        aiGenerated: assessment.analysisSource === 'gemini',
       }
     });
   } catch (err) {
-    console.error('[risk/assess] Error:', err instanceof Error ? err.message : err);
+    console.error(`[risk/assess][${requestId}] Error:`, err instanceof Error ? err.message : err);
     res.status(500).json({ error: err instanceof Error ? err.message : 'Risk assessment failed' });
   }
 });
