@@ -220,8 +220,10 @@ const NEGATION_PATTERNS = [
 ];
 
 // Resolved / past — symptoms already gone
+// NOTE: Do NOT include common English words like "the", "was" without context
 const RESOLVED_PATTERNS = [
-  /\b(tha|thi|the|kal|pehle|pahle|was|were|had|used\s+to|ho\s+gaya|theek\s+ho|better\s+now|ab\s+theek)\b/i,
+  /\b(theek\s+ho\s+gaya|theek\s+ho\s+gayi|better\s+now|ab\s+theek|all\s+better)\b/i,
+  /\b(ab\s+nahi|ab\s+nahin|ab\s+band)\b/i,
 ];
 
 /**
@@ -278,10 +280,15 @@ export function extractSymptomsFromText(text: string): ExtractedSymptom[] {
 
 // ─── Scoring weights ───────────────────────────────────────────────────────────
 const SEVERITY_SCORES: Record<'HIGH' | 'MEDIUM' | 'LOW', number> = {
-  HIGH: 28,
-  MEDIUM: 14,
-  LOW: 6,
+  HIGH: 30,
+  MEDIUM: 20,
+  LOW: 8,
 };
+
+// Duration/severity escalation patterns — add 10 extra if symptom described with these
+const ESCALATION_PATTERNS = [
+  /\b(since\s+yesterday|from\s+last\s+(day|night)|kal\s+se|rat\s+se|subah\s+se|since\s+morning|all\s+day|all\s+night|extreme|severe|bahut|bahot|tez|kaafi|kaafi\s+zyada|persistent|continuously|non.?stop)\b/i,
+];
 
 /**
  * Local risk assessment that reads the transcription text directly.
@@ -341,14 +348,31 @@ export function assessRiskLocal(input: RiskInput): RiskOutput {
   // ── 2. Score active (non-negated) extracted symptoms ─────────────────────
   const activeSymptoms = extractedSymptoms.filter(e => !e.negated);
 
+  // Check if the full text has duration/severity escalation markers
+  const hasEscalation = input.transcription
+    ? ESCALATION_PATTERNS.some(p => p.test(input.transcription!))
+    : false;
+
   for (const sym of activeSymptoms) {
-    score += SEVERITY_SCORES[sym.severity];
+    let symScore = SEVERITY_SCORES[sym.severity];
+    // Add escalation bonus if persistent/extreme qualifier present
+    if (hasEscalation) symScore += 10;
+    score += symScore;
     factors.push(sym.label);
   }
 
-  // ── 3. Escalation rules (override score if any high-risk sign present) ───
+  // ── 3. Escalation rules ────────────────────────────────────────────────────
+  // Any HIGH-risk sign → RED
   const hasHighRisk = activeSymptoms.some(s => s.severity === 'HIGH');
   if (hasHighRisk && score < 70) score = Math.max(score, 70);
+
+  // Fever in pregnancy → always at least YELLOW (score ≥ 40)
+  const hasFever = activeSymptoms.some(s => s.label === 'Fever');
+  if (hasFever && score < 40) score = 40;
+
+  // Persistent vomiting (with escalation marker) → at least YELLOW
+  const hasPersistentVomiting = activeSymptoms.some(s => s.label === 'Vomiting / Nausea') && hasEscalation;
+  if (hasPersistentVomiting && score < 40) score = 40;
 
   // ── 4. Gestational week adjustment ────────────────────────────────────────
   if (input.gestationalWeek >= 36) score += 8;
@@ -446,14 +470,22 @@ PATIENT:
 - Blood Pressure: ${input.bloodPressure || 'not measured'}
 - Previous complications: ${input.previousComplications?.join(', ') || 'none'}
 
-RULES:
-- Extract ALL symptoms from the description regardless of language (English/Hindi/Hinglish)
-- Score: base=5, HIGH risk symptom +25, MEDIUM +12, LOW +5, week≥36 +8, week≥28 +5
-- HIGH: bleeding, reduced fetal movement, blurred vision, severe abdominal pain, fits/convulsions
-- MEDIUM: headache, fever, swelling, dizziness, vomiting, high BP, abdominal pain
-- LOW: fatigue, back pain, mild nausea
-- If score≥70→RED, 40-69→YELLOW, <40→GREEN
-- clinicalReasoning MUST mention the specific symptoms found
+SCORING RULES (apply all that match):
+Base score: 8
+HIGH risk (+30 each): vaginal bleeding, absent/reduced fetal movement, blurred vision, severe abdominal pain, convulsions/fits, water breaking
+MEDIUM risk (+20 each): fever (any duration), persistent vomiting/nausea, headache, swelling (face/hands/feet), dizziness, high BP, abdominal pain
+LOW risk (+8 each): fatigue, mild back pain, mild nausea once
+Gestational modifiers: week≥36 +10, week 28–35 +8, week 20–27 +5
+Duration/severity escalation: if symptom described as "since yesterday/last day/kal se/extreme/bahut/tez" add +10 extra per escalated symptom
+BP modifiers: BP≥160 +35, BP≥140 +20, BP≥130 +10
+Previous complications: +10 each
+
+IMPORTANT:
+- ANY fever in pregnancy requires YELLOW minimum (≥40 score)
+- Persistent vomiting (since yesterday / kal se / from last day) requires YELLOW minimum
+- Score of 40–69 = YELLOW, ≥70 = RED, <40 = GREEN
+- clinicalReasoning MUST mention the specific symptoms found and their duration/severity
+- Different inputs MUST produce different scores
 
 Return this exact JSON (no markdown):
 {"riskLevel":"GREEN","riskScore":0,"riskFactors":[],"clinicalReasoning":"","suggestedAction":"","followUpRecommendation":""}`;
