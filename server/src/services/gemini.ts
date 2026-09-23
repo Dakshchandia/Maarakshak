@@ -11,15 +11,15 @@ function getGenAI(): GoogleGenerativeAI | null {
   return _genAI;
 }
 
-// Model fallback chain — most stable first
+// Model fallback chain — current models as of September 2026
 const MODEL_CHAIN = [
-  'gemini-1.5-flash',
-  'gemini-1.5-pro',
+  'gemini-2.5-flash',
+  'gemini-3.5-flash',
+  'gemini-3.1-flash-lite',
+  'gemini-2.5-flash-lite',
+  'gemini-2.5-pro',
   'gemini-2.0-flash',
   'gemini-2.0-flash-lite',
-  'gemini-2.5-flash',
-  'gemini-1.5-flash-latest',
-  'gemini-pro',
 ];
 
 export function isGeminiConfigured(): boolean {
@@ -57,12 +57,9 @@ async function tryGenerate(
     } catch (err) {
       lastError = err as Error;
       const msg = (err as Error).message || '';
-      // Only continue fallback for quota/not-found/server-error errors
-      if (msg.includes('429') || msg.includes('404') || msg.includes('not found') || msg.includes('quota') || msg.includes('503') || msg.includes('high demand')) {
-        console.warn(`Model ${modelName} failed (${msg.slice(0, 80)}), trying next...`);
-        continue;
-      }
-      throw err;
+      // Always try next model on any API error
+      console.warn(`[gemini] Model ${modelName} failed (${msg.slice(0, 100)}), trying next...`);
+      continue;
     }
   }
 
